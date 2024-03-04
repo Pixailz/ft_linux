@@ -7,3 +7,10 @@
 1. [POSIX.1-2008](https://pubs.opengroup.org/onlinepubs/9699919799/)
 1. [Filesystem Hierarchy Standard](https://refspecs.linuxfoundation.org/FHS_3.0/fhs/index.html)
 1. [Linux Standard Base](https://refspecs.linuxfoundation.org/lsb.shtml)
+
+1. [Beyond Linux From Scratchsystemd)](https://fr.linuxfromscratch.org/view/blfs-systemd-stable/)
+
+bookmark
+
+1. Linux From Scratch
+	> https://www.linuxfromscratch.org/lfs/view/stable/chapter03/packages.html

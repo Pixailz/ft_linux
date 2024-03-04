@@ -1,0 +1,81 @@
+#!/bin/bash
+
+set -e
+set -u
+set -o pipefail
+
+LFS="/mnt/lfs"
+# LFS_SOURCES_DIR="${LFS}/sources"
+LFS_SOURCES_DIR="./sources"
+
+source ./package-list
+
+function	check_version()
+{
+	bash ./rsc/version-check.sh
+
+	if [ $? -ne 0 ]; then
+		echo "Error: version-check.sh failed"
+		exit 1
+	fi
+}
+
+function	install_dependencies()
+{
+	sudo apt update && sudo apt upgrade -y && sudo apt install -y \
+		binutils \
+		bison \
+		gcc \
+		g++ \
+		make \
+		patch \
+		make \
+		texinfo
+}
+
+function	create_partition()
+{
+	: '# TODO
+	- create ext4 root and /boot partition
+	- create swap partition
+	'
+}
+
+function	mount_partition()
+{
+	: '# TODO
+	- mount root and /boot partition
+	'
+}
+
+function	package_download_dependencies()
+{
+	:
+}
+
+function	package_download_sources()
+{
+	: '# TODO
+	- check md5sum
+	'
+
+	for pack in ${PACKAGE[@]}; do
+		local	file=${PACKAGE_LINK[${pack}]##*/}
+		printf "EXT: %s | LINK %s\n" "${file}" "${PACKAGE_LINK[${pack}]}"
+		# curl --progress-bar --location \
+		# 	"${PACKAGE_LINK[${pack}]}" \
+		# 	--output "${LFS_SOURCES_DIR}/${file}"
+	done
+}
+
+function	_mkdir()
+{ [ ! -d "${1}" ] && rm -vrf "${1}"; mkdir -vp "${1}"; }
+
+function	_init()
+{
+	_mkdir "${LFS_SOURCES_DIR}"
+}
+
+# main
+_init
+package_download_sources
