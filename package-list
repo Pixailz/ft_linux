@@ -172,3 +172,23 @@ declare -gA PACKAGE_LINK=(
 	["zlib"]="https://zlib.net/fossils/zlib-1.3.1.tar.gz"
 	["zstd"]="https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-1.5.5.tar.gz"
 )
+
+PATCH=(
+	"bash-upstream"
+	"bzip2-documentation"
+	"coreutils-intl"
+	"glibc-fhs"
+	"kbd-backspace"
+	"readline-upstream"
+	"sysvinit-consolidated"
+)
+
+declare -gA PATCH_LINK=(
+	["bash-upstream"]="https://www.linuxfromscratch.org/patches/lfs/12.1/bash-5.2.21-upstream_fixes-1.patch"
+	["bzip2-documentation"]="https://www.linuxfromscratch.org/patches/lfs/12.1/bzip2-1.0.8-install_docs-1.patch"
+	["coreutils-intl"]="https://www.linuxfromscratch.org/patches/lfs/12.1/coreutils-9.4-i18n-1.patch"
+	["glibc-fhs"]="https://www.linuxfromscratch.org/patches/lfs/12.1/glibc-2.39-fhs-1.patch"
+	["kbd-backspace"]="https://www.linuxfromscratch.org/patches/lfs/12.1/kbd-2.6.4-backspace-1.patch"
+	["readline-upstream"]="https://www.linuxfromscratch.org/patches/lfs/12.1/readline-8.2-upstream_fixes-3.patch"
+	["sysvinit-consolidated"]="https://www.linuxfromscratch.org/patches/lfs/12.1/sysvinit-3.08-consolidated-1.patch"
+)

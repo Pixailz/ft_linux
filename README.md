@@ -13,4 +13,4 @@
 bookmark
 
 1. Linux From Scratch
-	> https://www.linuxfromscratch.org/lfs/view/stable/chapter03/packages.html
+	> https://linuxfromscratch.org/lfs/view/stable/chapter05/chapter05.html
