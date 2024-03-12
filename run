@@ -1,176 +1,92 @@
 #!/bin/bash
 
+# BASH PROPRETIES
+## Exit immediately if a command exits with a non-zero status
 set -e
+## Treat unset variables as an error when substituting
 set -u
+## Error in pipeline will be shown
 set -o pipefail
 
-LFS="/mnt/lfs"
-LFS_SOURCES_DIR="${LFS}/sources"
-
-source ./package-list
-
-function	check_version()
-{
-	bash ./rsc/version-check.sh
-
-	if [ $? -ne 0 ]; then
-		echo "Error: version-check.sh failed"
-		exit 1
-	fi
-}
-
-function	install_dependencies()
-{
-	sudo apt update && sudo apt install -y \
-		vim \
-		binutils \
-		bison \
-		gcc \
-		g++ \
-		make \
-		patch \
-		texinfo \
-		gawk \
-		curl
-
-	rm -vrf /bin/sh
-	ln -vs /bin/bash /bin/sh
-}
-
-function	create_partition()
-{
-	<<-EOF cat | fdisk /dev/sda
-		n
-
-
-
-		+200M
-		n
-
-
-
-		+2G
-		t
-
-		82
-		n
-
-
-
-
-		w
-	EOF
-	mkfs -v -t ext4 /dev/sda1
-	mkswap /dev/sda2
-	mkfs -v -t ext4 /dev/sda3
-}
-
-function	mount_partition()
-{
-	mkdir -pv "${LFS}"
-	mount -v -t ext4 /dev/sda3 "${LFS}"
-	mkdir -pv "${LFS}/boot"
-	mount -v -t ext4 /dev/sda1 "${LFS}/boot"
-	swapon /dev/sda2
-}
-
-function	_mkdir()
-{ [ ! -d "${1}" ] && rm -vrf "${1}"; mkdir -vp "${1}"; }
-
-function	_init()
-{
-	install_dependencies
-	check_version
-
-	create_partition
-	mount_partition
-}
-
-function	package_download_sources()
-{
-	_mkdir "${LFS_SOURCES_DIR}"
-	chmod -v a+wt "${LFS_SOURCES_DIR}"
-	for pack in ${PACKAGE[@]}; do
-		local	file=${PACKAGE_LINK[${pack}]##*/}
-		if [ ! -f "${LFS_SOURCES_DIR}/${file}" ]; then
-			echo "Downloading: ${file}"
-		else
-			echo "File exists: ${file}"
-			continue
-		fi
-		curl --progress-bar --location \
-			"${PACKAGE_LINK[${pack}]}" \
-			--output "${LFS_SOURCES_DIR}/${file}"
-	done
-	for patch in ${PATCH[@]}; do
-		local	file=${PATCH_LINK[${patch}]##*/}
-		if [ ! -f "${LFS_SOURCES_DIR}/${file}" ]; then
-			echo "Downloading: ${file}"
-		else
-			echo "File exists: ${file}"
-			continue
-		fi
-		curl --progress-bar --location \
-			"${PATCH_LINK[${patch}]}" \
-			--output "${LFS_SOURCES_DIR}/${file}"
-	done
-	chown -v root:root ${LFS_SOURCES_DIR}/*
-}
-
-function	create_limited_directory_layout()
-{
-	mkdir -pv ${LFS}/{etc,var,tools} ${LFS}/usr/{bin,lib,sbin}
-	for i in bin lib sbin; do
-		ln -sv usr/${i} ${LFS}/
-	done
-	case $(uname -m) in
-		x86_64) ln -sv lib ${LFS}/lib64 ;;
-	esac
-}
-
-function	do_as()
-{
-	local	user="${1:-lfs}"
-	local	cmd="${@:2}"
-	sudo -u "${user}" -- ${cmd[@]}
-}
-
-function	create_lfs_user()
-{
-	groupadd lfs
-	useradd -s /bin/bash -g lfs -m -k /dev/null lfs
-	chown -v lfs $LFS/{usr{,/*},lib,var,etc,bin,sbin,tools}
-	case $(uname -m) in
-		x86_64) chown -v lfs $LFS/lib64 ;;
-	esac
-	local	home_lfs=~lfs
-	cat > ${home_lfs}/.bash_profile <<-"EOF"
-		exec env -i HOME=$HOME TERM=$TERM PS1='\u:\w\$ ' /bin/bash
-	EOF
-	cat > ${home_lfs}/.bashrc <<-"EOF"
-		set +h
-		umask 022
-		LFS=/mnt/lfs
-		LC_ALL=POSIX
-		LFS_TGT=$(uname -m)-lfs-linux-gnu
-		PATH=/usr/bin
-		if [ ! -L /bin ]; then PATH=/bin:$PATH; fi
-		PATH=$LFS/tools/bin:$PATH
-		CONFIG_SITE=$LFS/usr/share/config.site
-		MAKEFLAGS=-j$(nproc)
-		export MAKEFLAGS LFS LC_ALL LFS_TGT PATH CONFIG_SITE
-		source ~/.bash_profile
-	EOF
-	chown -v lfs:lfs ${home_lfs}/.bash{rc,_profile}
-}
-
-# main
+# RUNASROOT
 [ "${UID}" != "0" ] && { echo "Error: run as root"; exit 1;}
 
-_init
+# VARIABLES
+## cli args
+: ${1:?"Error: missing Disk Device"}
+export TARGET_DISK="${1}"
 
-package_download_sources
+PATH_BASE=$(realpath ${BASH_SOURCE[0]})
+export DIR_BASE=${PATH_BASE%/*}
 
-create_limited_directory_layout
+## LFS
+export LFS="/mnt/lfs"
+export LFS_ARCH=$(uname -m)
+export LFS_CORES=$(nproc)
+export LFS_TGT=${LFS_ARCH}-lfs-linux-gnu
+export LFS_SOURCES_DIR="${LFS}/sources"
 
-create_lfs_user
+# source needed files
+source ${DIR_BASE}/src/include
+
+set +h
+umask 022
+LC_ALL=POSIX
+PATH=/usr/bin:/usr/sbin
+if [ ! -L /bin ]; then PATH=/bin:${PATH}; fi
+PATH=${LFS}/tools/bin:${PATH}
+CONFIG_SITE=/usr/share/config.site
+export MAKEFLAGS="-j${LFS_CORES}"
+export LFS LC_ALL LFS_TGT PATH CONFIG_SITE
+
+LOG_FILE=${DIR_BASE}/exec.log
+
+function	prepare()
+{
+	# checkup
+	# partition
+	download_sources
+	# create_lfs
+}
+
+function	cross_compile()
+{
+	export MAKEFLAGS="-j1"
+	compile_binutils_pass1
+	export MAKEFLAGS="-j${LFS_CORES}"
+	compile_gcc_pass1
+	fix_linux_headers
+	compile_glibc
+	compile_libstdcxx
+}
+
+function	temp_tool()
+{
+	# compile_m4
+	# compile_ncurses
+	# compile_bash
+	# compile_coreutils
+	# compile_diffutils
+	# compile_file
+	# compile_findutils
+	# compile_gawk
+	# compile_grep
+	# compile_gzip
+	# compile_make
+	# compile_patch
+	# compile_sed
+	# compile_tar
+	# compile_xz
+	compile_binutils_pass2
+	compile_gcc_pass2
+}
+
+set_sbu
+
+# prepare
+# cross_compile
+temp_tool
+
+unset LFS LFS_SOURCES_DIR TARGET_DISK
+
+exit 0

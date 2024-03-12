@@ -1,0 +1,8 @@
+# Downloaded thing
+.sources/*
+
+# SBU file
+SBU
+
+# execution log
+*.log

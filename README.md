@@ -13,4 +13,7 @@
 bookmark
 
 1. Linux From Scratch
-	> https://linuxfromscratch.org/lfs/view/stable/chapter05/chapter05.html
+    > https://www.linuxfromscratch.org/lfs/view/stable/chapter07/chapter07.html
+## TODO
+
+1. save step done ..

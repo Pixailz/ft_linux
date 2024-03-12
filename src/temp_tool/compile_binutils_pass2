@@ -1,0 +1,29 @@
+#!/bin/bash
+
+function	compile_binutils_pass2()
+{
+	local	dst_dir="${LFS_SOURCES_DIR}/binutils-2.42"
+	local	sbu="0.5"
+	local	package="binutils"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu})s)"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	rm -rf ${dst_dir}/build
+	take ${dst_dir}/build
+	sed '6009s/$add_dir//' -i ../ltmain.sh
+	../configure \
+		--prefix=/usr \
+		--build=$(../config.guess) \
+		--host=${LFS_TGT} \
+		--disable-nls \
+		--enable-shared \
+		--enable-gprofng=no \
+		--disable-werror \
+		--enable-64-bit-bfd \
+		--enable-default-hash-style=gnu
+	make
+	make DESTDIR=${LFS} install
+	rm -v $LFS/usr/lib/lib{bfd,ctf,ctf-nobfd,opcodes,sframe}.{a,la}
+	popd
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+}

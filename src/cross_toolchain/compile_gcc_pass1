@@ -1,0 +1,48 @@
+#!/bin/bash
+
+function	compile_gcc1()
+{
+	local	dst_dir="${LFS_SOURCES_DIR}/gcc-13.2.0"
+	local	sbu="3.8"
+	local	package="gcc"
+
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	pushd ${dst_dir}
+	tar -xf ../${PACKAGE_FILE["mpfr"]}
+	tar -xf ../${PACKAGE_FILE["gmp"]}
+	tar -xf ../${PACKAGE_FILE["mpc"]}
+	rm -rf mpfr && mv -v mpfr-* mpfr
+	rm -rf gmp && mv -v gmp-* gmp
+	rm -rf mpc && mv -v mpc-* mpc
+	case ${LFS_ARCH} in
+		x86_64)
+			sed -e '/m64=/s/lib64/lib/' -i.orig gcc/config/i386/t-linux64
+		;;
+	esac
+	take build
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu})s)"
+	../configure \
+		--target=$LFS_TGT \
+		--prefix=$LFS/tools \
+		--with-glibc-version=2.39 \
+		--with-sysroot=$LFS \
+		--with-newlib \
+		--without-headers \
+		--enable-default-pie \
+		--enable-default-ssp \
+		--disable-nls \
+		--disable-shared \
+		--disable-multilib \
+		--disable-threads \
+		--disable-libatomic \
+		--disable-libgomp \
+		--disable-libquadmath \
+		--disable-libssp \
+		--disable-libvtv \
+		--disable-libstdcxx \
+		--enable-languages=c,c++
+	make
+	make install
+	popd -2
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+}

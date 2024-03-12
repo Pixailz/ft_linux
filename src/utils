@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# FUNCTIONS
+function	_mkdir()
+{ [ ! -d "${1}" ] && rm -vrf "${1}"; mkdir -vp "${1}"; }
+
+function	take()
+{ _mkdir ${1}; pushd ${1}; }
+
+function	_printf()
+{
+	printf "[\e[33m%.13s\e[0m] " "$(date +%s%N)" >> ${LOG_FILE}
+	printf "%b %b\n" "${1}" "${2}" | tee -a ${LOG_FILE}
+}
+
+function	ppass()
+{ _printf "[\e[32m+\e[0m]" "${@}"; }
+
+function	pfail()
+{ _printf "[\e[31m-\e[0m]" "${@}"; }
+
+function	pwarn()
+{ _printf "[\e[31m!\e[0m]" "${@}"; }
+
+function	pinfo()
+{ _printf "[\e[34m*\e[0m]" "${@}"; }
+
+function	get_sbu()
+{ printf "%.6f\n" "$(echo "${1} * (${SBU:-1} / ${LFS_CORES:-1})" | bc -l)"; }

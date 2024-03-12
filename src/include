@@ -1,0 +1,33 @@
+#!/bin/bash
+
+source ${DIR_BASE}/src/utils
+source ${DIR_BASE}/src/package_link
+
+source ${DIR_BASE}/src/prepare/checkup
+source ${DIR_BASE}/src/prepare/partition
+source ${DIR_BASE}/src/prepare/download_sources
+source ${DIR_BASE}/src/prepare/create_lfs
+
+source ${DIR_BASE}/src/cross_toolchain/compile_binutils_pass1
+source ${DIR_BASE}/src/cross_toolchain/compile_gcc_pass1
+source ${DIR_BASE}/src/cross_toolchain/fix_linux_headers
+source ${DIR_BASE}/src/cross_toolchain/compile_glibc
+source ${DIR_BASE}/src/cross_toolchain/compile_libstdcxx
+
+source ${DIR_BASE}/src/temp_tool/compile_m4
+source ${DIR_BASE}/src/temp_tool/compile_ncurses
+source ${DIR_BASE}/src/temp_tool/compile_bash
+source ${DIR_BASE}/src/temp_tool/compile_coreutils
+source ${DIR_BASE}/src/temp_tool/compile_diffutils
+source ${DIR_BASE}/src/temp_tool/compile_file
+source ${DIR_BASE}/src/temp_tool/compile_findutils
+source ${DIR_BASE}/src/temp_tool/compile_gawk
+source ${DIR_BASE}/src/temp_tool/compile_grep
+source ${DIR_BASE}/src/temp_tool/compile_gzip
+source ${DIR_BASE}/src/temp_tool/compile_make
+source ${DIR_BASE}/src/temp_tool/compile_patch
+source ${DIR_BASE}/src/temp_tool/compile_sed
+source ${DIR_BASE}/src/temp_tool/compile_tar
+source ${DIR_BASE}/src/temp_tool/compile_xz
+source ${DIR_BASE}/src/temp_tool/compile_binutils_pass2
+source ${DIR_BASE}/src/temp_tool/compile_gcc_pass2

@@ -1,0 +1,61 @@
+#!/bin/bash
+
+function	partition()
+{
+	pinfo "Unmount all partition"
+	# () prevent IFS to be modified
+	(
+		IFS=$'\n'
+		mounted=($(mount | grep "${TARGET_DISK}" || true))
+		IFS=' '
+		for ((i = $((${#mounted[@]} - 1)); i >= 0; i--)); do
+			m=(${mounted[${i}]})
+			umount -v ${m[2]}
+		done
+	)
+
+	pinfo "Unmount all swap"
+	(
+		IFS=$'\n'
+		mounted=($(swapon | grep "${TARGET_DISK}" || true))
+		IFS=' '
+		for ((i = $((${#mounted[@]} - 1)); i >= 0; i--)); do
+			m=(${mounted[${i}]})
+			swapoff -v ${m[0]}
+		done
+	)
+
+	# pinfo "Create partition"
+	<<-EOF cat | fdisk ${TARGET_DISK}
+		n
+
+
+
+		+200M
+		n
+
+
+
+		+2G
+		t
+
+		82
+		n
+
+
+
+
+		w
+	EOF
+	pinfo "Make filesystem"
+	mkfs -v -t ext4 "${TARGET_DISK}1"
+	mkswap "${TARGET_DISK}2"
+	mkfs -v -t ext4 "${TARGET_DISK}3"
+
+	pinfo "Mount filesystem"
+	_mkdir "${LFS}"
+	mount -v -t ext4 "${TARGET_DISK}3" "${LFS}"
+	_mkdir "${LFS}/boot"
+	mount -v -t ext4 "${TARGET_DISK}1" "${LFS}/boot"
+	swapon -v "${TARGET_DISK}2"
+}

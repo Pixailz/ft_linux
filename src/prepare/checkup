@@ -1,0 +1,31 @@
+#!/bin/bash
+
+function	checkup()
+{
+	# Install dependencies
+	sudo apt update && sudo apt install -y \
+		vim \
+		binutils \
+		bison \
+		gcc \
+		g++ \
+		make \
+		patch \
+		texinfo \
+		gawk \
+		curl
+
+	pinfo "Symlink /bin/sh to /bin/bash"
+	[ /bin/sh -ef /bin/bash ] || (rm -vrf /bin/sh; ln -vs /bin/bash /bin/sh)
+
+	# Check if all good
+	pinfo "Check all good with LFS script"
+	bash ./rsc/version-check.sh
+
+	if [ $? -ne 0 ]; then
+		pfail "Error: version-check.sh failed"
+		exit 1
+	else
+		ppass "version-check.sh pass"
+	fi
+}
