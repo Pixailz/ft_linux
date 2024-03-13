@@ -16,4 +16,5 @@ function	compile_grep()
 	make DESTDIR=${LFS} install
 	popd
 	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${dst_dir}
 }

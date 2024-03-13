@@ -27,3 +27,36 @@ function	pinfo()
 
 function	get_sbu()
 { printf "%.6f\n" "$(echo "${1} * (${SBU:-1} / ${LFS_CORES:-1})" | bc -l)"; }
+
+function	do_chroot()
+{
+	sudo chroot "/mnt/lfs" /usr/bin/env -i \
+		HOME=/root \
+		TERM="$TERM" \
+		PS1='(lfs chroot) \u:\w\$ ' \
+		PATH=/usr/bin:/usr/sbin \
+		MAKEFLAGS="-j${LFS_CORES}" \
+		TESTSUITEFLAGS="-j${LFS_CORES}" \
+		/bin/bash <<<${@}
+}
+
+function	chroot_line()
+{
+	local	line="${1}"
+	local	file="${2}"
+	local	replace="${3:-0}"
+	if [ "${replace}" == "1" ]; then
+		replace=">"
+	else
+		replace=">>"
+	fi
+
+	sudo chroot "/mnt/lfs" /usr/bin/env -i \
+		HOME=/root \
+		TERM="$TERM" \
+		PS1='(lfs chroot) \u:\w\$ ' \
+		PATH=/usr/bin:/usr/sbin \
+		MAKEFLAGS="-j${LFS_CORES}" \
+		TESTSUITEFLAGS="-j${LFS_CORES}" \
+		/usr/bin/bash <<<"echo '${line}' ${replace} ${file}"
+}

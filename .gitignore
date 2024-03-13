@@ -6,3 +6,6 @@ SBU
 
 # execution log
 *.log
+
+# backup
+lfs-temp-tools-12.1*

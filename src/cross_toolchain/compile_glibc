@@ -40,4 +40,5 @@ function	compile_glibc()
 	rm -v a.out
 	ppass "${PACKAGE_FILE[${package}]}: test pass"
 	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${dst_dir}
 }

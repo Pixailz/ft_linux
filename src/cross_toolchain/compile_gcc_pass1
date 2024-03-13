@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function	compile_gcc1()
+function	compile_gcc_pass1()
 {
 	local	dst_dir="${LFS_SOURCES_DIR}/gcc-13.2.0"
 	local	sbu="3.8"
@@ -43,6 +43,10 @@ function	compile_gcc1()
 		--enable-languages=c,c++
 	make
 	make install
-	popd -2
+	popd
+	cat gcc/limitx.h gcc/glimits.h gcc/limity.h > \
+		`dirname $($LFS_TGT-gcc -print-libgcc-file-name)`/include/limits.h
+	popd
 	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${dst_dir}
 }

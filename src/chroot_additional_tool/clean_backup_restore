@@ -1,0 +1,23 @@
+#!/bin/bash
+
+function	clean_lfs()
+{
+	rm -rf /usr/share/{info,man,doc}/*
+	find /usr/{lib,libexec} -name \*.la -delete
+	rm -rf /tools
+	mountpoint -q ${LFS}/dev/shm && umount ${LFS}/dev/shm || true
+	umount ${LFS}/dev/pts || true
+	umount ${LFS}/{sys,proc,run,dev} || true
+}
+
+function	backup_lfs()
+{
+	cd ${LFS}
+	pinfo "Creating backup"
+	tar -cJpf ${DIR_BASE}/lfs-temp-tools-12.1_$(date +%d%m%Y%H%M%S).tar.xz .
+}
+
+function	restore()
+{
+	: # TODO
+}

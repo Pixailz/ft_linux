@@ -19,4 +19,5 @@ function	compile_bash()
 		ln -sv bash ${LFS}/bin/sh
 	popd
 	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${dst_dir}
 }

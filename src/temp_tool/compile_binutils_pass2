@@ -26,4 +26,5 @@ function	compile_binutils_pass2()
 	rm -v $LFS/usr/lib/lib{bfd,ctf,ctf-nobfd,opcodes,sframe}.{a,la}
 	popd
 	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${dst_dir}
 }

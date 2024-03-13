@@ -1,0 +1,29 @@
+#!/bin/bash
+
+function	compile_utils_linux()
+{
+	local	dst_dir="${LFS_SOURCES_DIR}/util-linux-2.39.3"
+	local	sbu="0.2"
+	local	package="util-linux"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu})s)"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/util-linux-2.39.3 \
+	&& mkdir -pv /var/lib/hwclock \
+	&& ./configure --libdir=/usr/lib \
+            --runstatedir=/run \
+            --disable-chfn-chsh \
+            --disable-login \
+            --disable-nologin \
+            --disable-su \
+            --disable-setpriv \
+            --disable-runuser \
+            --disable-pylibmount \
+            --disable-static \
+            --without-python \
+            ADJTIME_PATH=/var/lib/hwclock/adjtime \
+            --docdir=/usr/share/doc/util-linux-2.39.3 \
+	&& make && make install"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${dst_dir}
+}

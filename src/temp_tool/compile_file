@@ -7,9 +7,9 @@ function	compile_file()
 	local	package="file"
 
 	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu})s)"
+	rm -rf ${dst_dir}
 	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
 	pushd ${dst_dir}
-	make distclean
 	take ${dst_dir}/build
 	../configure --disable-bzlib \
 		--disable-libseccomp \
@@ -23,4 +23,5 @@ function	compile_file()
 	rm -v ${LFS}/usr/lib/libmagic.la
 	popd
 	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${dst_dir}
 }

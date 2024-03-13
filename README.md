@@ -13,7 +13,9 @@
 bookmark
 
 1. Linux From Scratch
-    > https://www.linuxfromscratch.org/lfs/view/stable/chapter07/chapter07.html
+    > https://www.linuxfromscratch.org/lfs/view/stable/chapter08/chapter08.html
 ## TODO
 
 1. save step done ..
+1. Fix failed compiling m4, need recompile cross compile
+1. Fix wrong SBU calculation

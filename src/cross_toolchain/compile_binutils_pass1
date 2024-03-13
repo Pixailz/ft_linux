@@ -42,4 +42,5 @@ function	compile_binutils_pass1()
 	set_sbu "${sbu}"
 	popd
 	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${dst_dir}
 }

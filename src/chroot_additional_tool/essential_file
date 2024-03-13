@@ -1,0 +1,52 @@
+#!/bin/bash
+
+function	essential_file()
+{
+	# Create /etc/mtab
+	rm -rf ${LFS}/etc/mtab
+	do_chroot ln -sv /proc/self/mounts /etc/mtab
+	# Create /etc/hosts
+	chroot_line "127.0.0.1  localhost ${LFS_HOSTNAME}" /etc/hosts 1
+	chroot_line "::1        localhost" /etc/hosts
+	# Create /etc/passwd
+	chroot_line "root:x:0:0:root:/root:/bin/bash" /etc/passwd 1
+	chroot_line "bin:x:1:1:bin:/dev/null:/usr/bin/false" /etc/passwd
+	chroot_line "daemon:x:6:6:Daemon User:/dev/null:/usr/bin/false" /etc/passwd
+	chroot_line "messagebus:x:18:18:D-Bus Message Daemon User:/run/dbus:/usr/bin/false" /etc/passwd
+	chroot_line "uuidd:x:80:80:UUID Generation Daemon User:/dev/null:/usr/bin/false" /etc/passwd
+	chroot_line "nobody:x:65534:65534:Unprivileged User:/dev/null:/usr/bin/false" /etc/passwd
+	# Create /etc/group
+	chroot_line "root:x:0:" /etc/group 1
+	chroot_line "bin:x:1:daemon" /etc/group
+	chroot_line "sys:x:2:" /etc/group
+	chroot_line "kmem:x:3:" /etc/group
+	chroot_line "tape:x:4:" /etc/group
+	chroot_line "tty:x:5:" /etc/group
+	chroot_line "daemon:x:6:" /etc/group
+	chroot_line "floppy:x:7:" /etc/group
+	chroot_line "disk:x:8:" /etc/group
+	chroot_line "lp:x:9:" /etc/group
+	chroot_line "dialout:x:10:" /etc/group
+	chroot_line "audio:x:11:" /etc/group
+	chroot_line "video:x:12:" /etc/group
+	chroot_line "utmp:x:13:" /etc/group
+	chroot_line "cdrom:x:15:" /etc/group
+	chroot_line "adm:x:16:" /etc/group
+	chroot_line "messagebus:x:18:" /etc/group
+	chroot_line "input:x:24:" /etc/group
+	chroot_line "mail:x:34:" /etc/group
+	chroot_line "kvm:x:61:" /etc/group
+	chroot_line "uuidd:x:80:" /etc/group
+	chroot_line "wheel:x:97:" /etc/group
+	chroot_line "users:x:999:" /etc/group
+	chroot_line "nogroup:x:65534:" /etc/group
+	# Create test user
+	chroot_line "tester:x:101:101::/home/tester:/bin/bash" /etc/passwd
+	chroot_line "tester:x:101:" /etc/group
+	do_chroot install -o tester -d /home/tester
+	# Create log folder
+	do_chroot touch /var/log/{btmp,lastlog,faillog,wtmp}
+	do_chroot chgrp -v utmp /var/log/lastlog
+	do_chroot chmod -v 664 /var/log/lastlog
+	do_chroot chmod -v 600 /var/log/btmp
+}

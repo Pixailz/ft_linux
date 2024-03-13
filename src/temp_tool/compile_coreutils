@@ -22,4 +22,5 @@ function	compile_coreutils()
 	sed -i 's/"1"/"8"/' ${LFS}/usr/share/man/man8/chroot.8
 	popd
 	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${dst_dir}
 }

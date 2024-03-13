@@ -1,0 +1,17 @@
+#!/bin/bash
+
+function	compile_gettext()
+{
+	local	dst_dir="${LFS_SOURCES_DIR}/gettext-0.22.5"
+	local	sbu="1.1"
+	local	package="gettext"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu})s)"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/gettext-0.22.5 \
+	&& ./configure --disable-shared \
+	&& make \
+	&& cp -v gettext-tools/src/{msgfmt,msgmerge,xgettext} /usr/bin"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${dst_dir}
+}

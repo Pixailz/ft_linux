@@ -24,6 +24,7 @@ export LFS="/mnt/lfs"
 export LFS_ARCH=$(uname -m)
 export LFS_CORES=$(nproc)
 export LFS_TGT=${LFS_ARCH}-lfs-linux-gnu
+export LFS_HOSTNAME="brda-sil"
 export LFS_SOURCES_DIR="${LFS}/sources"
 
 # source needed files
@@ -43,10 +44,10 @@ LOG_FILE=${DIR_BASE}/exec.log
 
 function	prepare()
 {
-	# checkup
-	# partition
+	checkup
+	partition
 	download_sources
-	# create_lfs
+	create_minimal_fhs
 }
 
 function	cross_compile()
@@ -56,36 +57,55 @@ function	cross_compile()
 	export MAKEFLAGS="-j${LFS_CORES}"
 	compile_gcc_pass1
 	fix_linux_headers
+	export MAKEFLAGS="-j1"
 	compile_glibc
+	export MAKEFLAGS="-j${LFS_CORES}"
 	compile_libstdcxx
 }
 
 function	temp_tool()
 {
-	# compile_m4
-	# compile_ncurses
-	# compile_bash
-	# compile_coreutils
-	# compile_diffutils
-	# compile_file
-	# compile_findutils
-	# compile_gawk
-	# compile_grep
-	# compile_gzip
-	# compile_make
-	# compile_patch
-	# compile_sed
-	# compile_tar
-	# compile_xz
+	compile_m4
+	compile_ncurses
+	compile_bash
+	compile_coreutils
+	compile_diffutils
+	compile_file
+	compile_findutils
+	compile_gawk
+	compile_grep
+	compile_gzip
+	compile_make
+	compile_patch
+	compile_sed
+	compile_tar
+	compile_xz
 	compile_binutils_pass2
 	compile_gcc_pass2
 }
 
+function	chroot_additional_tool()
+{
+	change_ownership
+	create_virtualfs
+	create_full_fhs
+	essential_file
+	compile_gettext
+	compile_bison
+	compile_perl
+	compile_python
+	compile_texinfo
+	compile_utils_linux
+	clean_lfs
+	backup_lfs
+}
+
 set_sbu
 
-# prepare
-# cross_compile
+prepare
+cross_compile
 temp_tool
+chroot_additional_tool
 
 unset LFS LFS_SOURCES_DIR TARGET_DISK
 
