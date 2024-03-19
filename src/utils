@@ -25,14 +25,43 @@ function	pwarn()
 function	pinfo()
 { _printf "[\e[34m*\e[0m]" "${@}"; }
 
+function	set_sbu()
+{
+	local	sbu=()
+	local	total=0
+	if [ "${1:-}" != ""  ]; then
+		sbu+=(${1})
+		ppass "added new SBU ${1}"
+		echo "${sbu}" >> ${DIR_BASE}/SBU
+	fi
+	sbu+=($(cat ${DIR_BASE}/SBU))
+
+	for ((i = 0; i < ${#sbu[@]}; i++)); do
+		total=$(bc -l <<<"${total} + ${sbu[i]}")
+	done
+	total=$(bc -l <<<"scale=6; (${total} / ${#sbu[@]}) / (${LFS_CORES:-1} / 4)")
+	export SBU=$(printf "%.6f\n" ${total})
+	pinfo "SBU from this run and previous one is \e[32m${SBU}\e[0ms"
+}
+
 function	get_sbu()
-{ printf "%.6f\n" "$(echo "${1} * (${SBU:-1} / ${LFS_CORES:-1})" | bc -l)"; }
+{
+	local	n="$(bc -l <<<"scale=6; ${1} * ${SBU:-1}")"
+	local	dec="${n#*.}"
+	local	int="${n/.*/}"
+	local	hour="$(bc -l <<<"scale=0; ${int} / 3600")"
+	local	minute="$(bc -l <<<"scale=0; (${int} / 60) % 60")"
+	local	second="$(bc -l <<<"scale=0; ${int} % 60")"
+
+	printf "%sh%02dm%02ds%03dms%03dμs" "${hour}" "${minute}" "${second}" \
+										"${dec::3}" "${dec: -3}"
+}
 
 function	do_chroot()
 {
 	sudo chroot "/mnt/lfs" /usr/bin/env -i \
 		HOME=/root \
-		TERM="$TERM" \
+		TERM="${TERM}" \
 		PS1='(lfs chroot) \u:\w\$ ' \
 		PATH=/usr/bin:/usr/sbin \
 		MAKEFLAGS="-j${LFS_CORES}" \
@@ -53,7 +82,7 @@ function	chroot_line()
 
 	sudo chroot "/mnt/lfs" /usr/bin/env -i \
 		HOME=/root \
-		TERM="$TERM" \
+		TERM="${TERM}" \
 		PS1='(lfs chroot) \u:\w\$ ' \
 		PATH=/usr/bin:/usr/sbin \
 		MAKEFLAGS="-j${LFS_CORES}" \

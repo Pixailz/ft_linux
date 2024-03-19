@@ -1,0 +1,33 @@
+#!/bin/bash
+
+function	compile_bash_pass2()
+{
+	local	dst_dir="bash-5.2.21"
+	local	sbu="1.2"
+	local	package="bash"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} pass 2 with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& patch -Np1 -i /sources/${PATCH_FILE["bash-upstream"]} \
+	&& ./configure --prefix=/usr \
+		--without-bash-malloc \
+		--with-installed-readline \
+		--docdir=/usr/share/doc/bash-5.2.21 \
+	&& make"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	pinfo "Testing ${PACKAGE_FILE[${package}]::-7}"
+	chroot_line "set timeout -1" /tmp/e 1
+	chroot_line "spawn make tests" /tmp/e
+	chroot_line "expect eof" /tmp/e
+	chroot_line "lassign [wait] _ _ _ value" /tmp/e
+	chroot_line "exit \$value" /tmp/e
+	do_chroot "cd /sources/${dst_dir} \
+	&& chown -R tester . \
+	&& su -s /usr/bin/expect tester </tmp/e"
+	ppass "Tested ${PACKAGE_FILE[${package}]::-7}"
+	pinfo "Installing ${PACKAGE_FILE[${package}]::-7}"
+	do_chroot "cd /sources/${dst_dir} && make install"
+	ppass "Installed ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+function	compile_findutils_pass1()
+{
+	local	dst_dir="${LFS_SOURCES_DIR}/findutils-4.9.0"
+	local	sbu="0.1"
+	local	package="findutils"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} pass 1 with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	pushd ${dst_dir}
+	./configure --prefix=/usr \
+		--localstatedir=/var/lib/locate \
+		--host=${LFS_TGT} \
+		--build=$(build-aux/config.guess)
+	make
+	make DESTDIR=${LFS} install
+	popd
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${dst_dir}
+}

@@ -1,0 +1,42 @@
+#!/bin/bash
+
+function	compile_vim()
+{
+	local	dst_dir="vim-9.1.0148"
+	local	sbu="2.5"
+	local	package="vim"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& echo '#define SYS_VIMRC_FILE \"/etc/vimrc\"' >> src/feature.h \
+	&& ./configure --prefix=/usr \
+	&& make \
+	&& chown -R tester . \
+	&& su tester -c \"TERM=xterm-256color LANG=en_US.UTF-8 make -j1 test\" &> vim-test.log || true \
+	&& make install \
+	&& ln -fsv vim /usr/bin/vi\
+	&& for L in  /usr/share/man/{,*/}man1/vim.1; do \
+		ln -sfv vim.1 \$(dirname \$L)/vi.1; \
+	done \
+	&& ln -sfv ../vim/vim91/doc /usr/share/doc/vim-9.1.0148"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	pinfo "Configuring ${PACKAGE_FILE[${package}]::-7}"
+	chroot_line '" Begin /etc/vimrc' /etc/vimrc 1
+	chroot_line '' /etc/vimrc
+	chroot_line '" Ensure defaults are set before customizing settings, not after' /etc/vimrc
+	chroot_line 'source $VIMRUNTIME/defaults.vim' /etc/vimrc
+	chroot_line '' /etc/vimrc
+	chroot_line 'let skip_defaults_vim=1' /etc/vimrc
+	chroot_line 'set nocompatible' /etc/vimrc
+	chroot_line 'set backspace=2' /etc/vimrc
+	chroot_line 'set mouse=' /etc/vimrc
+	chroot_line 'syntax on' /etc/vimrc
+	chroot_line 'if (&term == "xterm") || (&term == "putty")' /etc/vimrc
+	chroot_line '  set background=dark' /etc/vimrc
+	chroot_line 'endif' /etc/vimrc
+	chroot_line '' /etc/vimrc
+	chroot_line '" End /etc/vimrc' /etc/vimrc
+	ppass "Configured ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

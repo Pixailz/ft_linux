@@ -6,7 +6,7 @@ function	compile_gcc_pass2()
 	local	sbu="4.4"
 	local	package="gcc"
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu})s)"
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} pass 2 with SBU ${sbu} ($(get_sbu ${sbu}))"
 	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
 	pushd ${dst_dir}
 	tar -xf ../${PACKAGE_FILE["mpfr"]}
@@ -45,7 +45,7 @@ function	compile_gcc_pass2()
 	make
 	make DESTDIR=${LFS} install
 	[ ! -e $LFS/usr/bin/cc ] && \
-		ln -sv gcc $LFS/usr/bin/cc
+		ln -sfv gcc $LFS/usr/bin/cc
 	popd -2
 	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
 	rm -rf ${dst_dir}

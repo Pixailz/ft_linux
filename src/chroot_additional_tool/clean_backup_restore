@@ -2,12 +2,12 @@
 
 function	clean_lfs()
 {
-	rm -rf /usr/share/{info,man,doc}/*
-	find /usr/{lib,libexec} -name \*.la -delete
-	rm -rf /tools
-	mountpoint -q ${LFS}/dev/shm && umount ${LFS}/dev/shm || true
-	umount ${LFS}/dev/pts || true
-	umount ${LFS}/{sys,proc,run,dev} || true
+	do_chroot rm -rf /usr/share/{info,man,doc}/*
+	do_chroot find /usr/{lib,libexec} -name \*.la -delete
+	do_chroot rm -rf /tools
+	mountpoint -q ${LFS}/dev/shm && umount -v ${LFS}/dev/shm || true
+	umount -v ${LFS}/dev/pts || true
+	umount -v ${LFS}/{sys,proc,run,dev} || true
 }
 
 function	backup_lfs()
@@ -15,6 +15,7 @@ function	backup_lfs()
 	cd ${LFS}
 	pinfo "Creating backup"
 	tar -cJpf ${DIR_BASE}/lfs-temp-tools-12.1_$(date +%d%m%Y%H%M%S).tar.xz .
+	ppass "Backup done"
 }
 
 function	restore()

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+function	compile_bc()
+{
+	local	dst_dir="bc-6.7.5"
+	local	sbu="0.05"
+	local	package="bc"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU less than 0.1 ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& CC=gcc ./configure --prefix=/usr -G -O3 -r \
+	&& make \
+	&& make test \
+	&& make install"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

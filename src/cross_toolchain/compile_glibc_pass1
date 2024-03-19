@@ -1,0 +1,44 @@
+#!/bin/bash
+
+function	compile_glibc_pass1()
+{
+	local	dst_dir="${LFS_SOURCES_DIR}/glibc-2.39"
+	local	sbu="1.5"
+	local	package="glibc"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} pass 1 with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	pushd ${dst_dir}
+	case ${LFS_ARCH} in
+		i?86)
+			ln -sfv ld-linux.so.2 $LFS/lib/ld-lsb.so.3
+		;;
+		x86_64)
+			ln -sfv ../lib/ld-linux-x86-64.so.2 ${LFS}/lib64
+			ln -sfv ../lib/ld-linux-x86-64.so.2 ${LFS}/lib64/ld-lsb-x86-64.so.3
+		;;
+	esac
+	patch -Np1 -i ${LFS_SOURCES_DIR}/${PATCH_FILE["glibc-fhs"]}
+	take build
+	echo "rootsbindir=/usr/sbin" > configparms
+	../configure \
+		--prefix=/usr \
+		--host=${LFS_TGT} \
+		--build=$(../scripts/config.guess) \
+		--enable-kernel=4.19 \
+		--with-headers=${LFS}/usr/include \
+		--disable-nscd \
+		libc_cv_slibdir=/usr/lib
+	make
+	make DESTDIR=${LFS} install
+	sed '/RTLDLIST=/s@/usr@@g' -i $LFS/usr/bin/ldd
+	popd -2
+
+	# test glibc
+	echo 'int main(){}' | ${LFS_TGT}-gcc -xc -
+	readelf -l a.out | grep ld-linux
+	rm -v a.out
+	ppass "${PACKAGE_FILE[${package}]}: test pass"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${dst_dir}
+}

@@ -6,7 +6,7 @@ function	compile_libstdcxx()
 	local	sbu="0.2"
 	local	package="gcc"
 
-	pinfo "Building Libstdc++ with SBU ${sbu} ($(get_sbu ${sbu})s)"
+	pinfo "Building Libstdc++ with SBU ${sbu} ($(get_sbu ${sbu}))"
 	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
 	take ${dst_dir}/build
 	../libstdc++-v3/configure \

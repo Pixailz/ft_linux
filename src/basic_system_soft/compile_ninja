@@ -1,0 +1,27 @@
+#!/bin/bash
+
+function	compile_ninja()
+{
+	local	dst_dir="ninja-1.11.1"
+	local	sbu="0.3"
+	local	package="ninja"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& export NINJAJOBS=${LFS_CORES} \
+	&& sed -i '/int Guess/a \
+		int   j = 0; \
+		char* jobs = getenv( \"NINJAJOBS\" ); \
+		if ( jobs != NULL ) j = atoi( jobs ); \
+		if ( j > 0 ) return j; \
+		' src/ninja.cc \
+	&& python3 configure.py --bootstrap \
+	&& ./ninja ninja_test \
+	&& ./ninja_test --gtest_filter=-SubprocessTest.SetWithLots \
+	&& install -vm755 ninja /usr/bin/ \
+	&& install -vDm644 misc/bash-completion /usr/share/bash-completion/completions/ninja \
+	&& install -vDm644 misc/zsh-completion  /usr/share/zsh/site-functions/_ninja"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

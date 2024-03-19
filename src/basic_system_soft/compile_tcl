@@ -1,0 +1,41 @@
+#!/bin/bash
+
+function	compile_tcl()
+{
+	local	dst_dir="tcl8.6.14"
+	local	sbu="2.7"
+	local	package="tcl"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir}/unix \
+	&& ./configure \
+		--prefix=/usr \
+		--mandir=/usr/share/man \
+	&& make \
+	&& sed -e 's|/sources/${dst_dir}/unix|/usr/lib|' \
+		-e 's|/sources/${dst_dir}|/usr/include|' \
+		-i tclConfig.sh \
+	&& sed -e 's|/sources/${dst_dir}/unix/pkgs/tdbc1.1.7|/usr/lib/tdbc1.1.7|' \
+		-e 's|/sources/${dst_dir}/pkgs/tdbc1.1.7/generic|/usr/include|' \
+		-e 's|/sources/${dst_dir}/pkgs/tdbc1.1.7/library|/usr/lib/tcl8.6|' \
+		-e 's|/sources/${dst_dir}/pkgs/tdbc1.1.7|/usr/include|' \
+		-i pkgs/tdbc1.1.7/tdbcConfig.sh \
+	&& sed -e 's|/sources/${dst_dir}/unix/pkgs/itcl4.2.4|/usr/lib/itcl4.2.4|' \
+		-e 's|/sources/${dst_dir}/pkgs/itcl4.2.4/generic|/usr/include|' \
+		-e 's|/sources/${dst_dir}/pkgs/itcl4.2.4|/usr/include|' \
+		-i pkgs/itcl4.2.4/itclConfig.sh \
+	&& unset SRCDIR \
+	&& make test \
+	&& make install \
+	&& chmod -v u+w /usr/lib/libtcl8.6.so \
+	&& make install-private-headers \
+	&& ln -sfv tclsh8.6 /usr/bin/tclsh \
+	&& mv /usr/share/man/man3/{Thread,Tcl_Thread}.3 \
+	&& cd .. \
+	&& tar -xf /sources/${PACKAGE_FILE[tcl-doc]} --strip-components=1 \
+	&& mkdir -v -p /usr/share/doc/tcl-8.6.14 \
+	&& cp -v -r  ./html/* /usr/share/doc/tcl-8.6.14"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

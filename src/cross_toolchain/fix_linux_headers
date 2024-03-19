@@ -6,10 +6,10 @@ function	fix_linux_headers()
 	local	sbu="0.05"
 	local	package="linux"
 
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU less than 0.1 ($(get_sbu ${sbu}))"
 	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
 	pushd ${dst_dir}
 	make mrproper
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU less than 0.1 ($(get_sbu ${sbu})s)"
 	make headers
 	find usr/include -type f ! -name '*.h' -delete
 	cp -rv usr/include ${LFS}/usr

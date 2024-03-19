@@ -1,30 +1,11 @@
 #!/bin/bash
 
-function	set_sbu()
-{
-	local	sbu=()
-	local	total=0
-	if [ "${1:-}" != ""  ]; then
-		sbu+=(${1})
-		ppass "added new SBU ${1}"
-		echo "${sbu}" >> ${DIR_BASE}/SBU
-	fi
-	sbu+=($(cat ${DIR_BASE}/SBU))
-
-	for ((i = 0; i < ${#sbu[@]}; i++)); do
-		total=$(echo "${total} + ${sbu[i]}" | bc -l)
-	done
-	total=$(echo "${total} / ${#sbu[@]}" | bc -l)
-	export SBU=$(printf "%.6f\n" ${total})
-	pinfo "SBU from this run and previous one is \e[32m${SBU}\e[0ms"
-}
-
 function	compile_binutils_pass1()
 {
 	local	dst_dir="${LFS_SOURCES_DIR}/binutils-2.42"
 	local	package="binutils"
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} and getting SBU"
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} pass 1 and getting SBU"
 	[ -e ${dst_dir} ] && rm -rf ${dst_dir}
 	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
 	take ${dst_dir}/build

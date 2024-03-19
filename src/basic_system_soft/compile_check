@@ -1,0 +1,24 @@
+#!/bin/bash
+
+function	compile_expect()
+{
+	local	dst_dir="expect5.45.4"
+	local	sbu="0.2"
+	local	package="expect"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
+	do_chroot "python3 -c 'from pty import spawn; spawn([\"echo\", \"okey\"])' | grep okey"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& ./configure --prefix=/usr \
+		--with-tcl=/usr/lib \
+		--enable-shared \
+		--mandir=/usr/share/man \
+		--with-tclinclude=/usr/include \
+	&& make \
+	&& make test \
+	&& make install \
+	&& ln -svf expect5.45.4/libexpect5.45.4.so /usr/lib"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

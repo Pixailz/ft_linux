@@ -4,7 +4,7 @@ function	essential_file()
 {
 	# Create /etc/mtab
 	rm -rf ${LFS}/etc/mtab
-	do_chroot ln -sv /proc/self/mounts /etc/mtab
+	do_chroot ln -sfv /proc/self/mounts /etc/mtab
 	# Create /etc/hosts
 	chroot_line "127.0.0.1  localhost ${LFS_HOSTNAME}" /etc/hosts 1
 	chroot_line "::1        localhost" /etc/hosts

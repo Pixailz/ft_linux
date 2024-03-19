@@ -1,0 +1,16 @@
+#!/bin/bash
+
+function	compile_setuptools()
+{
+	local	dst_dir="setuptools-69.1.0"
+	local	sbu="0.05"
+	local	package="setuptools"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU less than 0.1 ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& pip3 wheel -w dist --no-cache-dir --no-build-isolation --no-deps \$PWD \
+	&& pip3 install --no-index --find-links dist setuptools"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

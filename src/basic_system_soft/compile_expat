@@ -1,0 +1,21 @@
+#!/bin/bash
+
+function	compile_expat()
+{
+	local	dst_dir="expat-2.6.1"
+	local	sbu="0.1"
+	local	package="expat"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& ./configure --prefix=/usr \
+		--disable-static \
+		--docdir=/usr/share/doc/expat-2.6.1 \
+	&& make \
+	&& make check \
+	&& make install \
+	&& install -v -m644 doc/*.{html,css} /usr/share/doc/expat-2.6.1"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

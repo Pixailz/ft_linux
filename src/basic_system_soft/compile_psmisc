@@ -1,0 +1,18 @@
+#!/bin/bash
+
+function	compile_psmisc()
+{
+	local	dst_dir="psmisc-23.6"
+	local	sbu="0.05"
+	local	package="psmisc"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU less than 0.1 ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& ./configure --prefix=/usr \
+	&& make \
+	&& make check \
+	&& make install"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

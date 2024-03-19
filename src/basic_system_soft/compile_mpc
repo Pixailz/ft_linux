@@ -1,0 +1,22 @@
+#!/bin/bash
+
+function	compile_mpc()
+{
+	local	dst_dir="mpc-1.3.1"
+	local	sbu="0.1"
+	local	package="mpc"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& ./configure --prefix=/usr \
+		--disable-static \
+		--docdir=/usr/share/doc/mpc-1.3.1 \
+	&& make \
+	&& make html \
+	&& make check \
+	&& make install \
+	&& make install-html"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

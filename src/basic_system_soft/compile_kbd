@@ -1,0 +1,22 @@
+#!/bin/bash
+
+function	compile_kbd()
+{
+	local	dst_dir="kbd-2.6.4"
+	local	sbu="0.1"
+	local	package="kbd"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& patch -Np1 -i /sources/${PATCH_FILE['kbd-backspace']} \
+	&& sed -i '/RESIZECONS_PROGS=/s/yes/no/' configure \
+	&& sed -i 's/resizecons.8 //' docs/man/man8/Makefile.in \
+	&& ./configure --prefix=/usr --disable-vlock \
+	&& make \
+	&& make check \
+	&& make install \
+	&& cp -R -v docs/doc -T /usr/share/doc/kbd-2.6.4"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+function	compile_libxcrypt()
+{
+	local	dst_dir="libxcrypt-4.4.36"
+	local	sbu="0.1"
+	local	package="libxcrypt"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& ./configure --prefix=/usr \
+		--enable-hashes=strong,glibc \
+		--enable-obsolete-api=no \
+		--disable-static \
+		--disable-failure-tokens \
+	&& make \
+	&& make check \
+	&& make install \
+	&& make distclean \
+	&& ./configure --prefix=/usr \
+		--enable-hashes=strong,glibc \
+		--enable-obsolete-api=glibc \
+		--disable-static \
+		--disable-failure-tokens \
+	&& make \
+	&& cp -av --remove-destination .libs/libcrypt.so.1* /usr/lib"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

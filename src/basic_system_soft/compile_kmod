@@ -1,0 +1,26 @@
+#!/bin/bash
+
+function	compile_kmod()
+{
+	local	dst_dir="kmod-31"
+	local	sbu="0.05"
+	local	package="kmod"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU less than 0.1 ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& ./configure --prefix=/usr \
+		--sysconfdir=/etc \
+		--with-openssl \
+		--with-xz \
+		--with-zstd \
+		--with-zlib \
+	&& make \
+	&& make install \
+	&& for target in depmod insmod modinfo modprobe rmmod; do \
+		ln -sfv ../bin/kmod /usr/sbin/\$target; \
+	done \
+	&& ln -sfv kmod /usr/bin/lsmod"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

@@ -6,12 +6,12 @@ function	create_minimal_fhs()
 	mkdir -pv ${LFS}/{etc,var,tools} ${LFS}/usr/{bin,lib,sbin}
 	for i in bin lib sbin; do
 		[ -e ${LFS}/${i} ] && rm -rf ${LFS}/${i}
-		ln -sv usr/${i} ${LFS}/
+		ln -sfv usr/${i} ${LFS}/
 	done
 	case ${LFS_ARCH} in
 		x86_64)
 			[ -e ${LFS}/lib64 ] && rm -rf ${LFS}/lib64
-			ln -sv lib ${LFS}/lib64
+			ln -sfv lib ${LFS}/lib64
 		;;
 	esac
 }

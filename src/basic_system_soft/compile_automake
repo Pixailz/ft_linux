@@ -1,0 +1,18 @@
+#!/bin/bash
+
+function	compile_automake()
+{
+	local	dst_dir="automake-1.16.5"
+	local	sbu="1.6"
+	local	package="automake"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& ./configure --prefix=/usr --docdir=/usr/share/doc/automake-1.16.5 \
+	&& make \
+	&& make check \
+	&& make install"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

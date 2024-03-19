@@ -48,14 +48,17 @@ function	partition()
 		w
 	EOF
 	pinfo "Make filesystem"
-	mkfs -v -t ext4 "${TARGET_DISK}1"
+	echo y | mkfs -v -t ext4 "${TARGET_DISK}1"
 	mkswap "${TARGET_DISK}2"
-	mkfs -v -t ext4 "${TARGET_DISK}3"
+	echo y | mkfs -v -t ext4 "${TARGET_DISK}3"
+}
 
+function	mount_lfs()
+{
 	pinfo "Mount filesystem"
 	_mkdir "${LFS}"
-	mount -v -t ext4 "${TARGET_DISK}3" "${LFS}"
+	mount -v -t ext4 "${TARGET_DISK}3" "${LFS}" || true
 	_mkdir "${LFS}/boot"
-	mount -v -t ext4 "${TARGET_DISK}1" "${LFS}/boot"
-	swapon -v "${TARGET_DISK}2"
+	mount -v -t ext4 "${TARGET_DISK}1" "${LFS}/boot" || true
+	swapon -v "${TARGET_DISK}2" || true
 }

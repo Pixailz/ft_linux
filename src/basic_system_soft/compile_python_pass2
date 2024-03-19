@@ -1,0 +1,28 @@
+#!/bin/bash
+
+function	compile_python_pass2()
+{
+	local	dst_dir="Python-3.12.2"
+	local	sbu="1.8"
+	local	package="python"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} pass 2 with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& ./configure --prefix=/usr \
+		--enable-shared \
+		--with-system-expat \
+		--enable-optimizations \
+	&& make \
+	&& make install"
+	chroot_line "[global]" /etc/pip.conf 1
+	chroot_line "root-user-action = ignore" /etc/pip.conf
+	chroot_line "disable-pip-version-check = true" /etc/pip.conf
+	do_chroot "cd /sources/${dst_dir} \
+	&& install -v -dm755 /usr/share/doc/python-3.12.2/html \
+	&& tar --no-same-owner -xvf /sources/${PACKAGE_FILE["python-doc"]} \
+	&& cp -R --no-preserve=mode python-3.12.2-docs-html/* \
+		/usr/share/doc/python-3.12.2/html"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}
