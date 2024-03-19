@@ -99,10 +99,7 @@ function	chroot_additional_tool()
 	compile_python_pass1
 	compile_texinfo_pass1
 	compile_util_linux_pass1
-	clean_lfs
 	backup_lfs "temp-tools"
-	mount_lfs
-	create_virtualfs
 }
 
 function	basic_system_soft()
@@ -194,14 +191,13 @@ function	basic_system_soft()
 set_sbu
 
 prepare
-mount_lfs
 cross_compile
 temp_tool
 chroot_additional_tool
 basic_system_soft
 
 unset LFS LFS_ARCH LFS_CORES LFS_TGT LFS_HOSTNAME LFS_SOURCES_DIR \
-	  LFS_ROOT_PASS \
+	  LFS_ROOT_PASS LFS_STRIP_BINARIES \
 	  TARGET_DISK PATH_BASE DIR_BASE LC_ALL CONFIG_SITE MAKEFLAGS
 
 exit 0

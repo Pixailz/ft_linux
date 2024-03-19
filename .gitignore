@@ -8,4 +8,4 @@ SBU
 *.log
 
 # backup
-lfs-temp-tools-12.1*
+lfs-12.1*
