@@ -1,0 +1,31 @@
+#!/bin/bash
+
+function	compile_e2fsprogs()
+{
+	local	dst_dir="e2fsprogs-1.47.0"
+	local	sbu_ssd="0.4"
+	local	sbu_hdd="2.4"
+	local	package="e2fsprogs"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU SSD:${sbu_ssd}($(get_sbu ${sbu_ssd})), HDD:${sbu_hdd}($(get_sbu ${sbu_hdd}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "mkdir -pv /sources/${dst_dir}/build && cd /sources/${dst_dir}/build \
+	&& ../configure --prefix=/usr \
+		--sysconfdir=/etc \
+		--enable-elf-shlibs \
+		--disable-libblkid \
+		--disable-libuuid \
+		--disable-uuidd \
+		--disable-fsck \
+	&& make \
+	&& make check || true\
+	&& make install \
+	&& rm -fv /usr/lib/{libcom_err,libe2p,libext2fs,libss}.a \
+	&& gunzip -v /usr/share/info/libext2fs.info.gz \
+	&& install-info --dir-file=/usr/share/info/dir /usr/share/info/libext2fs.info \
+	&& makeinfo -o doc/com_err.info ../lib/et/com_err.texinfo \
+	&& install -v -m644 doc/com_err.info /usr/share/info \
+	&& install-info --dir-file=/usr/share/info/dir /usr/share/info/com_err.info"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

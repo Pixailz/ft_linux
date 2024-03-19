@@ -1,0 +1,27 @@
+#!/bin/bash
+
+function	compile_man_db()
+{
+	local	dst_dir="man-db-2.12.0"
+	local	sbu="0.2"
+	local	package="man-db"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	do_chroot "cd /sources/${dst_dir} \
+	&& ./configure --prefix=/usr \
+		--docdir=/usr/share/doc/man-db-2.12.0 \
+		--sysconfdir=/etc \
+		--disable-setuid \
+		--enable-cache-owner=bin \
+		--with-browser=/usr/bin/lynx \
+		--with-vgrind=/usr/bin/vgrind \
+		--with-grap=/usr/bin/grap \
+		--with-systemdtmpfilesdir= \
+		--with-systemdsystemunitdir= \
+	&& make \
+	&& make check \
+	&& make install"
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+}

@@ -2,6 +2,7 @@
 
 source ${DIR_BASE}/src/utils
 source ${DIR_BASE}/src/package_link
+source ${DIR_BASE}/src/clean_backup_restore
 
 source ${DIR_BASE}/src/prepare/checkup
 source ${DIR_BASE}/src/prepare/partition
@@ -41,8 +42,7 @@ source ${DIR_BASE}/src/chroot_additional_tool/compile_bison_pass1
 source ${DIR_BASE}/src/chroot_additional_tool/compile_perl_pass1
 source ${DIR_BASE}/src/chroot_additional_tool/compile_python_pass1
 source ${DIR_BASE}/src/chroot_additional_tool/compile_texinfo_pass1
-source ${DIR_BASE}/src/chroot_additional_tool/compile_utils_linux
-source ${DIR_BASE}/src/chroot_additional_tool/clean_backup_restore
+source ${DIR_BASE}/src/chroot_additional_tool/compile_util_linux_pass1
 
 source ${DIR_BASE}/src/basic_system_soft/compile_man_pages
 source ${DIR_BASE}/src/basic_system_soft/compile_iana_etc
@@ -117,3 +117,11 @@ source ${DIR_BASE}/src/basic_system_soft/compile_vim
 source ${DIR_BASE}/src/basic_system_soft/compile_markupsafe
 source ${DIR_BASE}/src/basic_system_soft/compile_jinja2
 source ${DIR_BASE}/src/basic_system_soft/compile_udev
+source ${DIR_BASE}/src/basic_system_soft/compile_man_db
+source ${DIR_BASE}/src/basic_system_soft/compile_procps_ng
+source ${DIR_BASE}/src/basic_system_soft/compile_util_linux_pass2
+source ${DIR_BASE}/src/basic_system_soft/compile_e2fsprogs
+source ${DIR_BASE}/src/basic_system_soft/compile_sysklogd
+source ${DIR_BASE}/src/basic_system_soft/compile_sysvinit
+source ${DIR_BASE}/src/basic_system_soft/strip_binaries
+source ${DIR_BASE}/src/basic_system_soft/clean_basic_soft

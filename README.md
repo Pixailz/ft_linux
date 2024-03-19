@@ -13,7 +13,7 @@
 bookmark
 
 1. Linux From Scratch
-	> https://www.linuxfromscratch.org/lfs/view/stable/chapter08/man-db.html
+	> https://www.linuxfromscratch.org/lfs/view/stable/chapter09/chapter09.html
 
 ## TODO
 
@@ -23,3 +23,4 @@ bookmark
 1. Some test are not correctly checked and therefore considered as good
 	1. glibc pass 2
 	1. binutils pass 3
+1. Add support for more editor

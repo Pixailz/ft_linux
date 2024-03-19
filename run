@@ -27,6 +27,7 @@ export LFS_TGT=${LFS_ARCH}-lfs-linux-gnu
 export LFS_HOSTNAME="brda-sil"
 export LFS_SOURCES_DIR="${LFS}/sources"
 export LFS_ROOT_PASS="1234"
+export LFS_STRIP_BINARIES=
 
 # source needed files
 source ${DIR_BASE}/src/include
@@ -97,99 +98,106 @@ function	chroot_additional_tool()
 	compile_perl_pass1
 	compile_python_pass1
 	compile_texinfo_pass1
-	compile_utils_linux
+	compile_util_linux_pass1
 	clean_lfs
-	# backup_lfs
+	backup_lfs "temp-tools"
 	mount_lfs
 	create_virtualfs
 }
 
 function	basic_system_soft()
 {
-	# compile_man_pages
-	# compile_iana_etc
-	# compile_glibc_pass2
-	# compile_zlib
-	# compile_bzip2
-	# compile_xz_pass2
-	# compile_zstd
-	# compile_file_pass2
-	# compile_readline
-	# compile_m4_pass2
-	# compile_bc
-	# compile_flex
-	# compile_tcl
-	# compile_expect
-	# compile_dejagnu
-	# compile_pkgconf
-	# compile_binutils_pass3
-	# compile_gmp
-	# compile_mpfr
-	# compile_mpc
-	# compile_attr
-	# compile_acl
-	# compile_libcap
-	# compile_libxcrypt
-	# compile_shadow
-	# compile_gcc_pass3
-	# compile_ncurses_pass2
-	# compile_sed_pass2
-	# compile_psmisc
-	# compile_gettext_pass2
-	# compile_bison_pass2
-	# compile_grep_pass2
-	# compile_bash_pass2
-	# compile_libtool
-	# compile_gdbm
-	# compile_gperf
-	# compile_expat
-	# compile_inetutils
-	# compile_less
-	# compile_perl_pass2
-	# compile_xml_parser
-	# compile_intltool
-	# compile_autoconf
-	# compile_automake
-	# compile_openssl
-	# compile_kmod
-	# compile_libelf
-	# compile_libffi
-	# compile_python_pass2
-	# compile_flit_core
-	# compile_wheel
-	# compile_setuptools
-	# compile_ninja
-	# compile_meson
-	# compile_coreutils_pass2
-	# compile_check
-	# compile_diffutils_pass2
-	# compile_gawk_pass2
-	# compile_findutils_pass2
-	# compile_groff
-	# compile_grub
-	# compile_gzip_pass2
-	# compile_iproute2
-	# compile_kbd
-	# compile_libpipeline
-	# compile_make_pass2
-	# compile_patch_pass2
-	# compile_tar_pass2
-	# compile_texinfo_pass2
-	# compile_vim
-	# compile_markupsafe
-	# compile_jinja2
+	compile_man_pages
+	compile_iana_etc
+	compile_glibc_pass2
+	compile_zlib
+	compile_bzip2
+	compile_xz_pass2
+	compile_zstd
+	compile_file_pass2
+	compile_readline
+	compile_m4_pass2
+	compile_bc
+	compile_flex
+	compile_tcl
+	compile_expect
+	compile_dejagnu
+	compile_pkgconf
+	compile_binutils_pass3
+	compile_gmp
+	compile_mpfr
+	compile_mpc
+	compile_attr
+	compile_acl
+	compile_libcap
+	compile_libxcrypt
+	compile_shadow
+	compile_gcc_pass3
+	compile_ncurses_pass2
+	compile_sed_pass2
+	compile_psmisc
+	compile_gettext_pass2
+	compile_bison_pass2
+	compile_grep_pass2
+	compile_bash_pass2
+	compile_libtool
+	compile_gdbm
+	compile_gperf
+	compile_expat
+	compile_inetutils
+	compile_less
+	compile_perl_pass2
+	compile_xml_parser
+	compile_intltool
+	compile_autoconf
+	compile_automake
+	compile_openssl
+	compile_kmod
+	compile_libelf
+	compile_libffi
+	compile_python_pass2
+	compile_flit_core
+	compile_wheel
+	compile_setuptools
+	compile_ninja
+	compile_meson
+	compile_coreutils_pass2
+	compile_check
+	compile_diffutils_pass2
+	compile_gawk_pass2
+	compile_findutils_pass2
+	compile_groff
+	compile_grub
+	compile_gzip_pass2
+	compile_iproute2
+	compile_kbd
+	compile_libpipeline
+	compile_make_pass2
+	compile_patch_pass2
+	compile_tar_pass2
+	compile_texinfo_pass2
+	compile_vim
+	compile_markupsafe
+	compile_jinja2
 	compile_udev
+	compile_man_db
+	compile_procps_ng
+	compile_util_linux_pass2
+	compile_e2fsprogs
+	compile_sysklogd
+	compile_sysvinit
+	[ "${LFS_STRIP_BINARIES}" != "0" ] && strip_binaries || pinfo "Stripping binaries skipped"
+	clean_basic_soft
+	backup_lfs "basic-system-soft"
 }
 
 set_sbu
 
-# download_sources
-
-# prepare
-# mount_lfs
-# cross_compile
-# temp_tool
-# chroot_additional_tool
+prepare
+mount_lfs
+cross_compile
+temp_tool
+chroot_additional_tool
 basic_system_soft
 
 unset LFS LFS_ARCH LFS_CORES LFS_TGT LFS_HOSTNAME LFS_SOURCES_DIR \
