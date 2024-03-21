@@ -19,8 +19,11 @@ bookmark
 
 1. Save step done ..
 1. Get, by chapter all sbu for estimation of compilation time
-1. Fix, line 23, src/cross_toolchain/compile_libstdcxx
 1. Some test are not correctly checked and therefore considered as good
 	1. glibc pass 2
 	1. binutils pass 3
 1. Add support for more editor
+1. See if i can make a release of backup
+1. Calculate SBU less accurately, ms and μs are not significant
+1. better SBU time (0h0m12s is not clean)
+1. better timestamp on log (from timestamp to date)

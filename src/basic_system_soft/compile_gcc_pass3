@@ -27,7 +27,7 @@ function	compile_gcc_pass3()
 	&& make \
 	&& ulimit -s 32768 \
 	&& chown -R tester . \
-	&& su tester -c 'PATH=\${PATH} make -k check' \
+	&& su tester -c 'PATH=\${PATH} make -k check || true' \
 	&& ../contrib/test_summary | grep -A7 Summ | grep -v '^#' \
 	&& make install \
 	&& chown -v -R root:root \

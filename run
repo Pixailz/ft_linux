@@ -69,7 +69,7 @@ function	cross_compile()
 function	temp_tool()
 {
 	compile_m4_pass1
-	compile_ncurses
+	compile_ncurses_pass1
 	compile_bash_pass1
 	compile_coreutils_pass1
 	compile_diffutils_pass1
@@ -183,7 +183,7 @@ function	basic_system_soft()
 	compile_e2fsprogs
 	compile_sysklogd
 	compile_sysvinit
-	[ "${LFS_STRIP_BINARIES}" != "0" ] && strip_binaries || pinfo "Stripping binaries skipped"
+	[ "${LFS_STRIP_BINARIES:-0}" != "0" ] && strip_binaries || pinfo "Stripping binaries skipped"
 	clean_basic_soft
 	backup_lfs "basic-system-soft"
 }
@@ -200,4 +200,5 @@ unset LFS LFS_ARCH LFS_CORES LFS_TGT LFS_HOSTNAME LFS_SOURCES_DIR \
 	  LFS_ROOT_PASS LFS_STRIP_BINARIES \
 	  TARGET_DISK PATH_BASE DIR_BASE LC_ALL CONFIG_SITE MAKEFLAGS
 
-exit 0
+exit $!
+

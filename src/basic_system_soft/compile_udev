@@ -14,7 +14,7 @@ function	compile_udev()
 	&& ./configure --prefix=/usr \
 	&& sed '/systemd-sysctl/s/^/#/' -i rules.d/99-systemd.rules.in \
 	&& sed '/NETWORK_DIRS/s/systemd/udev/' -i src/basic/path-lookup.h \
-	&& mkdir -p build && cd build \
+	&& mkdir -vp build && cd build \
 	&& meson setup \
 		--prefix=/usr \
 		--buildtype=release \
@@ -26,6 +26,10 @@ function	compile_udev()
 		.. \
 	&& export udev_helpers=\$(grep \"'name' :\" ../src/udev/meson.build | \
 		awk '{print \$3}' | tr -d \",'\" | grep -v 'udevadm') \
+	&& ninja udevadm systemd-hwdb \
+		\$(ninja -n | grep -Eo '(src/(lib)?udev|rules.d|hwdb.d)/[^ ]*') \
+		\$(realpath libudev.so --relative-to .) \
+		\${udev_helpers} \
 	&& ninja udevadm systemd-hwdb \
 		\$(ninja -n | grep -Eo '(src/(lib)?udev|rules.d|hwdb.d)/[^ ]*') \
 		\$(realpath libudev.so --relative-to .) \
