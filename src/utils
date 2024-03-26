@@ -9,7 +9,7 @@ function	take()
 
 function	_printf()
 {
-	printf "[\e[33m%.13s\e[0m] " "$(date +%s%N)" >> ${LOG_FILE}
+	printf "[\e[33m%s\e[0m] " "$(date '+%d/%M/%Y %T')" >> ${LOG_FILE}
 	printf "%b %b\n" "${1}" "${2}" | tee -a ${LOG_FILE}
 }
 
@@ -37,24 +37,24 @@ function	set_sbu()
 	sbu+=($(cat ${DIR_BASE}/SBU))
 
 	for ((i = 0; i < ${#sbu[@]}; i++)); do
-		total=$(bc -l <<<"${total} + ${sbu[i]}")
+		total=$((total + sbu[i]))
 	done
-	total=$(bc -l <<<"scale=6; (${total} / ${#sbu[@]}) / (${LFS_CORES:-1} / 4)")
-	export SBU=$(printf "%.6f\n" ${total})
+	export SBU=$((${total} / ${#sbu[@]}))
 	pinfo "SBU from this run and previous one is \e[32m${SBU}\e[0ms"
 }
 
 function	get_sbu()
 {
-	local	n="$(bc -l <<<"scale=6; ${1} * ${SBU:-1}")"
+	local	n="$(bc -l <<<"scale=0; ${1} * ${SBU:-1}")"
 	local	dec="${n#*.}"
 	local	int="${n/.*/}"
-	local	hour="$(bc -l <<<"scale=0; ${int} / 3600")"
-	local	minute="$(bc -l <<<"scale=0; (${int} / 60) % 60")"
-	local	second="$(bc -l <<<"scale=0; ${int} % 60")"
+	local	hour="$((${int} / 3600))"
+	local	minute="$(((${int} / 60) % 60))"
+	local	second="$((${int} % 60))"
 
-	printf "%sh%02dm%02ds%03dms%03dμs" "${hour}" "${minute}" "${second}" \
-										"${dec::3}" "${dec: -3}"
+	if [ "${hour}" -gt 0 ]; then printf "%sh" "${hour}"; fi
+	if [ "${minute}" -gt 0 ]; then printf "%02dm" "${minute}"; fi
+	if [ "${second}" -gt 0 ]; then printf "%02ds" "${second}"; fi
 }
 
 function	do_chroot()
