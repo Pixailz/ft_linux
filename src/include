@@ -125,3 +125,15 @@ source ${DIR_BASE}/src/basic_system_soft/compile_sysklogd
 source ${DIR_BASE}/src/basic_system_soft/compile_sysvinit
 source ${DIR_BASE}/src/basic_system_soft/strip_binaries
 source ${DIR_BASE}/src/basic_system_soft/clean_basic_soft
+
+source ${DIR_BASE}/src/system_config/lfs_boot_script
+source ${DIR_BASE}/src/system_config/configure_devices
+source ${DIR_BASE}/src/system_config/configure_network
+source ${DIR_BASE}/src/system_config/configure_dns
+source ${DIR_BASE}/src/system_config/configure_sysvinit
+source ${DIR_BASE}/src/system_config/configure_clock
+source ${DIR_BASE}/src/system_config/configure_console
+source ${DIR_BASE}/src/system_config/configure_rc_site
+source ${DIR_BASE}/src/system_config/configure_locale
+source ${DIR_BASE}/src/system_config/configure_inputrc
+source ${DIR_BASE}/src/system_config/configure_shells

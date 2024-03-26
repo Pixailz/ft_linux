@@ -1,0 +1,45 @@
+#!/bin/bash
+
+function	configure_inputrc()
+{
+	chroot_line "# Begin default /etc/inputrc" /etc/inputrc 1
+	chroot_line "" /etc/inputrc
+	chroot_line "# Allow the command prompt to wrap to the next line" /etc/inputrc
+	chroot_line "set horizontal-scroll-mode Off" /etc/inputrc
+	chroot_line "" /etc/inputrc
+	chroot_line "# Enable 8bit input" /etc/inputrc
+	chroot_line "set meta-flag On" /etc/inputrc
+	chroot_line "set input-meta On" /etc/inputrc
+	chroot_line "" /etc/inputrc
+	chroot_line "# Turns off 8th bit stripping" /etc/inputrc
+	chroot_line "set convert-meta Off" /etc/inputrc
+	chroot_line "" /etc/inputrc
+	chroot_line "# Keep the 8th bit for display" /etc/inputrc
+	chroot_line "set output-meta On" /etc/inputrc
+	chroot_line "" /etc/inputrc
+	chroot_line "# none, visible or audible" /etc/inputrc
+	chroot_line "set bell-style none" /etc/inputrc
+	chroot_line "" /etc/inputrc
+	chroot_line "# All of the following map the escape sequence of the value" /etc/inputrc
+	chroot_line "# contained in the 1st argument to the readline specific functions" /etc/inputrc
+	chroot_line '"\e0d": backward-word' /etc/inputrc
+	chroot_line '"\e0c": forward-word' /etc/inputrc
+	chroot_line "" /etc/inputrc
+	chroot_line "# for linux console" /etc/inputrc
+	chroot_line '"\e[1~": beginning-of-line' /etc/inputrc
+	chroot_line '"\e[4~": end-of-line' /etc/inputrc
+	chroot_line '"\e[5~": beginning-of-history' /etc/inputrc
+	chroot_line '"\e[6~": end-of-history' /etc/inputrc
+	chroot_line '"\e[3~": delete-char' /etc/inputrc
+	chroot_line '"\e[2~": quoted-insert' /etc/inputrc
+	chroot_line "" /etc/inputrc
+	chroot_line "# for xterm" /etc/inputrc
+	chroot_line '"\eOH": beginning-of-line' /etc/inputrc
+	chroot_line '"\eOF": end-of-line' /etc/inputrc
+	chroot_line "" /etc/inputrc
+	chroot_line "# for Konsole" /etc/inputrc
+	chroot_line '"\e[H": beginning-of-line' /etc/inputrc
+	chroot_line '"\e[F": end-of-line' /etc/inputrc
+	chroot_line "" /etc/inputrc
+	chroot_line "# End default /etc/inputrc" /etc/inputrc
+}

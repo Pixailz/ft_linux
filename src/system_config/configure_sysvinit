@@ -1,0 +1,32 @@
+#!/bin/bash
+
+function	configure_sysvinit()
+{
+	chroot_line "# Begin default /etc/inittab" /etc/inittab 1
+	chroot_line "" /etc/inittab
+	chroot_line "id:3:initdefault:" /etc/inittab
+	chroot_line "" /etc/inittab
+	chroot_line "si::sysinit:/etc/rc.d/init.d/rc S" /etc/inittab
+	chroot_line "" /etc/inittab
+	chroot_line "l0:0:wait:/etc/rc.d/init.d/rc 0" /etc/inittab
+	chroot_line "l1:S1:wait:/etc/rc.d/init.d/rc 1" /etc/inittab
+	chroot_line "l2:2:wait:/etc/rc.d/init.d/rc 2" /etc/inittab
+	chroot_line "l3:3:wait:/etc/rc.d/init.d/rc 3" /etc/inittab
+	chroot_line "l4:4:wait:/etc/rc.d/init.d/rc 4" /etc/inittab
+	chroot_line "l5:5:wait:/etc/rc.d/init.d/rc 5" /etc/inittab
+	chroot_line "l6:6:wait:/etc/rc.d/init.d/rc 6" /etc/inittab
+	chroot_line "" /etc/inittab
+	chroot_line "ca:12345:ctrlaltdel:/sbin/shutdown -t1 -a -r now" /etc/inittab
+	chroot_line "" /etc/inittab
+	chroot_line "su:S06:once:/sbin/sulogin" /etc/inittab
+	chroot_line "s1:1:respawn:/sbin/sulogin" /etc/inittab
+	chroot_line "" /etc/inittab
+	chroot_line "1:2345:respawn:/sbin/agetty --noclear tty1 9600" /etc/inittab
+	chroot_line "2:2345:respawn:/sbin/agetty tty2 9600" /etc/inittab
+	chroot_line "3:2345:respawn:/sbin/agetty tty3 9600" /etc/inittab
+	chroot_line "4:2345:respawn:/sbin/agetty tty4 9600" /etc/inittab
+	chroot_line "5:2345:respawn:/sbin/agetty tty5 9600" /etc/inittab
+	chroot_line "6:2345:respawn:/sbin/agetty tty6 9600" /etc/inittab
+	chroot_line "" /etc/inittab
+	chroot_line "# End default /etc/inittab" /etc/inittab
+}

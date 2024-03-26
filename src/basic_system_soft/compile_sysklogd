@@ -15,7 +15,7 @@ function	compile_sysklogd()
 	&& make BINDIR=/sbin install"
 	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
 	pinfo "Configuring ${PACKAGE_FILE[${package}]::-7}"
-	chroot_line "# Begin /etc/syslog.conf" /etc/syslog.conf 1
+	chroot_line "# Begin default /etc/syslog.conf" /etc/syslog.conf 1
 	chroot_line "" /etc/syslog.conf
 	chroot_line "auth,authpriv.* -/var/log/auth.log" /etc/syslog.conf
 	chroot_line "*.*;auth,authpriv.none -/var/log/sys.log" /etc/syslog.conf
@@ -25,7 +25,7 @@ function	compile_sysklogd()
 	chroot_line "user.* -/var/log/user.log" /etc/syslog.conf
 	chroot_line "*.emerg *" /etc/syslog.conf
 	chroot_line "" /etc/syslog.conf
-	chroot_line "# End /etc/syslog.conf" /etc/syslog.conf
+	chroot_line "# End default /etc/syslog.conf" /etc/syslog.conf
 	ppass "Configured ${PACKAGE_FILE[${package}]::-7}"
 	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
 }

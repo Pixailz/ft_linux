@@ -1,0 +1,11 @@
+#!/bin/bash
+
+function	configure_shells()
+{
+	chroot_line "# Begin default /etc/shells" /etc/shells 1
+	chroot_line "" /etc/shells
+	chroot_line "/bin/sh" /etc/shells
+	chroot_line "/bin/bash" /etc/shells
+	chroot_line "" /etc/shells
+	chroot_line "# End default /etc/shells" /etc/shells
+}

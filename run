@@ -28,6 +28,17 @@ export LFS_HOSTNAME="brda-sil"
 export LFS_SOURCES_DIR="${LFS}/sources"
 export LFS_ROOT_PASS="1234"
 export LFS_STRIP_BINARIES=
+export LFS_DNS_PRIMARY="8.8.8.8"
+export LFS_DNS_SECONDARY="8.8.4.4"
+export LFS_CLOCK_UTC=0
+export LFS_CLOCKPARAMS=""
+export LFS_TZ="Europe/Paris"
+export LFS_CONSOLE_UNICODE=1
+export LFS_CONSOLE_FONT="Lat2-Terminus16"
+export LFS_RC_SITE_DISTRO="Linux From Scratch"
+export LFS_RC_SITE_DISTRO_CONTACT="lfs-dev@lists.linuxfromscratch.org"
+export LFS_RC_SITE_DISTRO_MINI="LFS"
+export LFS_LOCALE_LANG="en_US.utf8"
 
 # source needed files
 source ${DIR_BASE}/src/include
@@ -188,6 +199,22 @@ function	basic_system_soft()
 	backup_lfs "basic-system-soft"
 }
 
+function	system_config()
+{
+	lfs_boot_script
+	configure_devices
+	configure_network "enp0s3" 192.168.1.{190,254,255} "24"
+	configure_dns
+	chroot_line "echo '${LFS_HOSTNAME}'" /etc/hostname 1
+	configure_sysvinit
+	configure_clock
+	configure_console
+	configure_rc_site
+	configure_locale
+	configure_inputrc
+	configure_shells
+}
+
 set_sbu
 
 prepare
@@ -195,10 +222,8 @@ cross_compile
 temp_tool
 chroot_additional_tool
 basic_system_soft
+system_config
 
-unset LFS LFS_ARCH LFS_CORES LFS_TGT LFS_HOSTNAME LFS_SOURCES_DIR \
-	  LFS_ROOT_PASS LFS_STRIP_BINARIES \
-	  TARGET_DISK PATH_BASE DIR_BASE LC_ALL CONFIG_SITE MAKEFLAGS
+unset	${!LFS_@} TARGET_DISK PATH_BASE DIR_BASE LC_ALL CONFIG_SITE MAKEFLAGS
 
-exit $!
-
+exit $?

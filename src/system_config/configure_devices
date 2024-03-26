@@ -1,0 +1,10 @@
+#!/bin/bash
+
+function	configure_devices()
+{
+	do_chroot "bash /usr/lib/udev/init-net-rules.sh || true"
+	cat ${LFS}/etc/udev/rules.d/70-persistent-net.rules
+	do_chroot "sed -e '/^AlternativeNamesPolicy/s/=.*$/=/' \
+		-i /usr/lib/udev/network/99-default.link \
+		> /etc/udev/network/99-default.link"
+}

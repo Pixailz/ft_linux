@@ -1,0 +1,18 @@
+#!/bin/bash
+
+function	configure_locale()
+{
+	chroot_line "# Begin default /etc/profile" /etc/profile 1
+	chroot_line "" /etc/profile
+	chroot_line 'for i in $(locale); do' /etc/profile
+	chroot_line '	unset ${i%=*}' /etc/profile
+	chroot_line 'done' /etc/profile
+	chroot_line '' /etc/profile
+	chroot_line 'if [[ "${TERM}" = linux ]]; then' /etc/profile
+	chroot_line '	export LANG=C.UTF-8' /etc/profile
+	chroot_line 'else' /etc/profile
+	chroot_line "	export LANG=${LFS_LOCALE_LANG}" /etc/profile
+	chroot_line 'fi' /etc/profile
+	chroot_line '' /etc/profile
+	chroot_line '# End default /etc/profile' /etc/profile
+}

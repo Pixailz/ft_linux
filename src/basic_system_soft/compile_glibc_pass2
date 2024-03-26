@@ -64,7 +64,7 @@ function	compile_glibc_pass2()
 	&& localedef -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS \
 	&& localedef -i zh_TW -f UTF-8 zh_TW.UTF-8"
 
-	chroot_line '# Begin /etc/nsswitch.conf' /etc/nsswitch.conf 1
+	chroot_line '# Begin default /etc/nsswitch.conf' /etc/nsswitch.conf 1
 	chroot_line '' /etc/nsswitch.conf
 	chroot_line 'passwd: files' /etc/nsswitch.conf
 	chroot_line 'group: files' /etc/nsswitch.conf
@@ -77,7 +77,7 @@ function	compile_glibc_pass2()
 	chroot_line 'ethers: files' /etc/nsswitch.conf
 	chroot_line 'rpc: files' /etc/nsswitch.conf
 	chroot_line '' /etc/nsswitch.conf
-	chroot_line '# End /etc/nsswitch.conf' /etc/nsswitch.conf
+	chroot_line '# End default /etc/nsswitch.conf' /etc/nsswitch.conf
 
 	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE["tzdata"]} \
 		-C ${LFS_SOURCES_DIR}/${dst_dir}/build
@@ -92,7 +92,7 @@ function	compile_glibc_pass2()
 	&& cp -v zone.tab zone1970.tab iso3166.tab ${ZONEINFO} \
 	&& zic -d ${ZONEINFO} -p America/New_York'
 	echo pass1
-	chroot_line '# Begin /etc/ld.so.conf' /etc/ld.so.conf 1
+	chroot_line '# Begin default /etc/ld.so.conf' /etc/ld.so.conf 1
 	chroot_line '/usr/local/lib' /etc/ld.so.conf
 	chroot_line '/opt/lib' /etc/ld.so.conf
 	chroot_line '# Add an include directory' /etc/ld.so.conf
