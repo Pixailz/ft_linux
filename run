@@ -39,6 +39,7 @@ export LFS_RC_SITE_DISTRO="Linux From Scratch"
 export LFS_RC_SITE_DISTRO_CONTACT="lfs-dev@lists.linuxfromscratch.org"
 export LFS_RC_SITE_DISTRO_MINI="LFS"
 export LFS_LOCALE_LANG="en_US.utf8"
+export LFS_KERNEL_DEFCONF="arch/x86/configs/x86_64_defconfig"
 
 # source needed files
 source ${DIR_BASE}/src/include
@@ -215,6 +216,32 @@ function	system_config()
 	configure_shells
 }
 
+function	make_system_bootable()
+{
+	configure_fstab
+	compile_linux
+	configure_grub
+}
+
+function	finish_touch()
+{
+	echo 12.1 > ${LFS}/etc/lfs-release
+	cat > ${LFS}/etc/lsb-release <<-"EOF"
+		DISTRIB_ID="Linux From Scratch"
+		DISTRIB_RELEASE="12.1"
+		DISTRIB_CODENAME="Pixailz"
+		DISTRIB_DESCRIPTION="Linux From Scratch"
+	EOF
+	cat > /etc/os-release <<-"EOF"
+		NAME="Linux From Scratch"
+		VERSION="12.1"
+		ID=lfs
+		PRETTY_NAME="Linux From Scratch 12.1"
+		VERSION_CODENAME="Pixailz"
+		HOME_URL="https://www.linuxfromscratch.org/lfs/"
+	EOF
+}
+
 set_sbu
 
 prepare
@@ -223,6 +250,8 @@ temp_tool
 chroot_additional_tool
 basic_system_soft
 system_config
+make_system_bootable
+finish_touch
 
 unset	${!LFS_@} TARGET_DISK PATH_BASE DIR_BASE LC_ALL CONFIG_SITE MAKEFLAGS
 

@@ -137,3 +137,7 @@ source ${DIR_BASE}/src/system_config/configure_rc_site
 source ${DIR_BASE}/src/system_config/configure_locale
 source ${DIR_BASE}/src/system_config/configure_inputrc
 source ${DIR_BASE}/src/system_config/configure_shells
+
+source ${DIR_BASE}/src/make_system_bootable/configure_fstab
+source ${DIR_BASE}/src/make_system_bootable/compile_linux
+source ${DIR_BASE}/src/make_system_bootable/configure_grub

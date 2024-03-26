@@ -1,0 +1,21 @@
+#!/bin/bash
+
+function	configure_fstab()
+{
+	chroot_line "# Begin default /etc/fstab" /etc/fstab 1
+	chroot_line "" /etc/fstab
+	chroot_line "# file system  mount-point    type     options             dump  fsck" /etc/fstab
+	chroot_line "#                                                                order" /etc/fstab
+	chroot_line "" /etc/fstab
+	chroot_line "/dev/sdb3	/	ext4	defaults	1	1" /etc/fstab
+	chroot_line "/dev/sdb1	/boot	ext4	defaults	1	1" /etc/fstab
+	chroot_line "/dev/sdb2	swap	swap	pri=1	0	0" /etc/fstab
+	chroot_line "proc	/proc	proc	nosuid,noexec,nodev	0	0" /etc/fstab
+	chroot_line "sysfs	/sys	sysfs	nosuid,noexec,nodev	0	0" /etc/fstab
+	chroot_line "devpts	/dev/pts	devpts   gid=5,mode=620      0	0" /etc/fstab
+	chroot_line "tmpfs	/run	tmpfs    defaults            0	0" /etc/fstab
+	chroot_line "devtmpfs	/dev	devtmpfs mode=0755,nosuid    0	0" /etc/fstab
+	chroot_line "tmpfs	/dev/shm	tmpfs	nosuid,nodev	0	0" /etc/fstab
+	chroot_line "cgroup2	/sys/fs/cgroup	cgroup2	nosuid,noexec,nodev	0	0" /etc/fstab
+	chroot_line "" /etc/fstab
+}

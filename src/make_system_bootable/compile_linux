@@ -1,0 +1,78 @@
+#!/bin/bash
+
+function	kernel_config()
+{
+	local	var_name=${1}
+	local	var_value=${2}
+	local	prefix=${3:-CONFIG_}
+
+	grep "${prefix}${var_name}" ${LFS}/${KERNEL_CONFIG} 2>&1 1>/dev/null ||
+		echo "# ${prefix}${var_name} is not set" >> ${LFS}/${KERNEL_CONFIG}
+
+	sed -i "s|.*${prefix}${var_name}[ =].*|${prefix}${var_name}=${var_value}|" \
+		${LFS}/${KERNEL_CONFIG}
+}
+
+function	compile_linux()
+{
+	local	linux_version="6.7.8"
+	local	dst_dir="linux-${linux_version}"
+	local	sbu="20.4"
+	local	package="linux"
+
+	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
+	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
+	export KERNEL_CONFIG="/sources/${dst_dir}/.config"
+
+	do_chroot "cd /sources/${dst_dir} \
+	&& make mrproper \
+	&& cp ${LFS_KERNEL_DEFCONF} ${KERNEL_CONFIG}"
+
+	kernel_config "WERROR" "n"
+	kernel_config "PSI" "y"
+	kernel_config "PSI_DEFAULT_DISABLED" "n"
+	kernel_config "IKHEADERS" "n"
+	kernel_config "CGROUPS" "y"
+	kernel_config "MEMCG" "y"
+	kernel_config "EXPERT" "n"
+
+	kernel_config "RELOCATABLE" "y"
+	kernel_config "RANDOMISE_BASE" "y"
+
+	kernel_config "STACKPROTECTOR" "y"
+	kernel_config "STACKPROTECTOR_STRONG" "y"
+
+	kernel_config "UEVENT_HELPER" "n"
+	kernel_config "DEVTMPFS" "y"
+	kernel_config "DEVTMPFS_MOUNT" "y"
+
+	kernel_config "DRM" "y"
+	kernel_config "DRM_FBDEV_EMULATION" "y"
+	kernel_config "FRAMEBUFFER_CONSOLE" "y"
+
+	kernel_config "X86_X2APIC" "y"
+	kernel_config "PCI" "y"
+	kernel_config "PCI_MSI" "y"
+	kernel_config "IOMMU_SUPPORT" "y"
+	kernel_config "IRQ_REMAP" "y"
+
+	do_chroot "cd /sources/${dst_dir} \
+	&& make \
+	&& make modules_install \
+	&& cp -iv arch/x86/boot/bzImage /boot/vmlinuz-${linux_version}-lfs-12.1 \
+	&& cp -iv System.map /boot/System.map-${linux_version} \
+	&& cp -iv .config /boot/config-${linux_version} \
+	&& cp -r Documentation -T /usr/share/doc/linux-${linux_version}"
+
+	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
+	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+
+	chroot_line "# Begin default /etc/modprobe.d/usb.conf" /etc/modprobe.d/usb.conf 1
+	chroot_line "" /etc/modprobe.d/usb.conf
+	chroot_line "install ohci_hcd /sbin/modprobe ehci_hcd ; /sbin/modprobe -i ohci_hcd ; true" /etc/modprobe.d/usb.conf
+	chroot_line "install uhci_hcd /sbin/modprobe ehci_hcd ; /sbin/modprobe -i uhci_hcd ; true" /etc/modprobe.d/usb.conf
+	chroot_line "" /etc/modprobe.d/usb.conf
+	chroot_line "# End default /etc/modprobe.d/usb.conf" /etc/modprobe.d/usb.conf
+
+	unset KERNEL_CONFIG
+}
