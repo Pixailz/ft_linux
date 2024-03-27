@@ -9,7 +9,7 @@ function	compile_binutils_pass1()
 	[ -e ${dst_dir} ] && rm -rf ${dst_dir}
 	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
 	take ${dst_dir}/build
-	start=`date +%s.%N`
+	start=`date +%s`
 	../configure --prefix=${LFS}/tools \
 		--with-sysroot=${LFS} \
 		--target=${LFS_TGT} \
@@ -18,8 +18,8 @@ function	compile_binutils_pass1()
 		--disable-werror \
 		--enable-default-hash-style=gnu
 	make && make install
-	end=`date +%s.%N`
-	local	sbu=$(printf "%.6f\n" $(echo "${end} - ${start}" | bc -l))
+	end=`date +%s`
+	local	sbu=$((end - start))
 	set_sbu "${sbu}"
 	popd
 	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"

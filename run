@@ -111,7 +111,6 @@ function	chroot_additional_tool()
 	compile_python_pass1
 	compile_texinfo_pass1
 	compile_util_linux_pass1
-	backup_lfs "temp-tools"
 }
 
 function	basic_system_soft()
@@ -197,7 +196,6 @@ function	basic_system_soft()
 	compile_sysvinit
 	[ "${LFS_STRIP_BINARIES:-0}" != "0" ] && strip_binaries || pinfo "Stripping binaries skipped"
 	clean_basic_soft
-	backup_lfs "basic-system-soft"
 }
 
 function	system_config()
@@ -244,6 +242,8 @@ function	finish_touch()
 
 set_sbu
 
+download_sources
+
 prepare
 cross_compile
 temp_tool
@@ -253,6 +253,8 @@ system_config
 make_system_bootable
 finish_touch
 
-unset	${!LFS_@} TARGET_DISK PATH_BASE DIR_BASE LC_ALL CONFIG_SITE MAKEFLAGS
+backup_lfs "bootable"
+
+unset ${!LFS_@} TARGET_DISK PATH_BASE DIR_BASE LC_ALL CONFIG_SITE MAKEFLAGS
 
 exit $?
