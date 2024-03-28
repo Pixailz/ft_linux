@@ -32,9 +32,9 @@ function	configure_rc_site()
 	chroot_line '# Use a colored prefix' /etc/sysconfig/rc.site
 	chroot_line '# These values, if specified here, override the defaults' /etc/sysconfig/rc.site
 	chroot_line '#BMPREFIX="      "' /etc/sysconfig/rc.site
-	chroot_line 'SUCCESS_PREFIX="${SUCCESS}+${NORMAL} "' /etc/sysconfig/rc.site
-	chroot_line 'FAILURE_PREFIX="${FAILURE}-${NORMAL} "' /etc/sysconfig/rc.site
-	chroot_line 'WARNING_PREFIX="${WARNING}!${NORMAL} "' /etc/sysconfig/rc.site
+	chroot_line 'SUCCESS_PREFIX="${SUCCESS}  +  ${NORMAL} "' /etc/sysconfig/rc.site
+	chroot_line 'FAILURE_PREFIX="${FAILURE}  -  ${NORMAL} "' /etc/sysconfig/rc.site
+	chroot_line 'WARNING_PREFIX="${WARNING}  !  ${NORMAL} "' /etc/sysconfig/rc.site
 	chroot_line '' /etc/sysconfig/rc.site
 	chroot_line '# Manually set the right edge of message output (characters)' /etc/sysconfig/rc.site
 	chroot_line '# Useful when resetting console font during boot to override' /etc/sysconfig/rc.site

@@ -9,37 +9,46 @@ set -u
 set -o pipefail
 
 # RUNASROOT
-[ "${UID}" != "0" ] && { echo "Error: run as root"; exit 1;}
+[ "${UID}" != "0" ] && { echo "Error: run as root"; exit 1; }
 
-# VARIABLES
+# Config
 ## cli args
-: ${1:?"Error: missing Disk Device"}
-export TARGET_DISK="${1}"
+: ${TARGET_DISK:?"Error: missing Disk Device"}
 
-PATH_BASE=$(realpath ${BASH_SOURCE[0]})
-export DIR_BASE=${PATH_BASE%/*}
+declare -x PATH_BASE=$(realpath ${BASH_SOURCE[0]})
+declare -x DIR_BASE=${PATH_BASE%/*}
+declare -x DIR_SRC="${DIR_BASE}/src"
+declare -x DIR_LFS="${DIR_SRC}/01_lfs"
+
+declare -xa	LOG_LVL=(0)
+declare -x	LOG_FILE_KEEP=0
+declare -x	LOG_FILE="${DIR_BASE}/exec.log"
+declare -x	SBU_FILE="${DIR_BASE}/SBU"
+declare -x	SBU_EST_SIZE="30"
 
 ## LFS
-export LFS="/mnt/lfs"
-export LFS_ARCH=$(uname -m)
-export LFS_CORES=$(nproc)
-export LFS_TGT=${LFS_ARCH}-lfs-linux-gnu
-export LFS_HOSTNAME="brda-sil"
-export LFS_SOURCES_DIR="${LFS}/sources"
-export LFS_ROOT_PASS="1234"
-export LFS_STRIP_BINARIES=
-export LFS_DNS_PRIMARY="8.8.8.8"
-export LFS_DNS_SECONDARY="8.8.4.4"
-export LFS_CLOCK_UTC=0
-export LFS_CLOCKPARAMS=""
-export LFS_TZ="Europe/Paris"
-export LFS_CONSOLE_UNICODE=1
-export LFS_CONSOLE_FONT="Lat2-Terminus16"
-export LFS_RC_SITE_DISTRO="Linux From Scratch"
-export LFS_RC_SITE_DISTRO_CONTACT="lfs-dev@lists.linuxfromscratch.org"
-export LFS_RC_SITE_DISTRO_MINI="LFS"
-export LFS_LOCALE_LANG="en_US.utf8"
-export LFS_KERNEL_DEFCONF="arch/x86/configs/x86_64_defconfig"
+declare -x LFS="/mnt/lfs"
+declare -x LFS_ARCH=$(uname -m)
+declare -x LFS_CORES=$(nproc)
+declare -x LFS_TGT=${LFS_ARCH}-lfs-linux-xnu
+declare -x LFS_HOSTNAME="brda-sil"
+declare -x LFS_SOURCES_DIR="${LFS}/sources"
+declare -x LFS_ROOT_PASS="pass"
+declare -x LFS_STRIP_BINARIES=
+declare -x LFS_DNS_PRIMARY="8.8.8.8"
+declare -x LFS_DNS_SECONDARY="8.8.4.4"
+declare -x LFS_CLOCK_UTC=0
+declare -x LFS_CLOCKPARAMS=""
+declare -x LFS_TZ="Europe/Paris"
+declare -x LFS_CONSOLE_UNICODE=1
+declare -x LFS_CONSOLE_FONT="Lat2-Terminus16"
+declare -x LFS_RC_SITE_DISTRO="Linux From Scratch"
+declare -x LFS_RC_SITE_DISTRO_CONTACT="lfs-dev@lists.linuxfromscratch.org"
+declare -x LFS_RC_SITE_DISTRO_MINI="LFS"
+declare -x LFS_LOCALE_LANG="en_US.utf8"
+declare -x LFS_KERNEL_DEFCONF="arch/x86/configs/x86_64_defconfig"
+declare -x LFS_CODENAME="brda-sil"
+declare -x LFS_VERSION="12.1"
 
 # source needed files
 source ${DIR_BASE}/src/include
@@ -52,9 +61,6 @@ if [ ! -L /bin ]; then PATH=/bin:${PATH}; fi
 PATH=${LFS}/tools/bin:${PATH}
 CONFIG_SITE=/usr/share/config.site
 export MAKEFLAGS="-j${LFS_CORES}"
-export LFS LC_ALL LFS_TGT PATH CONFIG_SITE
-
-LOG_FILE=${DIR_BASE}/exec.log
 
 function	prepare()
 {
@@ -62,10 +68,11 @@ function	prepare()
 	partition
 	mount_lfs
 	download_sources
+	chown -v root:root -R ${LFS_SOURCES_DIR}
 	create_minimal_fhs
 }
 
-function	cross_compile()
+function	cross_toolchain()
 {
 	export MAKEFLAGS="-j1"
 	compile_binutils_pass1
@@ -219,42 +226,29 @@ function	make_system_bootable()
 	configure_fstab
 	compile_linux
 	configure_grub
+	finish_touch
 }
 
-function	finish_touch()
+function	do_lfs()
 {
-	echo 12.1 > ${LFS}/etc/lfs-release
-	cat > ${LFS}/etc/lsb-release <<-"EOF"
-		DISTRIB_ID="Linux From Scratch"
-		DISTRIB_RELEASE="12.1"
-		DISTRIB_CODENAME="Pixailz"
-		DISTRIB_DESCRIPTION="Linux From Scratch"
-	EOF
-	cat > /etc/os-release <<-"EOF"
-		NAME="Linux From Scratch"
-		VERSION="12.1"
-		ID=lfs
-		PRETTY_NAME="Linux From Scratch 12.1"
-		VERSION_CODENAME="Pixailz"
-		HOME_URL="https://www.linuxfromscratch.org/lfs/"
-	EOF
+	prepare
+	cross_toolchain
+	temp_tool
+	chroot_additional_tool
+	basic_system_soft
+	system_config
+	make_system_bootable
+	backup_lfs "bootable"
 }
+
+[ "${LOG_FILE_KEEP:-0}" == "0" ] && : > ${LOG_FILE}
 
 set_sbu
+get_summary
 
-download_sources
+do_lfs
 
-prepare
-cross_compile
-temp_tool
-chroot_additional_tool
-basic_system_soft
-system_config
-make_system_bootable
-finish_touch
-
-backup_lfs "bootable"
-
-unset ${!LFS_@} TARGET_DISK PATH_BASE DIR_BASE LC_ALL CONFIG_SITE MAKEFLAGS
+unset ${!LFS_@} ${!DIR_@} ${!LOG_@} ${!SBU_@} \
+	PATH_BASE LC_ALL CONFIG_SITE MAKEFLAGS
 
 exit $?

@@ -38,6 +38,4 @@ function	download_sources()
 	for patch in ${PATCH[@]}; do
 		get_file "${patch}" "1"
 	done
-
-	chown -v root:root -R ${LFS_SOURCES_DIR}
 }

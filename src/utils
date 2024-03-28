@@ -7,10 +7,24 @@ function	_mkdir()
 function	take()
 { _mkdir ${1}; pushd ${1}; }
 
+function	push_log_lvl()
+{ LOG_LVL+=(${1}); }
+
+function	pop_log_lvl()
+{ unset 'LOG_LVL[-1]'; }
+
 function	_printf()
 {
+	local	pad="${LOG_LVL[@]: -1}"
+	local	pad_str=""
+
+	if [ "${pad}" -gt 0 ]; then
+		for ((i = 0; i < ${pad}; i++)); do
+			pad_str+="   "
+		done
+	fi
 	printf "[\e[33m%s\e[0m] " "$(date '+%d/%M/%Y %T')" >> ${LOG_FILE}
-	printf "%b %b\n" "${1}" "${2}" | tee -a ${LOG_FILE}
+	printf "%s%b %b\n" "${pad_str}" "${1}" "${2}" | tee -a ${LOG_FILE}
 }
 
 function	ppass()
@@ -25,14 +39,34 @@ function	pwarn()
 function	pinfo()
 { _printf "[\e[34m*\e[0m]" "${@}"; }
 
+function	ptitle()
+{
+	local	est_sbu="$(calc_sbu "${1}")"
+	local	hdr="[\e[33;1m#\e[0;22m]"
+	local	est_sbu_col="\e[32m"
+
+	if [ "${est_sbu}" == "0" ]; then
+		est_sbu="No Compilation"
+		est_sbu_col="\e[31m"
+	else
+		est_sbu="SBU~:${est_sbu} ($(get_sbu ${est_sbu}))"
+	fi
+	est_sbu="$(printf "%-23s" "${est_sbu}")"
+	est_sbu="${est_sbu_col}${est_sbu}\e[0m"
+	_printf "${hdr}" "${est_sbu} ${@:2}"
+}
+
 function	set_sbu()
 {
 	local	sbu=()
 	local	total=0
+	local	added=0
+	local	str=""
 	if [ "${1:-}" != ""  ]; then
 		sbu+=(${1})
 		ppass "added new SBU ${1}"
 		echo "${sbu}" >> ${DIR_BASE}/SBU
+		added=1
 	fi
 	sbu+=($(cat ${DIR_BASE}/SBU))
 
@@ -40,7 +74,12 @@ function	set_sbu()
 		total=$((total + sbu[i]))
 	done
 	export SBU=$((${total} / ${#sbu[@]}))
-	pinfo "SBU from this run and previous one is \e[32m${SBU}\e[0ms"
+
+	str="\e[31m1SBU\e[0m:\e[32m${SBU}\e[0ms"
+	if [ "${added}" == "0" ]; then
+		str+=" (from previous run)"
+	fi
+	pinfo "${str}"
 }
 
 function	get_sbu()
@@ -55,6 +94,18 @@ function	get_sbu()
 	if [ "${hour}" -gt 0 ]; then printf "%sh" "${hour}"; fi
 	if [ "${minute}" -gt 0 ]; then printf "%02dm" "${minute}"; fi
 	if [ "${second}" -gt 0 ]; then printf "%02ds" "${second}"; fi
+}
+
+function	calc_sbu()
+{
+	local	tot=0
+
+	for i in $(sed -nE 's|\s+local\s+sbu="(.*)".*| + \1|p' ${1}); do
+		tot+="${i}"
+	done
+	tot="$(bc -l <<<"scale=2; ${tot}")"
+	[ "${tot::1}" == "." ] && tot="0${tot}"
+	echo "${tot}"
 }
 
 function	do_chroot()
@@ -88,4 +139,33 @@ function	chroot_line()
 		MAKEFLAGS="-j${LFS_CORES}" \
 		TESTSUITEFLAGS="-j${LFS_CORES}" \
 		/usr/bin/bash <<<"echo '${line}' ${replace} ${file}"
+}
+
+function	get_index()
+{
+	local	ind_beg="\e[1;34m"
+	local	ind_end="\e[22;0m"
+	local	ind="${ind_beg}${2}${ind_end}"
+
+	ptitle "${1}" "${ind} ${3}"
+}
+
+function	get_summary_lfs()
+{
+
+	get_index "${DIR_LFS}/**/*" "1" "LFS (\e[32m${LFS_VERSION}\e[0m)"
+	push_log_lvl 1
+	get_index "${DIR_LFS}/01_prepare/*" "1.1" "Prepare"
+	get_index "${DIR_LFS}/02_cross_toolchain/*" "1.2" "Cross Toolchain"
+	get_index "${DIR_LFS}/03_temp_tool/*" "1.3" "Temp Tool"
+	get_index "${DIR_LFS}/04_chroot_additional_tool/*" "1.4" "Chroot Additional Tool"
+	get_index "${DIR_LFS}/05_basic_system_soft/*" "1.5" "Basic System Soft"
+	get_index "${DIR_LFS}/06_system_config/*" "1.6" "System Config"
+	get_index "${DIR_LFS}/07_make_system_bootable/*" "1.7" "Make System Bootable"
+	pop_log_lvl
+}
+
+function	get_summary()
+{
+	get_summary_lfs
 }

@@ -4,7 +4,7 @@ function	configure_grub()
 {
 	local	grub_dir="/boot/grub"
 	local	grub_cfg="${grub_dir}/grub.cfg"
-	local	grub_device="/dev/sda"
+	local	grub_device="${TARGET_DISK}"
 
 	mkdir -pv ${LFS}${grub_dir}
 	do_chroot "grub-install ${grub_device}"
@@ -18,8 +18,8 @@ function	configure_grub()
 	chroot_line "" /boot/grub/grub.cfg
 	chroot_line "set root=(hd1,1)" /boot/grub/grub.cfg
 	chroot_line "" /boot/grub/grub.cfg
-	chroot_line "menuentry \"GNU/Linux, Linux 6.7.8-lfs-12.1\" {" /boot/grub/grub.cfg
-	chroot_line "	linux /vmlinuz-6.7.8-lfs-12.1 root=/dev/sdb3 ro" /boot/grub/grub.cfg
+	chroot_line "menuentry \"GNU/Linux, Linux 6.7.8-lfs-${LFS_VERSION}\" {" /boot/grub/grub.cfg
+	chroot_line "	linux /vmlinuz-6.7.8-lfs-${LFS_VERSION} root=${TARGET_DISK}3 ro" /boot/grub/grub.cfg
 	chroot_line "}" /boot/grub/grub.cfg
 	chroot_line "# End default /boot/grub/grub.cfg" /boot/grub/grub.cfg
 }

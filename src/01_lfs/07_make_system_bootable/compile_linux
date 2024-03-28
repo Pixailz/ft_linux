@@ -56,10 +56,12 @@ function	compile_linux()
 	kernel_config "IOMMU_SUPPORT" "y"
 	kernel_config "IRQ_REMAP" "y"
 
+	kernel_config "LOCALVERSION" "${LFS_CODENAME}"
+
 	do_chroot "cd /sources/${dst_dir} \
 	&& make \
 	&& make modules_install \
-	&& cp -iv arch/x86/boot/bzImage /boot/vmlinuz-${linux_version}-lfs-12.1 \
+	&& cp -iv arch/x86/boot/bzImage /boot/vmlinuz-${linux_version}-lfs-${LFS_VERSION} \
 	&& cp -iv System.map /boot/System.map-${linux_version} \
 	&& cp -iv .config /boot/config-${linux_version} \
 	&& cp -r Documentation -T /usr/share/doc/linux-${linux_version}"

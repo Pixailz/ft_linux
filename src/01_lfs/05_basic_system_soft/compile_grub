@@ -21,5 +21,3 @@ function	compile_grub()
 	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
 	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
 }
-
-
