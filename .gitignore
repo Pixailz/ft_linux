@@ -13,3 +13,8 @@ step
 
 # backup
 lfs-12.1*
+
+# package_meta
+package_meta*
+!package_meta_in
+!package_meta

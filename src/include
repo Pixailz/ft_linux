@@ -1,15 +1,19 @@
 #!/bin/bash
 
+# Main utils
 source ${DIR_SRC}/lifovar
 source ${DIR_SRC}/print
 source ${DIR_SRC}/utils
 source ${DIR_SRC}/chroot
 source ${DIR_SRC}/sbu
-source ${DIR_SRC}/package_link
 source ${DIR_SRC}/clean_backup_restore
 source ${DIR_SRC}/summary
 source ${DIR_SRC}/step
 source ${DIR_SRC}/trap
+
+# Get/Scrap/Update meta package, gevin a repo link and type
+# see more in src/get_package_link/README.md
+source ${GET_PACK_DIR_BASE}/main
 
 source ${DIR_LFS}/01_prepare/checkup
 source ${DIR_LFS}/01_prepare/partition
@@ -22,7 +26,6 @@ source ${DIR_LFS}/02_cross_toolchain/fix_linux_headers
 source ${DIR_LFS}/02_cross_toolchain/compile_glibc_pass1
 source ${DIR_LFS}/02_cross_toolchain/compile_libstdcxx
 
-# SBU 6.85
 source ${DIR_LFS}/03_temp_tool/compile_m4_pass1
 source ${DIR_LFS}/03_temp_tool/compile_ncurses_pass1
 source ${DIR_LFS}/03_temp_tool/compile_bash_pass1
@@ -41,7 +44,6 @@ source ${DIR_LFS}/03_temp_tool/compile_xz_pass1
 source ${DIR_LFS}/03_temp_tool/compile_binutils_pass2
 source ${DIR_LFS}/03_temp_tool/compile_gcc_pass2
 
-# SBU 2.8
 source ${DIR_LFS}/04_chroot_additional_tool/change_ownership
 source ${DIR_LFS}/04_chroot_additional_tool/create_virtualfs
 source ${DIR_LFS}/04_chroot_additional_tool/create_full_fhs
@@ -53,7 +55,6 @@ source ${DIR_LFS}/04_chroot_additional_tool/compile_python_pass1
 source ${DIR_LFS}/04_chroot_additional_tool/compile_texinfo_pass1
 source ${DIR_LFS}/04_chroot_additional_tool/compile_util_linux_pass1
 
-# SBU 88.75
 source ${DIR_LFS}/05_basic_system_soft/compile_man_pages
 source ${DIR_LFS}/05_basic_system_soft/compile_iana_etc
 source ${DIR_LFS}/05_basic_system_soft/compile_glibc_pass2

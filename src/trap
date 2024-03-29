@@ -5,7 +5,8 @@ function	save_last_step()
 	for step in "${!STEP[@]}"; do
 		if ! [[ "${step}" =~ ^STEP_ ]]; then
 			local	cur_step="$(step_get_var "${step}")"
-			if [ "${cur_step}" -gt "${STEP[${step}]}" ]; then
+			if [ ${STEP[${step}]} -gt ${cur_step} ]; then
+				pinfo "Saving last step for ${step} (${cur_step} -> ${STEP[${step}]})"
 				step_set_var "${step}" "${STEP[${step}]}"
 			fi
 		fi
@@ -24,7 +25,8 @@ function	trap_exit()
 		pfail "An error occured"
 	fi
 
-	unset ${!LFS_@} ${!DIR_@} ${!LOG_@} ${!SBU_@} \
+	unset ${!LFS_@} ${!DIR_@} ${!LOG_@} ${!SBU_@} ${!GET_PACK_@} ${!PACKAGE_@} \
+		${!CURRENT_PACKAGE_@} \
 		PATH_BASE LC_ALL CONFIG_SITE MAKEFLAGS LAST_RETURN_CODE CTRL_C_PRESSED
 	exit $?
 }
@@ -33,6 +35,9 @@ function	trap_sigint()
 {
 	LAST_RETURN_CODE=${?}
 	CTRL_C_PRESSED=1
+	echo
+
+	exit ${LAST_RETURN_CODE}
 }
 
 trap trap_sigint SIGINT

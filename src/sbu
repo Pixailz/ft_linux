@@ -43,9 +43,12 @@ function	get_sbu()
 function	calc_sbu()
 {
 	local	tot=0
+	local	todo=()
 
-	for i in $(sed -nE 's|\s+local\s+sbu="(.*)".*| + \1|p' ${1}); do
-		tot+="${i}"
+	for file in ${1}; do
+		if ! [[ "${file}" =~ ^${2}.* ]]; then
+			tot+="$(sed -nE 's|\s+local\s+sbu="(.*)".*| + \1|p' ${file})"
+		fi
 	done
 	tot="$(bc -l <<<"scale=2; ${tot}")"
 	[ "${tot::1}" == "." ] && tot="0${tot}"

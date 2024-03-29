@@ -28,7 +28,7 @@ function	pinfo()
 
 function	ptitle()
 {
-	local	est_sbu="$(calc_sbu "${1}")"
+	local	est_sbu="$(calc_sbu "${1}" "${2}")"
 	local	hdr="[\e[33;1m#\e[0;22m]"
 	local	est_sbu_col="\e[32m"
 
@@ -40,5 +40,5 @@ function	ptitle()
 	fi
 	est_sbu="$(printf "%-23s" "${est_sbu}")"
 	est_sbu="${est_sbu_col}${est_sbu}\e[0m"
-	_printf "${hdr}" "${est_sbu} ${@:2}"
+	_printf "${hdr}" "${est_sbu} ${@:3}"
 }

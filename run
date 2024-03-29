@@ -15,12 +15,19 @@ set -o pipefail
 ## cli args
 : ${TARGET_DISK:?"Error: missing Disk Device"}
 
-declare -x PATH_BASE=$(realpath ${BASH_SOURCE[0]})
-declare -x DIR_BASE=${PATH_BASE%/*}
-declare -x DIR_SRC="${DIR_BASE}/src"
-declare -x DIR_LFS="${DIR_SRC}/01_lfs"
-
-declare -x	LOG_FILE_KEEP=0
+declare -x	PATH_BASE=$(realpath ${BASH_SOURCE[0]})
+declare -x	DIR_BASE=${PATH_BASE%/*}
+declare -x	DIR_SRC="${DIR_BASE}/src"
+declare -x	DIR_LFS="${DIR_SRC}/01_lfs"
+declare -x	DIR_DOWNLOAD_CACHE="${DIR_BASE}/.sources"
+declare -x	GET_PACK_UPDATE=1
+declare -x	GET_PACK_DIR_BASE="${DIR_SRC}/01_lfs/01_prepare/update_pack_meta"
+declare -x	GET_PACK_ENV="${GET_PACK_DIR_BASE}/.env"
+declare -x	GET_PACK_IN="${DIR_BASE}/package_meta_in"
+declare -x	GET_PACK_OUT="${DIR_BASE}/package_meta"
+declare -x	GET_PACK_OUT_TMP="${GET_PACK_DIR_BASE}/package_meta"
+declare -xa GET_PACK_META=("link" "version" "file" "tar_folder")
+declare -x	LOG_FILE_KEEP=1
 declare -x	LOG_FILE="${DIR_BASE}/exec.log"
 declare -x	SBU_FILE="${DIR_BASE}/SBU"
 declare -x	SBU_EST_SIZE="30"
@@ -77,8 +84,8 @@ function	prepare()
 	step_do checkup
 	step_do partition
 	mount_lfs
-	download_sources
-	chown -v root:root -R ${LFS_SOURCES_DIR}
+	update_pack_meta
+	chown -v root:root -R "${LFS_SOURCES_DIR}"
 	step_do create_minimal_fhs
 	step_id_pop
 }
@@ -256,12 +263,19 @@ function	do_lfs()
 {
 	step_id_push "LFS"
 	step_do prepare
+	save_last_step
 	step_do cross_toolchain
+	save_last_step
 	step_do temp_tool
+	save_last_step
 	step_do chroot_additional_tool
+	save_last_step
 	step_do basic_system_soft
+	save_last_step
 	step_do system_config
+	save_last_step
 	step_do make_system_bootable
+	save_last_step
 	step_do backup_lfs 'bootable'
 	step_id_pop
 }
@@ -272,3 +286,7 @@ get_summary
 do_lfs
 
 # Testing Zone
+
+update_pack_meta
+
+exit ${?}

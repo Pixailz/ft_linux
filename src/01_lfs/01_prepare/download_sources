@@ -1,30 +1,5 @@
 #!/bin/bash
 
-function	get_file()
-{
-	if [ "${2:-}" == "" ]; then
-		file=${PACKAGE_FILE[${1}]}
-		link=${PACKAGE_LINK[${1}]}
-	else
-		file=${PATCH_FILE[${1}]}
-		link=${PATCH_LINK[${1}]}
-	fi
-
-	if [ -f "${LFS_SOURCES_DIR}/${file}" ]; then
-		ppass "File exists: ${file}"
-		return
-	fi
-	if [ ! -f ".sources/${file}" ]; then
-		pfail "Downloading: ${file}"
-		curl --progress-bar --location \
-			"${link}" \
-			--output ".sources/${file}"
-	else
-		ppass "File exists: ${file}"
-	fi
-	cp ".sources/${file}" "${LFS_SOURCES_DIR}/${file}"
-}
-
 function	download_sources()
 {
 	pinfo "Download sources"
@@ -32,10 +7,6 @@ function	download_sources()
 	_mkdir ".sources"
 	chmod -v a+wt "${LFS_SOURCES_DIR}"
 	for pack in ${PACKAGE[@]}; do
-		get_file "${pack}" ""
-	done
-
-	for patch in ${PATCH[@]}; do
-		get_file "${patch}" "1"
+		get_file "${pack}"
 	done
 }
