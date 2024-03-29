@@ -13,7 +13,7 @@ function	clean_lfs()
 function	backup_lfs()
 {
 	local	desc="${1:-}"
-	local	file="lfs-${LFS_VERSION}-${desc}-$(date +%d%m%Y%H%M%S).tar.xz"
+	local	file="lfs-${LFS_VERSION}-${LFS_CODENAME}-${desc}-$(date +%d%m%Y%H%M%S).tar.xz"
 
 	clean_lfs
 	cd ${LFS}

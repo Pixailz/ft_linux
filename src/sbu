@@ -1,0 +1,53 @@
+#!/bin/bash
+
+function	set_sbu()
+{
+	local	sbu=()
+	local	total=0
+	local	added=0
+	local	str=""
+	if [ "${1:-}" != ""  ]; then
+		sbu+=(${1})
+		ppass "added new SBU ${1}"
+		echo "${sbu}" >> ${DIR_BASE}/SBU
+		added=1
+	fi
+	sbu+=($(cat ${DIR_BASE}/SBU))
+
+	for ((i = 0; i < ${#sbu[@]}; i++)); do
+		total=$((total + sbu[i]))
+	done
+	export SBU=$((${total} / ${#sbu[@]}))
+
+	str="\e[31m1SBU\e[0m:\e[32m${SBU}\e[0ms"
+	if [ "${added}" == "0" ]; then
+		str+=" (from previous run)"
+	fi
+	pinfo "${str}"
+}
+
+function	get_sbu()
+{
+	local	n="$(bc -l <<<"scale=0; ${1} * ${SBU:-1}")"
+	local	dec="${n#*.}"
+	local	int="${n/.*/}"
+	local	hour="$((${int} / 3600))"
+	local	minute="$(((${int} / 60) % 60))"
+	local	second="$((${int} % 60))"
+
+	if [ "${hour}" -gt 0 ]; then printf "%sh" "${hour}"; fi
+	if [ "${minute}" -gt 0 ]; then printf "%02dm" "${minute}"; fi
+	if [ "${second}" -gt 0 ]; then printf "%02ds" "${second}"; fi
+}
+
+function	calc_sbu()
+{
+	local	tot=0
+
+	for i in $(sed -nE 's|\s+local\s+sbu="(.*)".*| + \1|p' ${1}); do
+		tot+="${i}"
+	done
+	tot="$(bc -l <<<"scale=2; ${tot}")"
+	[ "${tot::1}" == "." ] && tot="0${tot}"
+	echo "${tot}"
+}

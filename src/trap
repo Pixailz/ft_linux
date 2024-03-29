@@ -1,0 +1,39 @@
+#!/bin/bash
+
+function	save_last_step()
+{
+	for step in "${!STEP[@]}"; do
+		if ! [[ "${step}" =~ ^STEP_ ]]; then
+			local	cur_step="$(step_get_var "${step}")"
+			if [ "${cur_step}" -gt "${STEP[${step}]}" ]; then
+				step_set_var "${step}" "${STEP[${step}]}"
+			fi
+		fi
+	done
+}
+
+function	trap_exit()
+{
+	LAST_RETURN_CODE=${LAST_RETURN_CODE:-${?}}
+	save_last_step
+	if [ "${CTRL_C_PRESSED:-0}" == "1" ]; then
+		pwarn "Interrupted by user"
+	elif [ "${LAST_RETURN_CODE}" == "0" ]; then
+		ppass "All steps done"
+	else
+		pfail "An error occured"
+	fi
+
+	unset ${!LFS_@} ${!DIR_@} ${!LOG_@} ${!SBU_@} \
+		PATH_BASE LC_ALL CONFIG_SITE MAKEFLAGS LAST_RETURN_CODE CTRL_C_PRESSED
+	exit $?
+}
+
+function	trap_sigint()
+{
+	LAST_RETURN_CODE=${?}
+	CTRL_C_PRESSED=1
+}
+
+trap trap_sigint SIGINT
+trap trap_exit EXIT

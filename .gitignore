@@ -7,5 +7,9 @@ SBU
 # execution log
 *.log
 
+# File reference step
+step
+!src/step
+
 # backup
 lfs-12.1*

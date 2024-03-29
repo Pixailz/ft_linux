@@ -1,8 +1,15 @@
 #!/bin/bash
 
+source ${DIR_SRC}/lifovar
+source ${DIR_SRC}/print
 source ${DIR_SRC}/utils
+source ${DIR_SRC}/chroot
+source ${DIR_SRC}/sbu
 source ${DIR_SRC}/package_link
 source ${DIR_SRC}/clean_backup_restore
+source ${DIR_SRC}/summary
+source ${DIR_SRC}/step
+source ${DIR_SRC}/trap
 
 source ${DIR_LFS}/01_prepare/checkup
 source ${DIR_LFS}/01_prepare/partition

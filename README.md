@@ -19,7 +19,6 @@
 
 ## TODO
 
-1. Save step done ..
 1. Some test are not correctly checked and therefore considered as good
 1. Add support for more editor
 1. Find a way to get folder of tar sources

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+function	log_lvl_push()
+{ lifo_var_push "LOG_LVL" "${1}"; }
+
+function	log_lvl_pop()
+{ lifo_var_pop "LOG_LVL"; }
+
+function	step_id_push()
+{ lifo_var_push "STEP_ID" "${1}"; }
+
+function	step_id_pop()
+{ lifo_var_pop "STEP_ID"; }
+
+function	lifo_var_push()
+{ declare -n var="LIFOVAR_${1}"; var+=(${2}); unset -n var; }
+
+function	lifo_var_pop()
+{ declare -n var="LIFOVAR_${1}"; unset 'var[-1]'; unset -n var; }

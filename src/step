@@ -1,0 +1,53 @@
+#!/bin/bash
+
+function	step_get_var()
+{
+	sed -nE "s/^STEP_${1}=(.*)$/\1/p" "${STEP_FILE}"
+}
+
+function	step_set_var()
+{
+	sed -i "s/^STEP_${1}=.*$/STEP_${1}=${2}/g" "${STEP_FILE}"
+}
+
+function	step_setup()
+{
+	local	step="STEP_${1}"
+
+	if ! grep -q "${step}=" "${STEP_FILE}"; then
+		echo "${step}=0" >> "${STEP_FILE}"
+	fi
+	STEP["${1}"]="$(step_get_var ${1})"
+	STEP["STEP_${1}"]="0"
+}
+
+function	step_setup_file()
+{
+	[ -d "${STEP_FILE}" ] && rm -vrf "${STEP_FILE}"
+
+	step_setup "LFS"
+	step_setup "LFS_PREPARE"
+	step_setup "LFS_CROSS_TOOLCHAIN"
+	step_setup "LFS_TEMP_TOOL"
+	step_setup "LFS_CHROOT_ADDITIONAL_TOOL"
+	step_setup "LFS_BASIC_SYSTEM_SOFT"
+	step_setup "LFS_SYSTEM_CONFIG"
+	step_setup "LFS_MAKE_SYSTEM_BOOTABLE"
+	step_setup "TEST"
+}
+
+function	step_do()
+{
+	local	id="${LIFOVAR_STEP_ID[@]: -1}"
+	local	args=${2:-}
+	declare -n	last_step="STEP[${id}]"
+	declare -n	step="STEP[STEP_${id}]"
+	local	step_1=$((step + 1))
+
+	if [ "${step}" -ge "${last_step}" ]; then
+		${1} "${args}"
+		last_step="${step_1}"
+	fi
+	step=${step_1}
+	unset -n last_step step
+}

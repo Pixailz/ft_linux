@@ -1,0 +1,30 @@
+#!/bin/bash
+
+function	get_index()
+{
+	local	ind_beg="\e[1;34m"
+	local	ind_end="\e[22;0m"
+	local	ind="${ind_beg}${2}${ind_end}"
+
+	ptitle "${1}" "${ind} ${3}"
+}
+
+function	get_summary_lfs()
+{
+
+	get_index "${DIR_LFS}/**/*" "1" "LFS (\e[32m${LFS_VERSION}\e[0m)"
+	log_lvl_push 1
+	get_index "${DIR_LFS}/01_prepare/*" "1.1" "Prepare"
+	get_index "${DIR_LFS}/02_cross_toolchain/*" "1.2" "Cross Toolchain"
+	get_index "${DIR_LFS}/03_temp_tool/*" "1.3" "Temp Tool"
+	get_index "${DIR_LFS}/04_chroot_additional_tool/*" "1.4" "Chroot Additional Tool"
+	get_index "${DIR_LFS}/05_basic_system_soft/*" "1.5" "Basic System Soft"
+	get_index "${DIR_LFS}/06_system_config/*" "1.6" "System Config"
+	get_index "${DIR_LFS}/07_make_system_bootable/*" "1.7" "Make System Bootable"
+	log_lvl_pop
+}
+
+function	get_summary()
+{
+	get_summary_lfs
+}
