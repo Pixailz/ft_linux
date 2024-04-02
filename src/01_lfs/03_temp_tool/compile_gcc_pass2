@@ -2,19 +2,15 @@
 
 function	compile_gcc_pass2()
 {
-	local	dst_dir="${LFS_SOURCES_DIR}/gcc-13.2.0"
-	local	sbu="4.4"
-	local	package="gcc"
+	package_init gcc 4.4 2 1
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} pass 2 with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	pushd ${dst_dir}
-	tar -xf ../${PACKAGE_FILE["mpfr"]}
-	tar -xf ../${PACKAGE_FILE["gmp"]}
-	tar -xf ../${PACKAGE_FILE["mpc"]}
-	rm -rf mpfr && mv -v mpfr-* mpfr
-	rm -rf gmp && mv -v gmp-* gmp
-	rm -rf mpc && mv -v mpc-* mpc
+	_pushd ${dst_folder}
+	_tar -xf ../${PACKAGE_FILE["mpfr"]}
+	_tar -xf ../${PACKAGE_FILE["gmp"]}
+	_tar -xf ../${PACKAGE_FILE["mpc"]}
+	_rm mpfr; _mv mpfr-* mpfr
+	_rm gmp; _mv gmp-* gmp
+	_rm mpc; _mv mpc-* mpc
 	case ${LFS_ARCH} in
 		x86_64)
 			sed -e '/m64=/s/lib64/lib/' -i.orig gcc/config/i386/t-linux64
@@ -22,8 +18,7 @@ function	compile_gcc_pass2()
 	esac
 	sed '/thread_header =/s/@.*@/gthr-posix.h/' \
 		-i libgcc/Makefile.in libstdc++-v3/include/Makefile.in
-	rm -rf ${dst_dir}/build
-	take ${dst_dir}/build
+	take ${dst_folder}/build
 	../configure \
 		--build=$(../config.guess) \
 		--host=${LFS_TGT} \
@@ -44,9 +39,9 @@ function	compile_gcc_pass2()
 		--enable-languages=c,c++
 	make
 	make DESTDIR=${LFS} install
-	[ ! -e $LFS/usr/bin/cc ] && \
-		ln -sfv gcc $LFS/usr/bin/cc
-	popd -2
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${dst_dir}
+	[ ! -e ${LFS}/usr/bin/cc ] && \
+		_ln -s gcc ${LFS}/usr/bin/cc
+	_popd -2
+
+	package_clean
 }

@@ -2,11 +2,16 @@
 
 function	download_sources()
 {
+	declare -g DOWNLOAD_DONE=${DOWNLOAD_DONE:-0}
+	[ "${DOWNLOAD_DONE}" == "1" ] && return
+
 	pinfo "Download sources"
 	_mkdir "${LFS_SOURCES_DIR}"
-	_mkdir ".sources"
+	_mkdir "${DIR_DOWNLOAD_CACHE}"
 	chmod -v a+wt "${LFS_SOURCES_DIR}"
 	for pack in ${PACKAGE[@]}; do
 		get_file "${pack}"
+		((PACKAGE_ID++)) || true
 	done
+	DOWNLOAD_DONE=1
 }

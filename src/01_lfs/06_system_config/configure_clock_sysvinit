@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function	configure_clock()
+function	configure_clock_sysvinit()
 {
 	chroot_line "# Begin default /etc/sysconfig/clock" /etc/sysconfig/clock 1
 	chroot_line "" /etc/sysconfig/clock

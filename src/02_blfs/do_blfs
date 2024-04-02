@@ -1,0 +1,14 @@
+#!/bin/bash
+
+function	blfs_01_post_lfs()
+{
+	:
+}
+
+function	do_blfs()
+{
+	step_id_push "BLFS"
+	step_do blfs_01_post_lfs
+	save_last_step
+	step_id_pop
+}

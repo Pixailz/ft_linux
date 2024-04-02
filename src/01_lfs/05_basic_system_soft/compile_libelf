@@ -2,21 +2,23 @@
 
 function	compile_libelf()
 {
-	local	dst_dir="elfutils-0.191"
-	local	sbu="0.3"
-	local	package="elfutils"
+	package_init elfutils 0.3
 
-	pinfo "Building libelf from ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& ./configure --prefix=/usr \
 		--disable-debuginfod \
 		--enable-libdebuginfod=dummy \
-	&& make \
-	&& make check \
-	&& make -C libelf install \
-	&& install -vm644 config/libelf.pc /usr/lib/pkgconfig \
-	&& rm /usr/lib/libelf.a"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+	&& make"
+
+	if [ "${LFS_DO_TEST:-1}" == "1" ]; then
+		do_chroot "cd /sources/${package_tar_folder} \
+			&& make test || true"
+	fi
+
+	do_chroot "cd /sources/${package_tar_folder} \
+		&& make -C libelf install \
+		&& install -vm644 config/libelf.pc /usr/lib/pkgconfig \
+		&& rm /usr/lib/libelf.a"
+
+	package_clean
 }

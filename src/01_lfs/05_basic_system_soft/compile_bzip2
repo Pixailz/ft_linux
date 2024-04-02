@@ -2,14 +2,10 @@
 
 function	compile_bzip2()
 {
-	local	dst_dir="bzip2-1.0.8"
-	local	sbu="0.05"
-	local	package="bzip2"
+	package_init bzip2 0 2
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU less than 0.1 ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
-	&& patch -Np1 -i /sources/${PATCH_FILE["bzip2-documentation"]} \
+	do_chroot "cd /sources/${package_tar_folder} \
+	&& patch -Np1 -i /sources/${PACKAGE_FILE["patch_bzip2-documentation"]} \
 	&& sed -i 's@\(ln -s -f \)\$(PREFIX)/bin/@\1@' Makefile \
 	&& sed -i 's@(PREFIX)/man@(PREFIX)/share/man@g' Makefile \
 	&& make -f Makefile-libbz2_so \
@@ -17,12 +13,12 @@ function	compile_bzip2()
 	&& make \
 	&& make PREFIX=/usr install \
 	&& cp -av libbz2.so.* /usr/lib \
-	&& ln -fsv libbz2.so.1.0.8 /usr/lib/libbz2.so \
+	&& ln -fsv libbz2.so.${package_version} /usr/lib/libbz2.so \
 	&& cp -v bzip2-shared /usr/bin/bzip2 \
 	&& for i in /usr/bin/{bzcat,bunzip2}; do \
 		ln -sfv bzip2 \$i; \
 	done \
 	&& rm -fv /usr/lib/libbz2.a"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+
+	package_clean
 }

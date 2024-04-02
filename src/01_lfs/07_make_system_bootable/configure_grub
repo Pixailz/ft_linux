@@ -18,8 +18,8 @@ function	configure_grub()
 	chroot_line "" /boot/grub/grub.cfg
 	chroot_line "set root=(hd1,1)" /boot/grub/grub.cfg
 	chroot_line "" /boot/grub/grub.cfg
-	chroot_line "menuentry \"GNU/Linux, Linux 6.7.8-lfs-${LFS_VERSION}\" {" /boot/grub/grub.cfg
-	chroot_line "	linux /vmlinuz-6.7.8-lfs-${LFS_VERSION} root=${TARGET_DISK}3 ro" /boot/grub/grub.cfg
+	chroot_line "menuentry \"GNU/Linux, Linux ${PACKAGE_VERSION['linux']}-lfs-${LFS_VERSION}-${LFS_CODENAME}\" {" /boot/grub/grub.cfg
+	chroot_line "	linux /${LFS_VMLINUZ} root=${TARGET_DISK}3 ro" /boot/grub/grub.cfg
 	chroot_line "}" /boot/grub/grub.cfg
 	chroot_line "# End default /boot/grub/grub.cfg" /boot/grub/grub.cfg
 }

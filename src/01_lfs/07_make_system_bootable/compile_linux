@@ -15,16 +15,10 @@ function	kernel_config()
 
 function	compile_linux()
 {
-	local	linux_version="6.7.8"
-	local	dst_dir="linux-${linux_version}"
-	local	sbu="20.4"
-	local	package="linux"
+	package_init linux 20.4
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} kernel with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	export KERNEL_CONFIG="/sources/${dst_dir}/.config"
-
-	do_chroot "cd /sources/${dst_dir} \
+	export KERNEL_CONFIG="/sources/${package_tar_folder}/.config"
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& make mrproper \
 	&& cp ${LFS_KERNEL_DEFCONF} ${KERNEL_CONFIG}"
 
@@ -58,17 +52,16 @@ function	compile_linux()
 
 	kernel_config "LOCALVERSION" "${LFS_CODENAME}"
 
-	do_chroot "cd /sources/${dst_dir} \
+	# && cp -iv arch/x86/boot/bzImage /boot/vmlinuz-${package_version}-lfs-${LFS_VERSION}-${LFS_CODENAME} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& make \
 	&& make modules_install \
-	&& cp -iv arch/x86/boot/bzImage /boot/vmlinuz-${linux_version}-lfs-${LFS_VERSION} \
-	&& cp -iv System.map /boot/System.map-${linux_version} \
-	&& cp -iv .config /boot/config-${linux_version} \
-	&& cp -r Documentation -T /usr/share/doc/linux-${linux_version}"
+	&& cp -iv System.map /boot/System.map-${package_version} \
+	&& cp -iv arch/x86/boot/bzImage /boot/${LFS_VMLINUZ} \
+	&& cp -iv .config /boot/config-${package_version} \
+	&& cp -r Documentation -T /usr/share/doc/linux-${package_version}"
 
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
-	mkdir -vp ${LFS}/etc/modprobe.d
+	_mkdir ${LFS}/etc/modprobe.d
 	chroot_line "# Begin default /etc/modprobe.d/usb.conf" /etc/modprobe.d/usb.conf 1
 	chroot_line "" /etc/modprobe.d/usb.conf
 	chroot_line "install ohci_hcd /sbin/modprobe ehci_hcd ; /sbin/modprobe -i ohci_hcd ; true" /etc/modprobe.d/usb.conf
@@ -77,4 +70,8 @@ function	compile_linux()
 	chroot_line "# End default /etc/modprobe.d/usb.conf" /etc/modprobe.d/usb.conf
 
 	unset KERNEL_CONFIG
+
+	_tar -xf ${src_file} -C /usr/src
+
+	package_clean
 }

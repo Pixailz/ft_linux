@@ -2,19 +2,14 @@
 
 function	compile_sysklogd()
 {
-	local	dst_dir="sysklogd-1.5.1"
-	local	sbu="0.05"
-	local	package="sysklogd"
+	package_init sysklogd 0 2
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU less than 0.1 ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& sed -i '/Error loading kernel symbols/{n;n;d}' ksym_mod.c \
 	&& sed -i 's/union wait/int/' syslogd.c \
 	&& make \
 	&& make BINDIR=/sbin install"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	pinfo "Configuring ${PACKAGE_FILE[${package}]::-7}"
+
 	chroot_line "# Begin default /etc/syslog.conf" /etc/syslog.conf 1
 	chroot_line "" /etc/syslog.conf
 	chroot_line "auth,authpriv.* -/var/log/auth.log" /etc/syslog.conf
@@ -26,6 +21,6 @@ function	compile_sysklogd()
 	chroot_line "*.emerg *" /etc/syslog.conf
 	chroot_line "" /etc/syslog.conf
 	chroot_line "# End default /etc/syslog.conf" /etc/syslog.conf
-	ppass "Configured ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+
+	package_clean
 }

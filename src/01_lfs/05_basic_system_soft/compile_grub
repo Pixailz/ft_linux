@@ -2,13 +2,9 @@
 
 function	compile_grub()
 {
-	local	dst_dir="grub-2.12"
-	local	sbu="0.3"
-	local	package="grub"
+	package_init grub 0.3
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& unset {C,CPP,CXX,LD}FLAGS \
 	&& echo depends bli part_gpt > grub-core/extra_deps.lst \
 	&& ./configure --prefix=/usr \
@@ -18,6 +14,6 @@ function	compile_grub()
 	&& make \
 	&& make install \
 	&& mv -v /etc/bash_completion.d/grub /usr/share/bash-completion/completions"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+
+	package_clean
 }

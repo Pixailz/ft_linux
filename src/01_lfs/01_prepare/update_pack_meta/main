@@ -1,15 +1,6 @@
 #!/bin/bash
 
-# BASH PROPRETIES
-## Exit immediately if a command exits with a non-zero status
-set -e
-## Treat unset variables as an error when substituting
-set -u
-## Error in pipeline will be shown
-set -o pipefail
-
 # VARIABLES
-
 # FUNCTION
 SED_LATEST="/.*latest.*/!"
 SED_HREF_BEG="s|.*[hH][rR][eE][fF]=[\"']\(.*"
@@ -18,6 +9,9 @@ SED_HREF_END="\)[\"'].*|\1|p"
 CURL_OPT="-sL --compressed"
 
 [ -f ${GET_PACK_ENV} ] && source ${GET_PACK_ENV}
+
+. ${GET_PACK_IN}
+. ${GET_PACK_OUT}
 
 ## OUT
 declare -A PACKAGE_LINK
@@ -31,7 +25,7 @@ function	save_meta_package_begin()
 {
 	for meta in ${GET_PACK_META[@]}; do
 		local	var_out="out_${meta}"
-		echo -e "declare -A PACKAGE_${meta^^}=(" > ${!var_out}
+		echo -e "declare -gA PACKAGE_${meta^^}=(" > ${!var_out}
 	done
 }
 
@@ -53,7 +47,7 @@ function	save_meta_package_end()
 	echo "" >> ${GET_PACK_OUT}
 	cat ${out_tar_folder} >> ${GET_PACK_OUT}
 
-	rm -f ${out_link} ${out_version} ${out_file} ${out_tar_folder}
+	rm -rf ${out_link} ${out_version} ${out_file} ${out_tar_folder}
 	unset ${!out_@}
 }
 
@@ -115,7 +109,7 @@ function	get_package_link()
 				_ref_file="${pack}-${_ref_version}${PACKAGE_SUFFIX[${pack}]}"
 			fi
 			pinfo "\tFile:       [\e[1;34m${_ref_file}\e[22;0m]"
-			echo
+			_printf "" ""
 		fi
 		unset -n ${!_ref_@}
 	done
@@ -143,22 +137,30 @@ function	get_file()
 {
 	local	file=${PACKAGE_FILE[${1}]}
 	local	link=${PACKAGE_LINK[${1}]}
+	local	fmt_hdr="(${PACKAGE_ID}/${PACKAGE_NB})"
 
+	dset "${fmt_hdr}: Getting ${pack}"
+	_printf_ts
+	praw " ${HDR_INFO} Getting ${pack}... "
 	if [ ! -f "${DIR_DOWNLOAD_CACHE}/${file}" ]; then
-		pfail "Downloading: ${file}"
+		dset "${fmt_hdr}: Downlading ${packe}"
+		praw "${RED}Downloading${RST}... "
 		curl --progress-bar --location \
 			"${link}" \
 			--output "${DIR_DOWNLOAD_CACHE}/${file}"
 	else
-		ppass "File exists: ${DIR_DOWNLOAD_CACHE}/${file}"
+		praw "${GRE}Already downloaded${RST}. "
 	fi
 	get_package_tar_folder "${1}" "${file}"
 	if [ -f "${LFS_SOURCES_DIR}/${file}" ]; then
-		ppass "File exists: ${LFS_SOURCES_DIR}/${file}"
-		return
+		praw "${GRE}Already copied${RST}. "
+	else
+		praw "${RED}Copying${RST}... "
+		dset "${fmt_hdr}: Copying ${pack} to ${LFS_SOURCES_DIR}"
+		_cp -v "${DIR_DOWNLOAD_CACHE}/${file}" "${LFS_SOURCES_DIR}/${file}"
 	fi
-	cp -v "${DIR_DOWNLOAD_CACHE}/${file}" "${LFS_SOURCES_DIR}/${file}"
-	echo
+	dset "${fmt_hdr}: Done ${pack}"
+	praw "Done\n"
 }
 
 function	get_package_tar_folder()
@@ -166,38 +168,30 @@ function	get_package_tar_folder()
 	local	pack=${1}
 	local	file=${DIR_DOWNLOAD_CACHE}/${2}
 	local	-n	_ref_tar_folder=PACKAGE_TAR_FOLDER[${pack}]
-	local	first_line="$(tar -tf ${file} 2>/dev/null | head -n1)"
+	local	first_line="$(_tar -tf ${file} 2>/dev/null | head -n1)"
+	local	fmt=""
 
 	_ref_tar_folder="${first_line%%/*}"
-	pinfo "\tTar folder: [\e[1;35m${_ref_tar_folder}\e[22;0m]"
+	if [ "${first_line%%/*}" == "" ]; then
+		praw "(Tar folder found: ${BOL}${PUR}${_ref_tar_folder}${fmt}${RST}${RST_BOL}) "
+	fi
 	unset -n _ref_tar_folder
-}
-
-function	get_package_add_static()
-{
-	for key in ${PACKAGE_NOSCRAP[@]}; do
-		PACKAGE+=("${key}")
-		PACKAGE_REPO[${key}]=${PACKAGE_NOSCRAP_REPO[${key}]}
-		PACKAGE_PREFIX[${key}]=${PACKAGE_NOSCRAP_PREFIX[${key}]}
-		PACKAGE_SUFFIX[${key}]=${PACKAGE_NOSCRAP_SUFFIX[${key}]}
-	done
-	unset -n _ref_repo
 }
 
 function	update_pack_meta()
 {
-	. ${GET_PACK_IN}
-	. ${GET_PACK_OUT}
+	declare -g PACKAGE_NB=${#PACKAGE[@]}
+	declare -g PACKAGE_ID=0
 
-	get_package_add_static
-	[ "${GET_PACK_UPDATE:-0}" != "0" ] && get_package_link
+	dset "(0/${PACKAGE_NB}) Updating meta package"
 
-	download_sources
-	save_meta_package
+	[ "${GET_PACK_CHECK_REPO:-0}" != "0" ] && get_package_link || true
+
+	[ "${1:-${GET_PACK_DOWNLOAD:-0}}" != "0" ] && download_sources || true
+
+	[ "${GET_PACK_SAVE:-0}" != "0" ] && save_meta_package || true
 
 	unset ${!PACKAGE_@}
 
 	. ${GET_PACK_OUT}
 }
-
-# tar_get_package "binutils"

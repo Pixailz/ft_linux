@@ -16,12 +16,13 @@ function	backup_lfs()
 	local	file="lfs-${LFS_VERSION}-${LFS_CODENAME}-${desc}-$(date +%d%m%Y%H%M%S).tar.xz"
 
 	clean_lfs
-	cd ${LFS}
+	_pushd ${LFS}
 	pinfo "Creating backup ${file}"
-	tar -cJpf ${DIR_BASE}/${file} .
+	_tar -cJpf ${DIR_BASE}/${file} .
 	ppass "Backup done"
 	mount_lfs
 	create_virtualfs
+	_popd ${LFS}
 }
 
 function	restore()

@@ -1,18 +1,26 @@
 #!/bin/bash
 
-function	compile_check()
+function	compile_expect()
 {
-	local	dst_dir="check-0.15.2"
-	local	sbu="1.6"
-	local	package="check"
+	package_init expect 0.2
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
-	&& ./configure --prefix=/usr --disable-static \
-	&& make \
-	&& make check \
-	&& make docdir=/usr/share/doc/check-0.15.2 install"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+	do_chroot "python3 -c 'from pty import spawn; spawn([\"echo\", \"okey\"])' | grep okey"
+	do_chroot "cd /sources/${package_tar_folder} \
+	&& ./configure --prefix=/usr \
+		--with-tcl=/usr/lib \
+		--enable-shared \
+		--mandir=/usr/share/man \
+		--with-tclinclude=/usr/include \
+	&& make"
+
+	if [ "${LFS_DO_TEST:-1}" == "1" ]; then
+		do_chroot "cd /sources/${package_tar_folder} \
+			&& make test || true"
+	fi
+
+	do_chroot "cd /sources/${package_tar_folder} \
+		&& make install \
+		&& ln -svf expect${package_version}/libexpect${package_version}.so /usr/lib"
+
+	package_clean
 }

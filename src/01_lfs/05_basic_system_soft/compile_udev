@@ -2,13 +2,9 @@
 
 function	compile_udev()
 {
-	local	dst_dir="systemd-255"
-	local	sbu="0.2"
-	local	package="systemd"
+	package_init systemd 0.2
 
-	pinfo "Building udev with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& sed -i -e 's/GROUP=\"render\"/GROUP=\"video\"/' \
 		-e 's/GROUP=\"sgx\", //' rules.d/50-udev-default.rules.in \
 	&& ./configure --prefix=/usr \
@@ -50,9 +46,9 @@ function	compile_udev()
 	&& install -vm644 hwdb.d/*  ../hwdb.d/{*.hwdb,README} /usr/lib/udev/hwdb.d/ \
 	&& install -vm755 \${udev_helpers} /usr/lib/udev \
 	&& install -vm644 ../network/99-default.link /usr/lib/udev/network \
-	&& tar -xvf /sources/${PACKAGE_FILE['udev-lfs']} \
+	&& tar -xvf /sources/${PACKAGE_FILE[udev-lfs]} \
 	&& make -f udev-lfs-20230818/Makefile.lfs install \
-	&& tar -xf /sources/${PACKAGE_FILE['systemd-man-pages']} \
+	&& tar -xf /sources/${PACKAGE_FILE[systemd-man-pages]} \
 		--no-same-owner --strip-components=1 \
 		-C /usr/share/man --wildcards '*/udev*' '*/libudev*' \
 		'*/systemd.link.5' \
@@ -65,6 +61,6 @@ function	compile_udev()
 		> /usr/share/man/man8/udevd.8 \
 	&& rm /usr/share/man/man*/systemd* \
 	&& udev-hwdb update"
-	ppass "Builded udev"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+
+	package_clean
 }

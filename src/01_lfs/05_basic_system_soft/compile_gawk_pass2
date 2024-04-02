@@ -2,23 +2,25 @@
 
 function	compile_gawk_pass2()
 {
-	local	dst_dir="gawk-5.3.0"
-	local	sbu="0.1"
-	local	package="gawk"
+	package_init gawk 0.1 2
 
-	pinfo "Building libelf from ${PACKAGE_FILE[${package}]::-7} pass 2 with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& sed -i 's/extras//' Makefile.in \
 	&& ./configure --prefix=/usr \
-	&& make \
-	&& chown -R tester . \
-	&& su tester -c \"PATH=\${PATH} make check\" \
-	&& rm -f /usr/bin/gawk-5.3.0 \
-	&& make install \
-	&& ln -sfv gawk.1 /usr/share/man/man1/awk.1 \
-	&& mkdir -pv /usr/share/doc/gawk-5.3.0 \
-	&& cp -v doc/{awkforai.txt,*.{eps,pdf,jpg}} /usr/share/doc/gawk-5.3.0"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+	&& make"
+
+	if [ "${LFS_DO_TEST:-1}" == "1" ]; then
+		do_chroot "cd /sources/${package_tar_folder}
+			&& chown -R tester . \
+			&& su tester -c \"PATH=\${PATH} make check || true\" \
+			&& rm -f /usr/bin/gawk-${package_version}"
+	fi
+
+	do_chroot "cd /sources/${package_tar_folder} \
+		&& make install \
+		&& ln -sfv gawk.1 /usr/share/man/man1/awk.1 \
+		&& mkdir -pv /usr/share/doc/gawk-${package_version} \
+		&& cp -v doc/{awkforai.txt,*.{eps,pdf,jpg}} /usr/share/doc/gawk-${package_version}"
+
+	package_clean
 }

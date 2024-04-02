@@ -1,0 +1,14 @@
+#!/bin/bash
+
+function	configure_network_sysvinit()
+{
+	local	in_file="/etc/sysconfig/ifconfig.${LFS_NET_INTERFACE}"
+
+	chroot_line "ONBOOT=yes" "${in_file}" 1
+	chroot_line "IFACE=${LFS_NET_INTERFACE}" "${in_file}"
+	chroot_line "SERVICE=ipv4-static" "${in_file}"
+	chroot_line "IP=${LFS_NET_STATIC_IP}" "${in_file}"
+	chroot_line "GATEWAY=${LFS_NET_STATIC_GATE}" "${in_file}"
+	chroot_line "PREFIX=${LFS_NET_STATIC_PREF}" "${in_file}"
+	chroot_line "BROADCAST=${LFS_NET_STATIC_BROA}" "${in_file}"
+}

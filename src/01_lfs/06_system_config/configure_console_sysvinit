@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function	configure_console()
+function	configure_console_sysvinit()
 {
 	chroot_line "# Begin default /etc/sysconfig/console" /etc/sysconfig/console 1
 	chroot_line "" /etc/sysconfig/console

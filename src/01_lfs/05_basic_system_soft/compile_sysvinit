@@ -2,16 +2,12 @@
 
 function	compile_sysvinit()
 {
-	local	dst_dir="sysvinit-3.08"
-	local	sbu="0.05"
-	local	package="sysvinit"
+	package_init sysvinit 0
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU less than 0.1 ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
-	&& patch -Np1 -i /sources/${PATCH_FILE['sysvinit-consolidated']} \
+	do_chroot "cd /sources/${package_tar_folder} \
+	&& patch -Np1 -i /sources/${PACKAGE_FILE['patch_sysvinit-consolidated']} \
 	&& make \
 	&& make install"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+
+	package_clean
 }

@@ -2,13 +2,9 @@
 
 function	compile_flit_core()
 {
-	local	dst_dir="flit_core-3.9.0"
-	local	sbu="0.05"
-	local	package="flit-core"
+	package_init flit-core 0
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU less than 0.1 ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& pip3 wheel \
 		-w dist \
 		--no-cache-dir \
@@ -20,6 +16,6 @@ function	compile_flit_core()
 		--no-user \
 		--find-links dist \
 		flit_core"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+
+	package_clean
 }

@@ -10,10 +10,14 @@ source ${DIR_SRC}/clean_backup_restore
 source ${DIR_SRC}/summary
 source ${DIR_SRC}/step
 source ${DIR_SRC}/trap
+source ${DIR_SRC}/ansi
+source ${DIR_SRC}/daemon_status
 
 # Get/Scrap/Update meta package, gevin a repo link and type
 # see more in src/get_package_link/README.md
 source ${GET_PACK_DIR_BASE}/main
+
+source ${DIR_LFS}/do_lfs
 
 source ${DIR_LFS}/01_prepare/checkup
 source ${DIR_LFS}/01_prepare/partition
@@ -128,6 +132,8 @@ source ${DIR_LFS}/05_basic_system_soft/compile_vim
 source ${DIR_LFS}/05_basic_system_soft/compile_markupsafe
 source ${DIR_LFS}/05_basic_system_soft/compile_jinja2
 source ${DIR_LFS}/05_basic_system_soft/compile_udev
+source ${DIR_LFS}/05_basic_system_soft/compile_systemd
+source ${DIR_LFS}/05_basic_system_soft/compile_dbus
 source ${DIR_LFS}/05_basic_system_soft/compile_man_db
 source ${DIR_LFS}/05_basic_system_soft/compile_procps_ng
 source ${DIR_LFS}/05_basic_system_soft/compile_util_linux_pass2
@@ -139,11 +145,14 @@ source ${DIR_LFS}/05_basic_system_soft/clean_basic_soft
 
 source ${DIR_LFS}/06_system_config/lfs_boot_script
 source ${DIR_LFS}/06_system_config/configure_devices
-source ${DIR_LFS}/06_system_config/configure_network
+source ${DIR_LFS}/06_system_config/configure_network_sysvinit
+source ${DIR_LFS}/06_system_config/configure_network_systemd
 source ${DIR_LFS}/06_system_config/configure_dns
 source ${DIR_LFS}/06_system_config/configure_sysvinit
-source ${DIR_LFS}/06_system_config/configure_clock
-source ${DIR_LFS}/06_system_config/configure_console
+source ${DIR_LFS}/06_system_config/configure_clock_sysvinit
+source ${DIR_LFS}/06_system_config/configure_clock_systemd
+source ${DIR_LFS}/06_system_config/configure_console_sysvinit
+source ${DIR_LFS}/06_system_config/configure_console_systemd
 source ${DIR_LFS}/06_system_config/configure_rc_site
 source ${DIR_LFS}/06_system_config/configure_locale
 source ${DIR_LFS}/06_system_config/configure_inputrc
@@ -153,3 +162,6 @@ source ${DIR_LFS}/07_make_system_bootable/configure_fstab
 source ${DIR_LFS}/07_make_system_bootable/compile_linux
 source ${DIR_LFS}/07_make_system_bootable/configure_grub
 source ${DIR_LFS}/07_make_system_bootable/finish_touch
+
+
+source ${DIR_BLFS}/do_blfs

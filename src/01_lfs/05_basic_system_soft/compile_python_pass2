@@ -2,13 +2,9 @@
 
 function	compile_python_pass2()
 {
-	local	dst_dir="Python-3.12.2"
-	local	sbu="1.8"
-	local	package="python"
+	package_init python 1.8 2
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} pass 2 with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& ./configure --prefix=/usr \
 		--enable-shared \
 		--with-system-expat \
@@ -18,11 +14,11 @@ function	compile_python_pass2()
 	chroot_line "[global]" /etc/pip.conf 1
 	chroot_line "root-user-action = ignore" /etc/pip.conf
 	chroot_line "disable-pip-version-check = true" /etc/pip.conf
-	do_chroot "cd /sources/${dst_dir} \
-	&& install -v -dm755 /usr/share/doc/python-3.12.2/html \
-	&& tar --no-same-owner -xvf /sources/${PACKAGE_FILE["python-doc"]} \
-	&& cp -R --no-preserve=mode python-3.12.2-docs-html/* \
-		/usr/share/doc/python-3.12.2/html"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+	do_chroot "cd /sources/${package_tar_folder} \
+	&& install -v -dm755 /usr/share/doc/python-${package_version}/html \
+	&& tar --no-same-owner -xvf /sources/${PACKAGE_FILE[python-doc]} \
+	&& cp -R --no-preserve=mode ${PACKAGE_TAR_FOLDER[python-doc]}/* \
+		/usr/share/doc/python-${package_version}/html"
+
+	package_clean
 }

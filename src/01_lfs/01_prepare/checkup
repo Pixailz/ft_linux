@@ -16,7 +16,7 @@ function	checkup()
 		curl
 
 	pinfo "Symlink /bin/sh to /bin/bash"
-	[ /bin/sh -ef /bin/bash ] || (rm -vrf /bin/sh; ln -vfs /bin/bash /bin/sh)
+	[ /bin/sh -ef /bin/bash ] || (_rm /bin/sh; _ln -s /bin/bash /bin/sh)
 
 	# Check if all good
 	pinfo "Check all good with LFS script"

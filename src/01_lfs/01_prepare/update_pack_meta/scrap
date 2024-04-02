@@ -18,7 +18,10 @@ function	scrap_website()
 					echo "https://fossies.org${out[0]}"
 					;;
 				"fossies")
-					echo "${url%/*}${out[0]}"
+					echo "${url%/*}/${out[0]##*/}"
+					;;
+				"sourceforge")
+					echo "${out[0]%\/download*}"
 					;;
 			esac
 		else
@@ -29,7 +32,7 @@ function	scrap_website()
 				"less")
 					echo "https://www.greenwoodsoftware.com/less/${out[0]}"
 					;;
-				"intltool"|"python"|"tcl"|"xml-parser")
+				"intltool"|"python"|"tcl"|"xml-parser"|"linux"|"pkgconf")
 					echo "${out[0]}"
 					;;
 				"python-doc"|"tcl-doc")
@@ -51,6 +54,11 @@ function	scrap_fossies()
 function	scrap_fossies_search()
 {
 	scrap_website "${1}" "${2}" "fossies_search"
+}
+
+function	scrap_sourceforge()
+{
+	scrap_website "${1}" "${2}"	"sourceforge"
 }
 
 function	scrap_apache()
@@ -81,6 +89,67 @@ function	scrap_apache_dir()
 
 	if [ "${#out[@]}" != "0" ]; then
 		scrap_apache "${1}/${out[1]%/}" "${2}"
+	fi
+}
+
+function	scrap_apache_no_sort()
+{
+	declare -A TMP_FILE
+	local	n="[0-9]"
+	local	a="[a-zA-Z]"
+	local	r="${n}\{2\}-${a}\{3\}-${n}\{4\} ${n}\{2\}:${n}\{2\}"
+	local	p="${PACKAGE_PREFIX[${2}]}"
+	local	s="${PACKAGE_SUFFIX[${2}]}"
+
+	while read -r line; do
+		file=$(sed -n "${SED_LATEST} ${SED_HREF_BEG}${p}.*${s}${SED_HREF_END}" <<<"${line}" )
+		[ ${#file} == 0 ] && continue
+		date=$(sed -n "s|.*${file}.*\(${r}\).*|\1|p" <<<"${line}")
+		date=$(date -d "${date}" +"%s")
+		TMP_FILE[${date}]="${file}"
+	done < <(curl ${CURL_OPT} ${1})
+
+	ORDER=($(echo ${!TMP_FILE[@]} | tr ' ' '\n' | sort -rn))
+
+	echo "${1}/${TMP_FILE[${ORDER[0]}]}"
+
+	unset TMP_FILE ORDER
+}
+
+SED_PARENT_DIR="/.*\.\.\/.*/!"
+
+function	scrap_apache_no_sort_dir()
+{
+	declare -A TMP_FILE
+	local	n="[0-9]"
+	local	a="[a-zA-Z]"
+	local	r="${n}\{2\}-${a}\{3\}-${n}\{4\} ${n}\{2\}:${n}\{2\}"
+	local	p="${PACKAGE_PREFIX[${2}]}"
+	local	s="${PACKAGE_SUFFIX[${2}]}"
+	local	res11=""
+	local	res12=""
+
+	while read -r line; do
+		file=$(sed -n "${SED_PARENT_DIR} ${SED_HREF_BEG}.*${SED_HREF_END}" <<<"${line}" )
+		[ ${#file} == 0 ] && continue
+		date=$(sed -n "s|.*${file}.*\(${r}\).*|\1|p" <<<"${line}")
+		date=$(date -d "${date}" +"%s")
+		TMP_FILE[${date}]="${file}"
+	done < <(curl ${CURL_OPT} ${1})
+
+	local	order=($(echo ${!TMP_FILE[@]} | tr ' ' '\n' | sort -rn))
+
+	# get an item even if order is empty
+	for item in ${order[@]}; do
+		res1="${item}"
+		break
+	done
+
+	if [ "${res1}" != "" ]; then
+		res1="${TMP_FILE[${res1}]}"
+		res2="${res1%/}"
+		res2="${res2#v}"
+		echo "${1}/${res1}${p}${res2%/}${s}"
 	fi
 }
 

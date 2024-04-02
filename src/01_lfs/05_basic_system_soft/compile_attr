@@ -2,20 +2,22 @@
 
 function	compile_attr()
 {
-	local	dst_dir="attr-2.5.2"
-	local	sbu="0.05"
-	local	package="attr"
+	package_init attr 0
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU less than 0.1 ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& ./configure --prefix=/usr \
 		--disable-static \
 		--sysconfdir=/etc \
-		--docdir=/usr/share/doc/attr-2.5.2 \
-	&& make \
-	&& make check \
-	&& make install"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+		--docdir=/usr/share/doc/attr-${package_version} \
+	&& make"
+
+	if [ "${LFS_DO_TEST:-1}" == "1" ]; then
+		do_chroot "cd /sources/${package_tar_folder} \
+			&& make check || true"
+	fi
+
+	do_chroot "cd /sources/${package_tar_folder} \
+		&& make install"
+
+	package_clean
 }

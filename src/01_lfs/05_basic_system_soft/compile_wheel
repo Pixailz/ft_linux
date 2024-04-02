@@ -2,13 +2,9 @@
 
 function	compile_wheel()
 {
-	local	dst_dir="wheel-0.43.0"
-	local	sbu="0.05"
-	local	package="wheel"
+	package_init wheel 0
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU less than 0.1 ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& pip3 wheel \
 		-w dist \
 		--no-cache-dir \
@@ -19,6 +15,6 @@ function	compile_wheel()
 		--no-index \
 		--find-links=dist \
 		wheel"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+
+	package_clean
 }

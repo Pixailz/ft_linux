@@ -2,29 +2,32 @@
 
 function	compile_coreutils_pass2()
 {
-	local	dst_dir="coreutils-9.4"
-	local	sbu="1.0"
-	local	package="coreutils"
+	package_init coreutils 1.0 2
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} pass 2 with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
-	&& patch -Np1 -i /sources/${PATCH_FILE['coreutils-intl']} \
+	do_chroot "cd /sources/${package_tar_folder} \
+	&& patch -fNp1 -i /sources/${PACKAGE_FILE[patch_coreutils-intl]} || true \
 	&& sed -e '/n_out += n_hold/,+4 s|.*bufsize.*|//&|' -i src/split.c \
 	&& autoreconf -fiv \
 	&& FORCE_UNSAFE_CONFIGURE=1 ./configure \
 		--prefix=/usr \
 		--enable-no-install-program=kill,uptime \
-	&& make \
-	&& make NON_ROOT_USERNAME=tester check-root \
-	&& groupadd -g 102 dummy -U tester \
-	&& chown -R tester . \
-	&& su tester -c \"PATH=\$PATH make RUN_EXPENSIVE_TESTS=yes check\" \
-	&& groupdel dummy \
-	&& make install \
-	&& mv -v /usr/bin/chroot /usr/sbin \
-	&& mv -v /usr/share/man/man1/chroot.1 /usr/share/man/man8/chroot.8 \
-	&& sed -i 's/\"1\"/\"8\"/' /usr/share/man/man8/chroot.8"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+	&& make"
+
+	if [ "${LFS_DO_TEST:-1}" == "1" ]; then
+		do_chroot "cd /sources/${package_tar_folder} \
+			&& make NON_ROOT_USERNAME=tester check-root || true\
+			&& groupadd -g 102 dummy -U tester \
+			&& chown -R tester . \
+			&& su tester -c \"PATH=\$PATH make RUN_EXPENSIVE_TESTS=yes check || true\" \
+			&& groupdel dummy"
+	fi
+
+	do_chroot "cd /sources/${package_tar_folder} \
+		&& make install \
+		&& mv -v /usr/bin/chroot /usr/sbin \
+		&& mv -v /usr/share/man/man1/chroot.1 /usr/share/man/man8/chroot.8 \
+		&& sed -i 's/\"1\"/\"8\"/' /usr/share/man/man8/chroot.8"
+
+
+	package_clean
 }

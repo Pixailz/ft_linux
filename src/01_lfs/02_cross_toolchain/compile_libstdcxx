@@ -2,13 +2,9 @@
 
 function	compile_libstdcxx()
 {
-	local	dst_dir="${LFS_SOURCES_DIR}/gcc-13.2.0"
-	local	sbu="0.2"
-	local	package="gcc"
+	package_init gcc 0.2
 
-	pinfo "Building Libstdc++ with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	take ${dst_dir}/build
+	take ${dst_folder}/build
 	../libstdc++-v3/configure \
 		--host=${LFS_TGT} \
 		--build=$(../config.guess) \
@@ -16,11 +12,11 @@ function	compile_libstdcxx()
 		--disable-multilib \
 		--disable-nls \
 		--disable-libstdcxx-pch \
-		--with-gxx-include-dir=/tools/${LFS_TGT}/include/c++/13.2.0
+		--with-gxx-include-dir=/tools/${LFS_TGT}/include/c++/${package_version}
 	make
 	make DESTDIR=${LFS} install
-	rm -v ${LFS}/usr/lib/lib{stdc++{,exp,fs},supc++}.la
-	popd
-	ppass "Builded Libstdc++"
-	rm -rf ${dst_dir}
+	rm -rf ${LFS}/usr/lib/lib{stdc++{,exp,fs},supc++}.la
+	_popd
+
+	package_clean
 }

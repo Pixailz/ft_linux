@@ -14,7 +14,7 @@ function	step_setup()
 {
 	local	step="STEP_${1}"
 
-	if ! grep -q "${step}=" "${STEP_FILE}"; then
+	if ! grep -q "${step}=" "${STEP_FILE}" 2>/dev/null; then
 		echo "${step}=0" >> "${STEP_FILE}"
 	fi
 	STEP["${1}"]="$(step_get_var ${1})"
@@ -31,23 +31,22 @@ function	step_setup_file()
 	step_setup "LFS_TEMP_TOOL"
 	step_setup "LFS_CHROOT_ADDITIONAL_TOOL"
 	step_setup "LFS_BASIC_SYSTEM_SOFT"
-	step_setup "LFS_SYSTEM_CONFIG"
+	step_setup "LFS_SYSTEM_CONFIG_SYSVINIT"
+	step_setup "LFS_SYSTEM_CONFIG_SYSTEMD"
 	step_setup "LFS_MAKE_SYSTEM_BOOTABLE"
+	step_setup "BLFS"
+	step_setup "BLFS_PREPARE"
 	step_setup "TEST"
 }
 
 function	step_do()
 {
 	local	id="${LIFOVAR_STEP_ID[@]: -1}"
-	local	args=${2:-}
-	declare -n	last_step="STEP[${id}]"
-	declare -n	step="STEP[STEP_${id}]"
-	local	step_1=$((step + 1))
+	local	step_1=$((${STEP[STEP_${id}]} + 1))
 
-	if [ "${step}" -ge "${last_step}" ]; then
-		${1} "${args}"
-		last_step="${step_1}"
+	if [ "${STEP[STEP_${id}]}" -ge "${STEP[${id}]}" ]; then
+		${1} ${@:2}
+		STEP[${id}]="${step_1}"
 	fi
-	step=${step_1}
-	unset -n last_step step
+	STEP[STEP_${id}]=${step_1}
 }

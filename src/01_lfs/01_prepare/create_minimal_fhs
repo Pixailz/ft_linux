@@ -3,15 +3,16 @@
 function	create_minimal_fhs()
 {
 	pinfo "Create directory layout"
-	mkdir -pv ${LFS}/{etc,var,tools} ${LFS}/usr/{bin,lib,sbin}
+	mkdir -p ${LFS}/{etc,var,tools} ${LFS}/usr/{bin,lib,sbin}
 	for i in bin lib sbin; do
-		[ -e ${LFS}/${i} ] && rm -rf ${LFS}/${i}
-		ln -sfv usr/${i} ${LFS}/
+		[ -e ${LFS}/${i} ] && _rm ${LFS}/${i}
+		_ln -s usr/${i} ${LFS}/
 	done
 	case ${LFS_ARCH} in
 		x86_64)
-			[ -e ${LFS}/lib64 ] && rm -rf ${LFS}/lib64
-			ln -sfv lib ${LFS}/lib64
+			[ -e ${LFS}/lib64 ] && _rm ${LFS}/lib64
+			_ln -s lib ${LFS}/lib64
 		;;
 	esac
 }
+

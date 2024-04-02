@@ -6,9 +6,9 @@ function	configure_dns()
 
 	chroot_line "# Begin default /etc/resolv.conf" "${dns_file}" 1
 	chroot_line "" "${dns_file}"
-	chroot_line "nameserver ${LFS_DNS_PRIMARY}" "${dns_file}"
-	if [ "${LFS_DNS_SECONDARY:-}" != "" ]; then
-		chroot_line "nameserver ${LFS_DNS_SECONDARY}" "${dns_file}"
+	chroot_line "nameserver ${LFS_NET_DNS_PRI}" "${dns_file}"
+	if [ "${LFS_NET_DNS_SEC:-}" != "" ]; then
+		chroot_line "nameserver ${LFS_NET_DNS_SEC}" "${dns_file}"
 	fi
 	chroot_line "" "${dns_file}"
 	chroot_line "# End default /etc/resolv.conf" "${dns_file}"

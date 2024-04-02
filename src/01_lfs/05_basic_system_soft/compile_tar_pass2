@@ -2,18 +2,20 @@
 
 function	compile_tar_pass2()
 {
-	local	dst_dir="tar-1.35"
-	local	sbu="0.5"
-	local	package="tar"
+	package_init tar 0.5 2
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} pass 2 with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& FORCE_UNSAFE_CONFIGURE=1 ./configure --prefix=/usr \
-	&& make \
-	&& make check || true \
-	&& make install \
-	&& make -C doc install-html docdir=/usr/share/doc/tar-1.35"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+	&& make"
+
+	if [ "${LFS_DO_TEST:-1}" == "1" ]; then
+		do_chroot "cd /sources/${package_tar_folder} \
+			&& make check || true"
+	fi
+
+	do_chroot "cd /sources/${package_tar_folder} \
+		&& make install \
+		&& make -C doc install-html docdir=/usr/share/doc/tar-${package_version}"
+
+	package_clean
 }

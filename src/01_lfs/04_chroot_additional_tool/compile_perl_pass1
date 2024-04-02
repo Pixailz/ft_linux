@@ -2,24 +2,23 @@
 
 function	compile_perl_pass1()
 {
-	local	dst_dir="perl-5.38.2"
-	local	sbu="0.6"
-	local	package="perl"
+	package_init perl 0.6
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} pass 1 with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	local	tmp_ver="${package_version%.*}"
+
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& sh Configure -des \
 		-Dprefix=/usr \
 		-Dvendorprefix=/usr \
 		-Duseshrplib \
-		-Dprivlib=/usr/lib/perl5/5.38/core_perl \
-		-Darchlib=/usr/lib/perl5/5.38/core_perl \
-		-Dsitelib=/usr/lib/perl5/5.38/site_perl \
-		-Dsitearch=/usr/lib/perl5/5.38/site_perl \
-		-Dvendorlib=/usr/lib/perl5/5.38/vendor_perl \
-		-Dvendorarch=/usr/lib/perl5/5.38/vendor_perl \
-	&& make && make install"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+		-Dprivlib=/usr/lib/perl5/${tmp_ver}/core_perl \
+		-Darchlib=/usr/lib/perl5/${tmp_ver}/core_perl \
+		-Dsitelib=/usr/lib/perl5/${tmp_ver}/site_perl \
+		-Dsitearch=/usr/lib/perl5/${tmp_ver}/site_perl \
+		-Dvendorlib=/usr/lib/perl5/${tmp_ver}/vendor_perl \
+		-Dvendorarch=/usr/lib/perl5/${tmp_ver}/vendor_perl \
+	&& make \
+	&& make install"
+
+	package_clean
 }

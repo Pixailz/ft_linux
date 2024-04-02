@@ -2,14 +2,9 @@
 
 function	compile_binutils_pass2()
 {
-	local	dst_dir="${LFS_SOURCES_DIR}/binutils-2.42"
-	local	sbu="0.5"
-	local	package="binutils"
+	package_init binutils 0.5 2 1
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} pass 2 with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	rm -rf ${dst_dir}/build
-	take ${dst_dir}/build
+	take ${dst_folder}/build
 	sed '6009s/$add_dir//' -i ../ltmain.sh
 	../configure \
 		--prefix=/usr \
@@ -23,8 +18,8 @@ function	compile_binutils_pass2()
 		--enable-default-hash-style=gnu
 	make
 	make DESTDIR=${LFS} install
-	rm -v $LFS/usr/lib/lib{bfd,ctf,ctf-nobfd,opcodes,sframe}.{a,la}
-	popd
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${dst_dir}
+	rm -rf ${LFS}/usr/lib/lib{bfd,ctf,ctf-nobfd,opcodes,sframe}.{a,la}
+	_popd
+
+	package_clean
 }

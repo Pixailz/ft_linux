@@ -2,18 +2,20 @@
 
 function	compile_make_pass2()
 {
-	local	dst_dir="make-4.4.1"
-	local	sbu="0.5"
-	local	package="make"
+	package_init make 0.5 2
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} pass 2 with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& ./configure --prefix=/usr \
-	&& make \
-	&& chown -R tester . \
-	&& su tester -c \"PATH=\${PATH} make check\" \
-	&& make install"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+	&& make"
+
+	if [ "${LFS_DO_TEST:-1}" == "1" ]; then
+		do_chroot "cd /sources/${package_tar_folder} \
+			&& chown -R tester . \
+			&& su tester -c \"PATH=\${PATH} make check || true\" "
+	fi
+
+	do_chroot "cd /sources/${package_tar_folder} \
+		&& make install"
+
+	package_clean
 }

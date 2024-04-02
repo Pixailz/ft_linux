@@ -2,26 +2,27 @@
 
 function	compile_vim()
 {
-	local	dst_dir="vim-9.1.0148"
-	local	sbu="2.5"
-	local	package="vim"
+	package_init vim 2.5
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& echo '#define SYS_VIMRC_FILE \"/etc/vimrc\"' >> src/feature.h \
 	&& ./configure --prefix=/usr \
-	&& make \
-	&& chown -R tester . \
-	&& su tester -c \"TERM=xterm-256color LANG=en_US.UTF-8 make -j1 test\" &> vim-test.log || true \
-	&& make install \
-	&& ln -fsv vim /usr/bin/vi\
-	&& for L in  /usr/share/man/{,*/}man1/vim.1; do \
-		ln -sfv vim.1 \$(dirname \$L)/vi.1; \
-	done \
-	&& ln -sfv ../vim/vim91/doc /usr/share/doc/vim-9.1.0148"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	pinfo "Configuring ${PACKAGE_FILE[${package}]::-7}"
+	&& make"
+
+	if [ "${LFS_DO_TEST:-1}" == "1" ]; then
+		do_chroot "cd /sources/${package_tar_folder} \
+			&& chown -R tester . \
+			&& su tester -c \"TERM=xterm-256color LANG=en_US.UTF-8 make -j1 test\" &> vim-test.log || true \""
+	fi
+
+	do_chroot "cd /sources/${package_tar_folder} \
+		&& make install \
+		&& ln -fsv vim /usr/bin/vi\
+		&& for L in  /usr/share/man/{,*/}man1/vim.1; do \
+			ln -sfv vim.1 \$(dirname \$L)/vi.1; \
+		done \
+		&& ln -sfv ../vim/vim91/doc /usr/share/doc/vim-9.1.0148"
+
 	chroot_line '" Begin /etc/vimrc' /etc/vimrc 1
 	chroot_line '' /etc/vimrc
 	chroot_line '" Ensure defaults are set before customizing settings, not after' /etc/vimrc
@@ -37,6 +38,6 @@ function	compile_vim()
 	chroot_line 'endif' /etc/vimrc
 	chroot_line '' /etc/vimrc
 	chroot_line '" End /etc/vimrc' /etc/vimrc
-	ppass "Configured ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+
+	package_clean
 }

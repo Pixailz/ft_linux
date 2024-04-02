@@ -2,21 +2,23 @@
 
 function	compile_flex()
 {
-	local	dst_dir="flex-2.6.4"
-	local	sbu="0.1"
-	local	package="flex"
+	package_init flex 0.1 2
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU ${sbu} ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& ./configure --prefix=/usr \
-		--docdir=/usr/share/doc/flex-2.6.4 \
+		--docdir=/usr/share/doc/flex-${package_version} \
 		--disable-static \
-	&& make \
-	&& make check \
-	&& make install \
-	&& ln -sfv flex /usr/bin/lex \
-	&& ln -sfv flex.1 /usr/share/man/man1/lex.1 "
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+	&& make"
+
+	if [ "${LFS_DO_TEST:-1}" == "1" ]; then
+		do_chroot "cd /sources/${package_tar_folder} \
+			&& make check || true"
+	fi
+
+	do_chroot "cd /sources/${package_tar_folder} \
+		&& make install \
+		&& ln -sfv flex /usr/bin/lex \
+		&& ln -sfv flex.1 /usr/share/man/man1/lex.1"
+
+	package_clean
 }

@@ -4,7 +4,7 @@ function	change_ownership()
 {
 	pinfo "Changing ownership of ${LFS} to root"
 	chown -R root:root ${LFS}/{usr,lib,var,etc,bin,sbin,tools}
-	case $(uname -m) in
+	case ${LFS_ARCH} in
 		x86_64) chown -R root:root ${LFS}/lib64 ;;
 	esac
 }

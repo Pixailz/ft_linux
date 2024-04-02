@@ -1,5 +1,8 @@
 #!/bin/bash
 
+function	_printf_ts()
+{ printf "[${YEL}%s${RST}]" "$(date '+%d/%M/%Y %T')" >> ${LOG_FILE}; }
+
 function	_printf()
 {
 	local	pad="${LIFOVAR_LOG_LVL[@]: -1}"
@@ -10,35 +13,44 @@ function	_printf()
 			pad_str+="   "
 		done
 	fi
-	printf "[\e[33m%s\e[0m] " "$(date '+%d/%M/%Y %T')" >> ${LOG_FILE}
-	printf "%s%b %b\n" "${pad_str}" "${1}" "${2}" | tee -a ${LOG_FILE}
+	if [ "${3:-}" == "" ]; then
+		_printf_ts
+		printf "%s%b %b\n" "${pad_str}" "${1}" "${2}" | tee -a ${LOG_FILE}
+	else
+		printf "%b" "${2}" | tee -a ${LOG_FILE}
+	fi
 }
 
 function	ppass()
-{ _printf "[\e[32m+\e[0m]" "${@}"; }
+{ _printf "${HDR_PASS}" "${@}"; }
 
 function	pfail()
-{ _printf "[\e[31m-\e[0m]" "${@}"; }
+{ _printf "${HDR_FAIL}" "${@}"; }
 
 function	pwarn()
-{ _printf "[\e[31m!\e[0m]" "${@}"; }
+{ _printf "${HDR_WARN}" "${@}"; }
 
 function	pinfo()
-{ _printf "[\e[34m*\e[0m]" "${@}"; }
+{ _printf "${HDR_INFO}" "${@}"; }
+
+function	praw()
+{
+	_printf "" "${@}" "1"
+}
 
 function	ptitle()
 {
 	local	est_sbu="$(calc_sbu "${1}" "${2}")"
-	local	hdr="[\e[33;1m#\e[0;22m]"
-	local	est_sbu_col="\e[32m"
+	local	hdr="${HDR_TITLE}"
+	local	est_sbu_col="${GRE}"
 
 	if [ "${est_sbu}" == "0" ]; then
 		est_sbu="No Compilation"
-		est_sbu_col="\e[31m"
+		est_sbu_col="${RED}"
 	else
 		est_sbu="SBU~:${est_sbu} ($(get_sbu ${est_sbu}))"
 	fi
 	est_sbu="$(printf "%-23s" "${est_sbu}")"
-	est_sbu="${est_sbu_col}${est_sbu}\e[0m"
+	est_sbu="${est_sbu_col}${est_sbu}${RST}"
 	_printf "${hdr}" "${est_sbu} ${@:3}"
 }

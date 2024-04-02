@@ -1,0 +1,63 @@
+#!/bin/bash
+
+function	daemon_print_status()
+{
+	local	beg="${CUR_SAV}${CSI}${S_LINES};1H${CLR_LINE}"
+	local	end="${CUR_RES}"
+	echo -ne "${beg}$(cat ${DAEMON_OUT})${end}" > "${tty}"
+}
+
+function	daemon_sigint()
+{
+	sigint_handler
+}
+
+function	daemon_status()
+{
+	declare -g	tty="${1}"
+
+	trap daemon_sigint SIGINT
+
+	while true; do
+		daemon_print_status
+		sleep ${DAEMON_REFRESH_RATE}
+	done
+}
+
+function	update_screen_size()
+{
+	read -r S_LINES S_COLUMNS < <(stty size)
+	export S_LINES S_COLUMNS
+}
+
+function	set_scrolling_region()
+{
+	update_screen_size
+	echo -e "${CLR_SCREEN}${CSI};$((S_LINES - 1))r"
+}
+
+function	daemon_init()
+{
+	declare -gx DAEMON_OUT=$(mktemp /tmp/.daemon_out.XXXXXXXXXX)
+	declare -x DAEMON_MAX=0
+	declare -x DAEMON_REFRESH_RATE=0.02
+
+	echo -e "${VID_ENA}${CUR_DIS}"
+	set_scrolling_region
+
+	dset "INIT"
+
+	daemon_status "$(tty)" &
+
+	DAEMON_PID="${!}"
+}
+
+function	daemon_kill()
+{
+	echo -e "${CSI}r${CUR_ENA}${VID_DIS}"
+	# echo -e "${CSI}r${CUR_ENA}"
+	# kill -s SIGINT ${DAEMON_PID}
+}
+
+function	dset()
+{ echo ${1} > "${DAEMON_OUT}"; }

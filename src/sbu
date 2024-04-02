@@ -19,7 +19,7 @@ function	set_sbu()
 	done
 	export SBU=$((${total} / ${#sbu[@]}))
 
-	str="\e[31m1SBU\e[0m:\e[32m${SBU}\e[0ms"
+	str="${RED}1SBU${RST}:${GRE}${SBU}${RST}s"
 	if [ "${added}" == "0" ]; then
 		str+=" (from previous run)"
 	fi
@@ -47,7 +47,7 @@ function	calc_sbu()
 
 	for file in ${1}; do
 		if ! [[ "${file}" =~ ^${2}.* ]]; then
-			tot+="$(sed -nE 's|\s+local\s+sbu="(.*)".*| + \1|p' ${file})"
+			tot+="$(sed -nE 's|\tpackage_init .* ([0-9]+\.?[0-9]+).*| + \1|p' ${file})"
 		fi
 	done
 	tot="$(bc -l <<<"scale=2; ${tot}")"

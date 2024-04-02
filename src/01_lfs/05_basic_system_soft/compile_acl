@@ -2,18 +2,14 @@
 
 function	compile_acl()
 {
-	local	dst_dir="acl-2.3.2"
-	local	sbu="0.05"
-	local	package="acl"
+	package_init acl 0
 
-	pinfo "Building ${PACKAGE_FILE[${package}]::-7} with SBU less than 0.1 ($(get_sbu ${sbu}))"
-	tar -xf ${LFS_SOURCES_DIR}/${PACKAGE_FILE[${package}]} -C ${LFS_SOURCES_DIR}
-	do_chroot "cd /sources/${dst_dir} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& ./configure --prefix=/usr \
 		--disable-static \
-		--docdir=/usr/share/doc/acl-2.3.2 \
+		--docdir=/usr/share/doc/acl-${package_version} \
 	&& make \
 	&& make install"
-	ppass "Builded ${PACKAGE_FILE[${package}]::-7}"
-	rm -rf ${LFS_SOURCES_DIR}/${dst_dir}
+
+	package_clean
 }

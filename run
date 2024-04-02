@@ -19,8 +19,11 @@ declare -x	PATH_BASE=$(realpath ${BASH_SOURCE[0]})
 declare -x	DIR_BASE=${PATH_BASE%/*}
 declare -x	DIR_SRC="${DIR_BASE}/src"
 declare -x	DIR_LFS="${DIR_SRC}/01_lfs"
+declare -x	DIR_BLFS="${DIR_SRC}/02_blfs"
 declare -x	DIR_DOWNLOAD_CACHE="${DIR_BASE}/.sources"
-declare -x	GET_PACK_UPDATE=1
+declare -x	GET_PACK_SAVE=
+declare -x	GET_PACK_CHECK_REPO=
+declare -x	GET_PACK_DOWNLOAD=1
 declare -x	GET_PACK_DIR_BASE="${DIR_SRC}/01_lfs/01_prepare/update_pack_meta"
 declare -x	GET_PACK_ENV="${GET_PACK_DIR_BASE}/.env"
 declare -x	GET_PACK_IN="${DIR_BASE}/package_meta_in"
@@ -47,8 +50,14 @@ declare -x LFS_HOSTNAME="brda-sil"
 declare -x LFS_SOURCES_DIR="${LFS}/sources"
 declare -x LFS_ROOT_PASS="pass"
 declare -x LFS_STRIP_BINARIES=
-declare -x LFS_DNS_PRIMARY="8.8.8.8"
-declare -x LFS_DNS_SECONDARY="8.8.4.4"
+declare -x LFS_NET_INTERFACE="enp0s3"
+declare -x LFS_NET_USE_DHCP=1
+declare -x LFS_NET_STATIC_IP="192.168.1.190"
+declare -x LFS_NET_STATIC_GATE="192.168.1.254"
+declare -x LFS_NET_STATIC_BROA="192.168.1.255"
+declare -x LFS_NET_STATIC_PREF="24"
+declare -x LFS_NET_DNS_PRI="8.8.8.8"
+declare -x LFS_NET_DNS_SEC="8.8.4.4"
 declare -x LFS_CLOCK_UTC=0
 declare -x LFS_CLOCKPARAMS=""
 declare -x LFS_TZ="Europe/Paris"
@@ -61,9 +70,13 @@ declare -x LFS_LOCALE_LANG="en_US.utf8"
 declare -x LFS_KERNEL_DEFCONF="arch/x86/configs/x86_64_defconfig"
 declare -x LFS_CODENAME="brda-sil"
 declare -x LFS_VERSION="12.1"
+declare -x LFS_DO_TEST=0
+declare -x LFS_SYSTEMD=1
 
 # source needed files
 source ${DIR_BASE}/src/include
+
+declare -x LFS_VMLINUZ="vmlinuz-${PACKAGE_VERSION[linux]}-${LFS_CODENAME}"
 
 set +h
 umask 022
@@ -75,218 +88,27 @@ CONFIG_SITE=/usr/share/config.site
 export MAKEFLAGS="-j${LFS_CORES}"
 
 [ "${LOG_FILE_KEEP:-0}" == "0" ] && : > ${LOG_FILE}
-step_setup_file
 
-# Funtctions
-function	prepare()
+function	init()
 {
-	step_id_push "LFS_PREPARE"
-	step_do checkup
-	step_do partition
-	mount_lfs
-	update_pack_meta
-	chown -v root:root -R "${LFS_SOURCES_DIR}"
-	step_do create_minimal_fhs
-	step_id_pop
-}
+	step_setup_file
+	daemon_init
 
-function	cross_toolchain()
-{
-	step_id_push "LFS_CROSS_TOOLCHAIN"
-	export MAKEFLAGS="-j1"
-	step_do compile_binutils_pass1
-	export MAKEFLAGS="-j${LFS_CORES}"
-	step_do compile_gcc_pass1
-	step_do fix_linux_headers
-	export MAKEFLAGS="-j1"
-	step_do compile_glibc_pass1
-	export MAKEFLAGS="-j${LFS_CORES}"
-	step_do compile_libstdcxx
-	step_id_pop
+	set_sbu
+	get_summary
 }
+# Functions
 
-function	temp_tool()
-{
-	step_id_push "LFS_TEMP_TOOL"
-	step_do compile_m4_pass1
-	step_do compile_ncurses_pass1
-	step_do compile_bash_pass1
-	step_do compile_coreutils_pass1
-	step_do compile_diffutils_pass1
-	step_do compile_file_pass1
-	step_do compile_findutils_pass1
-	step_do compile_gawk_pass1
-	step_do compile_grep_pass1
-	step_do compile_gzip_pass1
-	step_do compile_make_pass1
-	step_do compile_patch_pass1
-	step_do compile_sed_pass1
-	step_do compile_tar_pass1
-	step_do compile_xz_pass1
-	step_do compile_binutils_pass2
-	step_do compile_gcc_pass2
-	step_id_pop
-}
-
-function	chroot_additional_tool()
-{
-	step_id_push "LFS_CHROOT_ADDITIONAL_TOOL"
-	step_do change_ownership
-	step_do create_virtualfs
-	step_do create_full_fhs
-	step_do essential_file
-	step_do compile_gettext_pass1
-	step_do compile_bison_pass1
-	step_do compile_perl_pass1
-	step_do compile_python_pass1
-	step_do compile_texinfo_pass1
-	step_do compile_util_linux_pass1
-	step_id_pop
-}
-
-function	basic_system_soft()
-{
-	step_id_push "LFS_BASIC_SYSTEM_SOFT"
-	step_do compile_man_pages
-	step_do compile_iana_etc
-	step_do compile_glibc_pass2
-	step_do compile_zlib
-	step_do compile_bzip2
-	step_do compile_xz_pass2
-	step_do compile_zstd
-	step_do compile_file_pass2
-	step_do compile_readline
-	step_do compile_m4_pass2
-	step_do compile_bc
-	step_do compile_flex
-	step_do compile_tcl
-	step_do compile_expect
-	step_do compile_dejagnu
-	step_do compile_pkgconf
-	step_do compile_binutils_pass3
-	step_do compile_gmp
-	step_do compile_mpfr
-	step_do compile_mpc
-	step_do compile_attr
-	step_do compile_acl
-	step_do compile_libcap
-	step_do compile_libxcrypt
-	step_do compile_shadow
-	step_do compile_gcc_pass3
-	step_do compile_ncurses_pass2
-	step_do compile_sed_pass2
-	step_do compile_psmisc
-	step_do compile_gettext_pass2
-	step_do compile_bison_pass2
-	step_do compile_grep_pass2
-	step_do compile_bash_pass2
-	step_do compile_libtool
-	step_do compile_gdbm
-	step_do compile_gperf
-	step_do compile_expat
-	step_do compile_inetutils
-	step_do compile_less
-	step_do compile_perl_pass2
-	step_do compile_xml_parser
-	step_do compile_intltool
-	step_do compile_autoconf
-	step_do compile_automake
-	step_do compile_openssl
-	step_do compile_kmod
-	step_do compile_libelf
-	step_do compile_libffi
-	step_do compile_python_pass2
-	step_do compile_flit_core
-	step_do compile_wheel
-	step_do compile_setuptools
-	step_do compile_ninja
-	step_do compile_meson
-	step_do compile_coreutils_pass2
-	step_do compile_check
-	step_do compile_diffutils_pass2
-	step_do compile_gawk_pass2
-	step_do compile_findutils_pass2
-	step_do compile_groff
-	step_do compile_grub
-	step_do compile_gzip_pass2
-	step_do compile_iproute2
-	step_do compile_kbd
-	step_do compile_libpipeline
-	step_do compile_make_pass2
-	step_do compile_patch_pass2
-	step_do compile_tar_pass2
-	step_do compile_texinfo_pass2
-	step_do compile_vim
-	step_do compile_markupsafe
-	step_do compile_jinja2
-	step_do compile_udev
-	step_do compile_man_db
-	step_do compile_procps_ng
-	step_do compile_util_linux_pass2
-	step_do compile_e2fsprogs
-	step_do compile_sysklogd
-	step_do compile_sysvinit
-	[ "${LFS_STRIP_BINARIES:-0}" != "0" ] && strip_binaries || pinfo "Stripping binaries skipped"
-	step_do clean_basic_soft
-	step_id_pop
-}
-
-function	system_config()
-{
-	step_id_push "LFS_SYSTEM_CONFIG"
-	step_do lfs_boot_script
-	step_do configure_devices
-	step_do configure_network '"enp0s3" '192.168.1.{190,254,255}' "24"'
-	step_do configure_dns
-	step_do chroot_line '"echo '${LFS_HOSTNAME}'" /etc/hostname 1'
-	step_do configure_sysvinit
-	step_do configure_clock
-	step_do configure_console
-	step_do configure_rc_site
-	step_do configure_locale
-	step_do configure_inputrc
-	step_do configure_shells
-	step_id_pop
-}
-
-function	make_system_bootable()
-{
-	step_id_push "LFS_MAKE_SYSTEM_BOOTABLE"
-	step_do configure_fstab
-	step_do compile_linux
-	step_do configure_grub
-	step_do finish_touch
-	step_id_pop
-}
-
-function	do_lfs()
-{
-	step_id_push "LFS"
-	step_do prepare
-	save_last_step
-	step_do cross_toolchain
-	save_last_step
-	step_do temp_tool
-	save_last_step
-	step_do chroot_additional_tool
-	save_last_step
-	step_do basic_system_soft
-	save_last_step
-	step_do system_config
-	save_last_step
-	step_do make_system_bootable
-	save_last_step
-	step_do backup_lfs 'bootable'
-	step_id_pop
-}
+init
 
 # Main
-set_sbu
-get_summary
-do_lfs
+# do_lfs
+# do_blfs
 
 # Testing Zone
 
+# mount_lfs
+# create_virtualfs
 update_pack_meta
 
 exit ${?}
