@@ -5,6 +5,7 @@
 SBU
 
 # execution log
+log/
 *.log
 
 # File reference step
@@ -12,7 +13,7 @@ step
 !src/step
 
 # backup
-lfs-12.1*
+lfs-*
 
 # package_meta
 package_meta*

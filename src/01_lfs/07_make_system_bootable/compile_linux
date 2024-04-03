@@ -71,7 +71,8 @@ function	compile_linux()
 
 	unset KERNEL_CONFIG
 
-	_tar -xf ${src_file} -C /usr/src
+	_tar -xf ${src_file} -C ${LFS}/usr/src
+	_mv ${LFS}/usr/src/${package_tar_folder} ${LFS}/usr/src/kernel-${package_version}
 
 	package_clean
 }

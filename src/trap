@@ -1,19 +1,5 @@
 #!/bin/bash
 
-function	save_last_step()
-{
-	for step in "${!STEP[@]}"; do
-		if ! [[ "${step}" =~ ^STEP_ ]]; then
-			local	cur_step="$(step_get_var "${step}")"
-			if [ ${STEP[${step}]} -gt ${cur_step} ]; then
-				pinfo "Saving last step for ${step} (${cur_step} -> ${STEP[${step}]})"
-				step_set_var "${step}" "${STEP[${step}]}"
-			fi
-		fi
-	done
-}
-
-
 function	trap_exit()
 {
 	LAST_RETURN_CODE=${LAST_RETURN_CODE:-${?}}
@@ -24,7 +10,6 @@ function	trap_exit()
 	else
 		pfail "An error occured, error code: ${LAST_RETURN_CODE}"
 	fi
-	save_last_step
 	daemon_kill
 	unset ${!LFS_@} ${!DIR_@} ${!LOG_@} ${!SBU_@} ${!GET_PACK_@} ${!PACKAGE_@} \
 		${!CURRENT_PACKAGE_@} ${!DAEMON_@} ${!S_@} \

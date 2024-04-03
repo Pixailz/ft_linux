@@ -137,13 +137,14 @@ function	get_file()
 {
 	local	file=${PACKAGE_FILE[${1}]}
 	local	link=${PACKAGE_LINK[${1}]}
-	local	fmt_hdr="(${PACKAGE_ID}/${PACKAGE_NB})"
+	local	fmt_hdr="(${GRE}${PACKAGE_ID}${RST}/${RED}${PACKAGE_NB}${RST})"
+
 
 	dset "${fmt_hdr}: Getting ${pack}"
 	_printf_ts
 	praw " ${HDR_INFO} Getting ${pack}... "
 	if [ ! -f "${DIR_DOWNLOAD_CACHE}/${file}" ]; then
-		dset "${fmt_hdr}: Downlading ${packe}"
+		dset "${fmt_hdr}: Downlading ${pack}"
 		praw "${RED}Downloading${RST}... "
 		curl --progress-bar --location \
 			"${link}" \
@@ -157,7 +158,7 @@ function	get_file()
 	else
 		praw "${RED}Copying${RST}... "
 		dset "${fmt_hdr}: Copying ${pack} to ${LFS_SOURCES_DIR}"
-		_cp -v "${DIR_DOWNLOAD_CACHE}/${file}" "${LFS_SOURCES_DIR}/${file}"
+		_cp "${DIR_DOWNLOAD_CACHE}/${file}" "${LFS_SOURCES_DIR}/${file}"
 	fi
 	dset "${fmt_hdr}: Done ${pack}"
 	praw "Done\n"
@@ -181,7 +182,7 @@ function	get_package_tar_folder()
 function	update_pack_meta()
 {
 	declare -g PACKAGE_NB=${#PACKAGE[@]}
-	declare -g PACKAGE_ID=0
+	declare -g PACKAGE_ID
 
 	dset "(0/${PACKAGE_NB}) Updating meta package"
 

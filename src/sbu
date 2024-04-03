@@ -12,12 +12,19 @@ function	set_sbu()
 		echo "${sbu}" >> ${DIR_BASE}/SBU
 		added=1
 	fi
+	[ ! -f ${DIR_BASE}/SBU ] && : > ${DIR_BASE}/SBU
+
 	sbu+=($(cat ${DIR_BASE}/SBU))
 
 	for ((i = 0; i < ${#sbu[@]}; i++)); do
 		total=$((total + sbu[i]))
 	done
-	export SBU=$((${total} / ${#sbu[@]}))
+
+	if [ "${#sbu[@]}" == "0" ]; then
+		export SBU="0"
+	else
+		export SBU=$((${total} / ${#sbu[@]}))
+	fi
 
 	str="${RED}1SBU${RST}:${GRE}${SBU}${RST}s"
 	if [ "${added}" == "0" ]; then

@@ -7,6 +7,7 @@ function	step_get_var()
 
 function	step_set_var()
 {
+	pinfo "Saving last step for ${1} ($((${2} - 1)) -> ${2})"
 	sed -i "s/^STEP_${1}=.*$/STEP_${1}=${2}/g" "${STEP_FILE}"
 }
 
@@ -42,11 +43,17 @@ function	step_setup_file()
 function	step_do()
 {
 	local	id="${LIFOVAR_STEP_ID[@]: -1}"
-	local	step_1=$((${STEP[STEP_${id}]} + 1))
+	local	step_1="$((${STEP[STEP_${id}]} + 1))"
+	local	fmt="${BOL}${CYA}${id}${RST}${RST_BOL} "
+	fmt+="(${GRE}${step_1}${RST}/${RED}${LFS_MAX_STEP}${RST}): "
+	fmt+="${BOL}${YEL}${1}${RST}${RST_BOL}"
+
+	dset "${fmt}"
 
 	if [ "${STEP[STEP_${id}]}" -ge "${STEP[${id}]}" ]; then
-		${1} ${@:2}
-		STEP[${id}]="${step_1}"
+		${1} ${@:2} | tee "${LOG_FILE_DIR}/${1}.log"
+		STEP["${id}"]="${step_1}"
+		step_set_var "${id}" "${step_1}"
 	fi
-	STEP[STEP_${id}]=${step_1}
+	STEP["STEP_${id}"]="${step_1}"
 }

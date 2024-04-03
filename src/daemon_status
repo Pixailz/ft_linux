@@ -3,30 +3,44 @@
 function	daemon_print_status()
 {
 	local	beg="${CUR_SAV}${CSI}${S_LINES};1H${CLR_LINE}"
-	local	end="${CUR_RES}"
-	echo -ne "${beg}$(cat ${DAEMON_OUT})${end}" > "${tty}"
+	local	end="${POS_DATE}${RED}${BOL}$(date +'%T')${RST}${RST_BOL}${CUR_RES}"
+
+	echo -ne "${beg}$(cat ${DAEMON_OUT})${dot}${end}" > "${tty}"
 }
 
 function	daemon_sigint()
 {
-	sigint_handler
+	exit ${?}
 }
 
 function	daemon_status()
 {
 	declare -g	tty="${1}"
+	declare -g	index_dot=0
+	declare -g	dot="."
 
+	set +x
 	trap daemon_sigint SIGINT
 
 	while true; do
 		daemon_print_status
 		sleep ${DAEMON_REFRESH_RATE}
+		((index_dot++)) || true
+		if [ ${index_dot} -gt 75 ]; then
+			case ${dot} in
+				".")	dot=".."	;;
+				"..")	dot="..."	;;
+				"...")	dot="."		;;
+			esac
+			index_dot=0
+		fi
 	done
 }
 
 function	update_screen_size()
 {
 	read -r S_LINES S_COLUMNS < <(stty size)
+	POS_DATE="${CSI}${S_LINES};$((S_COLUMNS - 7))H"
 	export S_LINES S_COLUMNS
 }
 
@@ -38,25 +52,23 @@ function	set_scrolling_region()
 
 function	daemon_init()
 {
-	declare -gx DAEMON_OUT=$(mktemp /tmp/.daemon_out.XXXXXXXXXX)
-	declare -x DAEMON_MAX=0
-	declare -x DAEMON_REFRESH_RATE=0.02
-
 	echo -e "${VID_ENA}${CUR_DIS}"
 	set_scrolling_region
 
-	dset "INIT"
+	dset "${BOL}${GRE}INIT${RST}${RST_BOL}"
 
 	daemon_status "$(tty)" &
 
 	DAEMON_PID="${!}"
+	ppass "Daemon launched with PID: ${DAEMON_PID}"
 }
 
 function	daemon_kill()
 {
 	echo -e "${CSI}r${CUR_ENA}${VID_DIS}"
-	# echo -e "${CSI}r${CUR_ENA}"
-	# kill -s SIGINT ${DAEMON_PID}
+	kill -s SIGINT ${DAEMON_PID} &>/dev/null || true
+	wait ${DAEMON_PID} || true
+	rm -rf "${DAEMON_OUT}"
 }
 
 function	dset()

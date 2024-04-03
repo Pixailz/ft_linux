@@ -31,11 +31,12 @@ declare -x	GET_PACK_OUT="${DIR_BASE}/package_meta"
 declare -x	GET_PACK_OUT_TMP="${GET_PACK_DIR_BASE}/package_meta"
 declare -xa GET_PACK_META=("link" "version" "file" "tar_folder")
 declare -x	LOG_FILE_KEEP=1
-declare -x	LOG_FILE="${DIR_BASE}/exec.log"
 declare -x	SBU_FILE="${DIR_BASE}/SBU"
 declare -x	SBU_EST_SIZE="30"
-declare -xA	STEP
+declare -gA	STEP
 declare -x	STEP_FILE="${DIR_BASE}/step"
+declare -x	LOG_FILE_DIR="${DIR_BASE}/log"
+declare -x	LOG_FILE_EXEC="${DIR_BASE}/exec.log"
 
 ## LIFOVAR
 declare -xa	LIFOVAR_LOG_LVL=(0)
@@ -72,6 +73,13 @@ declare -x LFS_CODENAME="brda-sil"
 declare -x LFS_VERSION="12.1"
 declare -x LFS_DO_TEST=0
 declare -x LFS_SYSTEMD=1
+declare -x LFS_MAX_STEP=0
+declare -x LFS_CUR_STEP=0
+declare -x LFS_GIT_VERSION="$(git rev-parse HEAD 2>/dev/null | head -c7)"
+
+declare -x DAEMON_OUT=$(mktemp /tmp/.daemon_out.XXXXXXXXXX)
+declare -x DAEMON_MAX=0
+declare -x DAEMON_REFRESH_RATE=0.02
 
 # source needed files
 source ${DIR_BASE}/src/include
@@ -87,10 +95,11 @@ PATH=${LFS}/tools/bin:${PATH}
 CONFIG_SITE=/usr/share/config.site
 export MAKEFLAGS="-j${LFS_CORES}"
 
-[ "${LOG_FILE_KEEP:-0}" == "0" ] && : > ${LOG_FILE}
+[ "${LOG_FILE_KEEP:-0}" == "0" ] && : > ${LOG_FILE_EXEC}
 
 function	init()
 {
+	_mkdir "${LOG_FILE_DIR}"
 	step_setup_file
 	daemon_init
 
@@ -102,13 +111,13 @@ function	init()
 init
 
 # Main
-# do_lfs
+do_lfs
 # do_blfs
 
 # Testing Zone
 
 # mount_lfs
 # create_virtualfs
-update_pack_meta
+# update_pack_meta
 
 exit ${?}

@@ -9,6 +9,7 @@ function	download_sources()
 	_mkdir "${LFS_SOURCES_DIR}"
 	_mkdir "${DIR_DOWNLOAD_CACHE}"
 	chmod -v a+wt "${LFS_SOURCES_DIR}"
+	PACKAGE_ID=1
 	for pack in ${PACKAGE[@]}; do
 		get_file "${pack}"
 		((PACKAGE_ID++)) || true

@@ -8,21 +8,32 @@ function	clean_lfs()
 	mountpoint -q ${LFS}/dev/shm && umount -v ${LFS}/dev/shm || true
 	umount -v ${LFS}/dev/pts || true
 	umount -v ${LFS}/{sys,proc,run,dev} || true
+	find ${LFS}/sources/* -type d -exec rm -rf {} \; || true
 }
 
 function	backup_lfs()
 {
-	local	desc="${1:-}"
-	local	file="lfs-${LFS_VERSION}-${LFS_CODENAME}-${desc}-$(date +%d%m%Y%H%M%S).tar.xz"
+	local	file_desc="${1:-}"
+	local	file="lfs-${LFS_VERSION}-${LFS_CODENAME}-${PACKAGE_VERSION[linux]}"
+	[ "${LFS_GIT_VERSION}" != "" ] && file+="-${LFS_GIT_VERSION}"
+	[ "${file_desc}" != "" ] && file+="-${file_desc}"
+	file+="-$(date +%d%m%Y%H%M%S).tar.gz"
 
 	clean_lfs
 	_pushd ${LFS}
 	pinfo "Creating backup ${file}"
-	_tar -cJpf ${DIR_BASE}/${file} .
+	dset "${BOL}${CYA}Creating backup ${GRE}${file}${RST}${RST_BOL}"
+	# GZIP MAXED
+	env GZIP=-9 tar -czpf "${DIR_BASE}/${file}" .
+	# BZIP2
+	# tar -cjpf "${DIR_BASE}/${file}" .
+	# XZ ...
+	# tar -czpf "${DIR_BASE}/${file}" .
 	ppass "Backup done"
+
 	mount_lfs
 	create_virtualfs
-	_popd ${LFS}
+	_popd
 }
 
 function	restore()

@@ -25,5 +25,6 @@ function	get_summary_lfs()
 
 function	get_summary()
 {
+	dset "${BOL}${CYA}Summary${RST}${RST_BOL}"
 	get_summary_lfs
 }

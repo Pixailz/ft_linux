@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function	_printf_ts()
-{ printf "[${YEL}%s${RST}]" "$(date '+%d/%M/%Y %T')" >> ${LOG_FILE}; }
+{ printf "[${YEL}%s${RST}]" "$(date '+%d/%M/%Y %T')" >> ${LOG_FILE_EXEC}; }
 
 function	_printf()
 {
@@ -15,9 +15,9 @@ function	_printf()
 	fi
 	if [ "${3:-}" == "" ]; then
 		_printf_ts
-		printf "%s%b %b\n" "${pad_str}" "${1}" "${2}" | tee -a ${LOG_FILE}
+		printf "%s%b %b\n" "${pad_str}" "${1}" "${2}" | tee -a ${LOG_FILE_EXEC}
 	else
-		printf "%b" "${2}" | tee -a ${LOG_FILE}
+		printf "%b" "${2}" | tee -a ${LOG_FILE_EXEC}
 	fi
 }
 
