@@ -173,7 +173,7 @@ function	get_package_tar_folder()
 	local	fmt=""
 
 	_ref_tar_folder="${first_line%%/*}"
-	if [ "${first_line%%/*}" == "" ]; then
+	if [ "${first_line%%/*}" != "" ]; then
 		praw "(Tar folder found: ${BOL}${PUR}${_ref_tar_folder}${fmt}${RST}${RST_BOL}) "
 	fi
 	unset -n _ref_tar_folder
