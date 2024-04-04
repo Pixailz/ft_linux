@@ -48,6 +48,8 @@ the script will update the [package_meta_in](./package_meta_in) file
    1. Register check/test that don't pass
 1. Split package compilation in three part: building, testing, installing
 1. Finish systemd part, and do sysvinit, or do it will doing systemd
+1. Make a wiki on how to use this script, at the end because it's not finished
+   yet and can change
 
 ## IDEAS
 1. Add support for more editor
