@@ -18,6 +18,7 @@ set -o pipefail
 declare -x	PATH_BASE=$(realpath ${BASH_SOURCE[0]})
 declare -x	DIR_BASE=${PATH_BASE%/*}
 declare -x	DIR_SRC="${DIR_BASE}/src"
+declare -x	DIR_RSC="${DIR_BASE}/rsc"
 declare -x	DIR_LFS="${DIR_SRC}/01_lfs"
 declare -x	DIR_BLFS="${DIR_SRC}/02_blfs"
 declare -x	DIR_DOWNLOAD_CACHE="${DIR_BASE}/.sources"
@@ -41,6 +42,7 @@ declare -x	LOG_FILE_EXEC="${DIR_BASE}/exec.log"
 ## LIFOVAR
 declare -xa	LIFOVAR_LOG_LVL=(0)
 declare -xa	LIFOVAR_STEP_ID=(0)
+declare -xa	LIFOVAR_STEP_ID_MAX=(0)
 
 ## LFS
 declare -x LFS="/mnt/lfs"
@@ -63,7 +65,7 @@ declare -x LFS_CLOCK_UTC=0
 declare -x LFS_CLOCKPARAMS=""
 declare -x LFS_TZ="Europe/Paris"
 declare -x LFS_CONSOLE_UNICODE=1
-declare -x LFS_CONSOLE_FONT="Lat2-Terminus16"
+declare -x LFS_CONSOLE_FONT="ter-v16b"
 declare -x LFS_RC_SITE_DISTRO="Linux From Scratch"
 declare -x LFS_RC_SITE_DISTRO_CONTACT="lfs-dev@lists.linuxfromscratch.org"
 declare -x LFS_RC_SITE_DISTRO_MINI="LFS"
@@ -77,9 +79,10 @@ declare -x LFS_MAX_STEP=0
 declare -x LFS_CUR_STEP=0
 declare -x LFS_GIT_VERSION="$(git rev-parse HEAD 2>/dev/null | head -c7)"
 
+declare -x SCREEN_SIZE=$(mktemp /tmp/.screen_size.XXXXXXXXXX)
 declare -x DAEMON_OUT=$(mktemp /tmp/.daemon_out.XXXXXXXXXX)
 declare -x DAEMON_MAX=0
-declare -x DAEMON_REFRESH_RATE=0.02
+declare -x DAEMON_REFRESH_RATE=0.05
 
 # source needed files
 source ${DIR_BASE}/src/include
@@ -119,5 +122,6 @@ do_lfs
 # mount_lfs
 # create_virtualfs
 # update_pack_meta
+# backup_lfs
 
 exit ${?}

@@ -90,8 +90,10 @@ declare -xa PACKAGE=(
 	# STATIC
 	"coreutils"
 	"lfs-bootscripts"
-	"udev-lfs"
 	"systemd-man-pages"
+	"udev-lfs"
+	"terminus"
+
 	# PATCH
 	"patch_bash-upstream"
 	"patch_bzip2-documentation"
@@ -104,12 +106,8 @@ declare -xa PACKAGE=(
 )
 
 # declare -xa PACKAGE=(
-# 	"linux"
-# 	# "util-linux"
-# 	# "kbd"
-# 	# "kmod"
-# 	# "libcap"
-# 	"man-pages"
+# 	"terminus"
+# 	"util-linux"
 # )
 
 # Package repository
@@ -193,7 +191,7 @@ declare -xA PACKAGE_REPO=(
 	["tcl-doc"]="fossies_search,https://fossies.org/linux/misc/tcl-"
 	["texinfo"]="apache,https://ftp.gnu.org/gnu/texinfo"
 	["tzdata"]="apache,https://data.iana.org/time-zones/releases"
-	# ["util-linux"]="apache_no_sort_dir,https://mirrors.edge.kernel.org/pub/linux/utils/util-linux"
+	["util-linux"]="apache_no_sort_dir,https://mirrors.edge.kernel.org/pub/linux/utils/util-linux"
 	["vim"]="github_tag,vim/vim"
 	["wheel"]="github_tag,pypa/wheel"
 	["xml-parser"]="website,https://metacpan.org/dist/XML-Parser"
@@ -202,12 +200,12 @@ declare -xA PACKAGE_REPO=(
 	["zstd"]="github,facebook/zstd"
 
 	# STATIC
-	# ["coreutils"]="apache,https://ftp.gnu.org/gnu/coreutils"
 	["coreutils"]="no_scrap,https://ftp.gnu.org/gnu/coreutils/coreutils-9.4.tar.gz"
 	["util-linux"]="no_scrap,https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.39/util-linux-2.39.3.tar.gz"
 	["lfs-bootscripts"]="no_scrap,https://www.linuxfromscratch.org/lfs/downloads/12.1/lfs-bootscripts-20230728.tar.xz"
 	["systemd-man-pages"]="no_scrap,https://anduin.linuxfromscratch.org/LFS/systemd-man-pages-255.tar.xz"
 	["udev-lfs"]="no_scrap,https://anduin.linuxfromscratch.org/LFS/udev-lfs-20230818.tar.xz"
+	["terminus"]="no_scrap,https://freefr.dl.sourceforge.net/project/terminus-font/terminus-font-4.49/terminus-font-4.49.1.tar.gz"
 
 	# PATCH
 	["patch_bash-upstream"]="no_scrap,https://www.linuxfromscratch.org/patches/lfs/12.1/bash-5.2.21-upstream_fixes-1.patch"
@@ -232,7 +230,6 @@ declare -xA PACKAGE_PREFIX=(
 	["bison"]="bison-"
 	["bzip2"]="bzip2-"
 	["check"]="check-"
-	["coreutils"]="coreutils-"
 	["dbus"]="dbus-"
 	["dejagnu"]="dejagnu-"
 	["diffutils"]="diffutils-"
@@ -310,9 +307,11 @@ declare -xA PACKAGE_PREFIX=(
 	["zstd"]="zstd-"
 
 	# STATIC
+	["coreutils"]="coreutils-"
 	["lfs-bootscripts"]="lfs-bootscripts-"
 	["systemd-man-pages"]="systemd-man-pages-"
 	["udev-lfs"]="udev-lfs-"
+	["terminus"]="terminus-font-"
 
 	# PATCH
 	["patch_bash-upstream"]=""
@@ -337,7 +336,6 @@ declare -xA PACKAGE_SUFFIX=(
 	["bison"]=".tar.gz"
 	["bzip2"]=".tar.gz"
 	["check"]=".tar.gz"
-	["coreutils"]=".tar.gz"
 	["dbus"]=".tar.xz"
 	["dejagnu"]=".tar.gz"
 	["diffutils"]=".tar.xz"
@@ -416,9 +414,11 @@ declare -xA PACKAGE_SUFFIX=(
 	["zstd"]=".tar.gz"
 
 	# STATIC
+	["coreutils"]=".tar.gz"
 	["lfs-bootscripts"]=".tar.xz"
 	["systemd-man-pages"]=".tar.xz"
 	["udev-lfs"]=".tar.xz"
+	["terminus"]=".tar.gz"
 
 	# PATCH
 	["patch_bash-upstream"]=".patch"

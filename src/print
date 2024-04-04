@@ -37,20 +37,3 @@ function	praw()
 {
 	_printf "" "${@}" "1"
 }
-
-function	ptitle()
-{
-	local	est_sbu="$(calc_sbu "${1}" "${2}")"
-	local	hdr="${HDR_TITLE}"
-	local	est_sbu_col="${GRE}"
-
-	if [ "${est_sbu}" == "0" ]; then
-		est_sbu="No Compilation"
-		est_sbu_col="${RED}"
-	else
-		est_sbu="SBU~:${est_sbu} ($(get_sbu ${est_sbu}))"
-	fi
-	est_sbu="$(printf "%-23s" "${est_sbu}")"
-	est_sbu="${est_sbu_col}${est_sbu}${RST}"
-	_printf "${hdr}" "${est_sbu} ${@:3}"
-}

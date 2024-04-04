@@ -10,5 +10,6 @@ function	configure_clock_sysvinit()
 	chroot_line "# such as machine hardware clock type for Alphas." /etc/sysconfig/clock
 	chroot_line "CLOCKPARAMS=${LFS_CLOCKPARAMS}" /etc/sysconfig/clock
 	chroot_line "" /etc/sysconfig/clock
+	chroot_line "# End default /etc/sysconfig/clock" /etc/sysconfig/clock
 	do_chroot cp -v --remove-destination /usr/share/zoneinfo/${LFS_TZ} /etc/localtime
 }

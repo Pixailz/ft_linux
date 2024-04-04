@@ -12,9 +12,58 @@ function	essential_file()
 	chroot_line "root:x:0:0:root:/root:/bin/bash" /etc/passwd 1
 	chroot_line "bin:x:1:1:bin:/dev/null:/usr/bin/false" /etc/passwd
 	chroot_line "daemon:x:6:6:Daemon User:/dev/null:/usr/bin/false" /etc/passwd
+	chroot_line "lp:x:9:9:Printing Daemon:/dev/null:/usr/bin/false" /etc/passwd
+	chroot_line "atd:x:17:17:at Daemon:/var/spool/atjobs:/usr/bin/false" /etc/passwd
 	chroot_line "messagebus:x:18:18:D-Bus Message Daemon User:/run/dbus:/usr/bin/false" /etc/passwd
+	chroot_line "named:x:20:20:Named User:/dev/null:/usr/bin/false" /etc/passwd
+	chroot_line "gdm:x:21:21:GDM User:/var/lib/gdm:/usr/bin/false" /etc/passwd
+	chroot_line "fcron:x:22:22:Fcron User:/dev/null:/usr/bin/false" /etc/passwd
+	chroot_line "systemd-journal:x:23:23:systemd Journal System:/:/usr/bin/false" /etc/passwd
+	chroot_line "apache:x:25:25:Apache User:/srv/httpd:/usr/bin/false" /etc/passwd
+	chroot_line "smmsp:x:26:26:smmsp User:/var/spool/clientmqueue:/usr/bin/false" /etc/passwd
+	chroot_line "polkitd:x:27:27:PolicyKit Daemon User:/var/lib/polkit:/usr/bin/false" /etc/passwd
+	chroot_line "rpc:x:28:28:RPC Daemon User:/var/lib/nfs:/usr/bin/false" /etc/passwd
+	chroot_line "exim:x:31:31:Exim Daemon User:/var/spool/exim:/usr/bin/false" /etc/passwd
+	chroot_line "postfix:x:32:32:Postfix Daemon User:/var/spool/postfix:/usr/bin/false" /etc/passwd
+	chroot_line "sendmail:x:34:34:Sendmail Daemon User:/dev/null:/usr/bin/false" /etc/passwd
+	chroot_line "vmailman:x:35:35:Virtual Mailman:/var/spool/vmailman:/usr/bin/false" /etc/passwd
+	chroot_line "news:x:36:36:News Daemon User:/var/spool/news:/usr/bin/false" /etc/passwd
+	chroot_line "kdm:x:37:37:KDM Display Manager:/var/lib/kdm:/usr/bin/false" /etc/passwd
+	chroot_line "fetchmail:x:38:38:Fetchmail Daemon User:/dev/null:/usr/bin/false" /etc/passwd
+	chroot_line "mysql:x:40:40:MySQL Daemon User:/var/lib/mysql:/usr/bin/false" /etc/passwd
+	chroot_line "postgres:x:41:41:PostgreSQL Server:/var/lib/postgres:/usr/bin/false" /etc/passwd
+	chroot_line "dovecot:x:42:42:Dovecot Secure IMAP Server:/dev/null:/usr/bin/false" /etc/passwd
+	chroot_line "dovenull:x:43:43:Dovecot Login User:/dev/null:/usr/bin/false" /etc/passwd
+	chroot_line "ftp:x:45:45:FTP Daemon User:/srv/ftp:/usr/bin/false" /etc/passwd
+	chroot_line "proftpd:x:46:46:ProFTPD Daemon User:/var/lib/proftpd:/usr/bin/false" /etc/passwd
+	chroot_line "vsftpd:x:47:47:vsftpd Daemon User:/var/lib/vsftpd:/usr/bin/false" /etc/passwd
+	chroot_line "rsyncd:x:48:48:rsync Daemon User:/var/lib/rsync:/usr/bin/false" /etc/passwd
+	chroot_line "sshd:x:50:50:SSH Daemon User:/var/empty:/usr/bin/false" /etc/passwd
+	chroot_line "stunnel:x:51:51:Stunnel Daemon User:/dev/null:/usr/bin/false" /etc/passwd
+	chroot_line "dhcpd:x:52:52:DHCP Daemon User:/var/lib/dhcp:/usr/bin/false" /etc/passwd
+	chroot_line "svn:x:56:56:Subversion Server:/srv/svn:/usr/bin/false" /etc/passwd
+	chroot_line "git:x:58:58:Git Version Control:/srv/git:/usr/bin/false" /etc/passwd
+	chroot_line "games:x:60:60:Games Account:/var/games:/usr/bin/false" /etc/passwd
+	chroot_line "sddm:x:64:64:Simple Desktop Display Manager:/var/lib/sddm:/usr/bin/false" /etc/passwd
+	chroot_line "lightdm:x:65:65:LightDM Display Manager:/var/lib/lightdm:/usr/bin/false" /etc/passwd
+	chroot_line "colord:x:71:71:Color Management Daemon User:/var/lib/colord:/usr/bin/false" /etc/passwd
+	chroot_line "systemd-journal-gateway:x:73:73:systemd Journal Gateway:/:/usr/bin/false" /etc/passwd
+	chroot_line "systemd-journal-remote:x:74:74:systemd Journal Remote:/:/usr/bin/false" /etc/passwd
+	chroot_line "systemd-journal-upload:x:75:75:systemd Journal Upload:/:/usr/bin/false" /etc/passwd
+	chroot_line "systemd-network:x:76:76:systemd Network Management:/:/usr/bin/false" /etc/passwd
+	chroot_line "systemd-resolve:x:77:77:systemd Resolver:/:/usr/bin/false" /etc/passwd
+	chroot_line "systemd-timesync:x:78:78:systemd Time Synchronization:/:/usr/bin/false" /etc/passwd
+	chroot_line "ssystemd-coredump:x:79:79:systemd Core Dumper:/:/usr/bin/false" /etc/passwd
 	chroot_line "uuidd:x:80:80:UUID Generation Daemon User:/dev/null:/usr/bin/false" /etc/passwd
+	chroot_line "systemd-oom:x:81:81:systemd Out Of Memory Daemon:/:/usr/bin/false" /etc/passwd
+	chroot_line "ldap:x:83:83:OpenLDAP User:/var/lib/openldap:/usr/bin/false" /etc/passwd
+	chroot_line "avahi:x:84:84:Avahi Daemon User:/var/run/avahi-daemon:/usr/bin/false" /etc/passwd
+	chroot_line "avaahi-autoipd:x:85:85:Avahi AutoIP Daemon User:/var/lib/avahi-autoipd:/usr/bin/false" /etc/passwd
+	chroot_line "ntp:x:87:87:Network Time Protocol User:/var/lib/ntp:/usr/bin/false" /etc/passwd
+	chroot_line "unbound:x:88:88:Unbound DNS Resolver:/var/lib/unbound:/usr/bin/false" /etc/passwd
+	chroot_line "anonymous:x:98:98:Anonymous User:/dev/null:/usr/bin/false" /etc/passwd
 	chroot_line "nobody:x:65534:65534:Unprivileged User:/dev/null:/usr/bin/false" /etc/passwd
+
 	# Create /etc/group
 	chroot_line "root:x:0:" /etc/group 1
 	chroot_line "bin:x:1:daemon" /etc/group
@@ -32,21 +81,73 @@ function	essential_file()
 	chroot_line "utmp:x:13:" /etc/group
 	chroot_line "cdrom:x:15:" /etc/group
 	chroot_line "adm:x:16:" /etc/group
+	chroot_line "atd:x:17:" /etc/group
 	chroot_line "messagebus:x:18:" /etc/group
+	chroot_line "lpadmin:x:19:" /etc/group
+	chroot_line "named:x:20:" /etc/group
+	chroot_line "gdm:x:21:" /etc/group
+	chroot_line "fcron:x:22:" /etc/group
+	chroot_line "systemd-journal:x:23:" /etc/group
 	chroot_line "input:x:24:" /etc/group
+	chroot_line "apache:x:25:" /etc/group
+	chroot_line "smmsp:x:26:" /etc/group
+	chroot_line "polkitd:x:27:" /etc/group
+	chroot_line "rpc:x:28:" /etc/group
+	chroot_line "exim:x:31:" /etc/group
+	chroot_line "postfix:x:32:" /etc/group
+	chroot_line "postdrop:x:33:" /etc/group
 	chroot_line "mail:x:34:" /etc/group
+	chroot_line "vmailman:x:35:" /etc/group
+	chroot_line "news:x:36:" /etc/group
+	chroot_line "kdm:x:37:" /etc/group
+	chroot_line "mysql:x:40:" /etc/group
+	chroot_line "postgres:x:41:" /etc/group
+	chroot_line "dovecot:x:42:" /etc/group
+	chroot_line "dovenull:x:43:" /etc/group
+	chroot_line "ftp:x:45:" /etc/group
+	chroot_line "proftpd:x:46:" /etc/group
+	chroot_line "vsftpd:x:47:" /etc/group
+	chroot_line "rsyncd:x:48:" /etc/group
+	chroot_line "sshd:x:50:" /etc/group
+	chroot_line "stunnel:x:51:" /etc/group
+	chroot_line "dhcpd:x:52:" /etc/group
+	chroot_line "svn:x:56:" /etc/group
+	chroot_line "svntest:x:57:" /etc/group
+	chroot_line "git:x:58:" /etc/group
+	chroot_line "games:x:60:" /etc/group
 	chroot_line "kvm:x:61:" /etc/group
+	chroot_line "wireshark:x:62:" /etc/group
+	chroot_line "sddm:x:64:" /etc/group
+	chroot_line "lightdm:x:65:" /etc/group
+	chroot_line "scanner:x:70:" /etc/group
+	chroot_line "colord:x:71:" /etc/group
+	chroot_line "systemd-journal-gateway:x:73:" /etc/group
+	chroot_line "systemd-journal-remote:x:74:" /etc/group
+	chroot_line "systemd-journal-upload:x:75:" /etc/group
+	chroot_line "systemd-network:x:76:" /etc/group
+	chroot_line "systemd-resolve:x:77:" /etc/group
+	chroot_line "systemd-timesync:x:78:" /etc/group
+	chroot_line "systemd-coredump:x:79:" /etc/group
 	chroot_line "uuidd:x:80:" /etc/group
+	chroot_line "systemd-oom:x:81:" /etc/group
+	chroot_line "ldap:x:83:" /etc/group
+	chroot_line "avahi:x:84:" /etc/group
+	chroot_line "avaahi-autoipd:x:85:" /etc/group
+	chroot_line "netdev:x:86:" /etc/group
+	chroot_line "ntp:x:87:" /etc/group
+	chroot_line "unbound:x:88:" /etc/group
+	chroot_line "plugdev:x:90:" /etc/group
 	chroot_line "wheel:x:97:" /etc/group
 	chroot_line "users:x:999:" /etc/group
 	chroot_line "nogroup:x:65534:" /etc/group
-	# Create test user
-	chroot_line "tester:x:101:101::/home/tester:/bin/bash" /etc/passwd
-	chroot_line "tester:x:101:" /etc/group
-	do_chroot install -o tester -d /home/tester
-	# Create log folder
-	do_chroot touch /var/log/{btmp,lastlog,faillog,wtmp}
-	do_chroot chgrp -v utmp /var/log/lastlog
-	do_chroot chmod -v 664 /var/log/lastlog
-	do_chroot chmod -v 600 /var/log/btmp
+
+	# # Create test user
+	# chroot_line "tester:x:101:101::/home/tester:/bin/bash" /etc/passwd
+	# chroot_line "tester:x:101:" /etc/group
+	# do_chroot install -o tester -d /home/tester
+	# # Create log folder
+	# do_chroot touch /var/log/{btmp,lastlog,faillog,wtmp}
+	# do_chroot chgrp -v utmp /var/log/lastlog
+	# do_chroot chmod -v 664 /var/log/lastlog
+	# do_chroot chmod -v 600 /var/log/btmp
 }

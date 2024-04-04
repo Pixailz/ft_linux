@@ -7,10 +7,16 @@ function	log_lvl_pop()
 { lifo_var_pop "LOG_LVL"; }
 
 function	step_id_push()
-{ lifo_var_push "STEP_ID" "${1}"; }
+{
+	lifo_var_push "STEP_ID" "${1}"
+	lifo_var_push "STEP_ID_MAX" "${2}"
+}
 
 function	step_id_pop()
-{ lifo_var_pop "STEP_ID"; }
+{
+	lifo_var_pop "STEP_ID"
+	lifo_var_pop "STEP_ID_MAX"
+}
 
 function	lifo_var_push()
 { declare -n var="LIFOVAR_${1}"; var+=(${2}); unset -n var; }

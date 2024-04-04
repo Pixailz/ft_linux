@@ -20,6 +20,11 @@ function	backup_lfs()
 	file+="-$(date +%d%m%Y%H%M%S).tar.gz"
 
 	clean_lfs
+
+	_cp ${LOG_FILE_EXEC} ${LOG_FILE_DIR}/exec.log
+	env GZIP=-9 tar -czpf "${LFS_SOURCES_DIR}/log.tar.gz" ${LOG_FILE_DIR}
+	_rm ${LOG_FILE_DIR}/exec.log
+
 	_pushd ${LFS}
 	pinfo "Creating backup ${file}"
 	dset "${BOL}${CYA}Creating backup ${GRE}${file}${RST}${RST_BOL}"
@@ -38,5 +43,19 @@ function	backup_lfs()
 
 function	restore()
 {
-	: # TODO
+	local	backup_file="${1}"
+
+	if [ ! -f "${backup_file}" ]; then
+		pfail "Backup file ${backup_file} not found"
+		return
+	fi
+
+	mount_lfs
+	_pushd ${LFS}
+	pinfo "Restoring backup ${backup_file}"
+	dset "Restoring backup ${CYA}${backup_file}${RST}"
+	tar -xpf "${backup_file}"
+	ppass "Restore done"
+	dset "Restoring backup ${GRE}done${RST}"
+	_popd
 }

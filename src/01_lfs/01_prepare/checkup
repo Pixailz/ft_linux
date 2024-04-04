@@ -20,7 +20,7 @@ function	checkup()
 
 	# Check if all good
 	pinfo "Check all good with LFS script"
-	bash ./rsc/version-check.sh
+	bash ${DIR_RSC}/version-check.sh
 
 	if [ $? -ne 0 ]; then
 		pfail "Error: version-check.sh failed"

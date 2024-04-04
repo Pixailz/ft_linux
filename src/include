@@ -157,6 +157,7 @@ source ${DIR_LFS}/06_system_config/configure_rc_site
 source ${DIR_LFS}/06_system_config/configure_locale
 source ${DIR_LFS}/06_system_config/configure_inputrc
 source ${DIR_LFS}/06_system_config/configure_shells
+source ${DIR_LFS}/06_system_config/install_fonts
 
 source ${DIR_LFS}/07_make_system_bootable/configure_fstab
 source ${DIR_LFS}/07_make_system_bootable/compile_linux

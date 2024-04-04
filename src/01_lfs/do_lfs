@@ -2,8 +2,7 @@
 
 function	lfs_01_prepare()
 {
-	step_id_push "LFS_PREPARE"
-	LFS_MAX_STEP=4
+	step_id_push "LFS_PREPARE" 4
 	step_do checkup
 	step_do partition
 	mount_lfs
@@ -15,8 +14,7 @@ function	lfs_01_prepare()
 
 function	lfs_02_cross_toolchain()
 {
-	step_id_push "LFS_CROSS_TOOLCHAIN"
-	LFS_MAX_STEP=5
+	step_id_push "LFS_CROSS_TOOLCHAIN" 5
 	export MAKEFLAGS="-j1"
 	step_do compile_binutils_pass1
 	export MAKEFLAGS="-j${LFS_CORES}"
@@ -31,8 +29,7 @@ function	lfs_02_cross_toolchain()
 
 function	lfs_03_temp_tool()
 {
-	step_id_push "LFS_TEMP_TOOL"
-	LFS_MAX_STEP=17
+	step_id_push "LFS_TEMP_TOOL" 17
 	step_do compile_m4_pass1
 	step_do compile_ncurses_pass1
 	step_do compile_bash_pass1
@@ -55,8 +52,7 @@ function	lfs_03_temp_tool()
 
 function	lfs_04_chroot_additional_tool()
 {
-	step_id_push "LFS_CHROOT_ADDITIONAL_TOOL"
-	LFS_MAX_STEP=10
+	step_id_push "LFS_CHROOT_ADDITIONAL_TOOL" 10
 	step_do change_ownership
 	step_do create_virtualfs
 	step_do create_full_fhs
@@ -72,8 +68,9 @@ function	lfs_04_chroot_additional_tool()
 
 function	lfs_05_basic_system_soft()
 {
-	step_id_push "LFS_BASIC_SYSTEM_SOFT"
-	[ "${LFS_SYSTEMD:-0}" == "0" ] && LFS_MAX_STEP=80 || LFS_MAX_STEP=79
+	local	max_step=80
+	[ "${LFS_SYSTEMD:-0}" == "0" ] || max_step=79
+	step_id_push "LFS_BASIC_SYSTEM_SOFT" ${max_step}
 	step_do compile_man_pages
 	step_do compile_iana_etc
 	step_do compile_glibc_pass2
@@ -167,12 +164,12 @@ function	lfs_05_basic_system_soft()
 
 function	lfs_06_system_config_systemd()
 {
-	step_id_push "LFS_SYSTEM_CONFIG_SYSTEMD"
-	LFS_MAX_STEP=8
+	step_id_push "LFS_SYSTEM_CONFIG_SYSTEMD" 9
 	step_do configure_network_systemd
 	step_do configure_dns
 	step_do chroot_line "${LFS_HOSTNAME}" /etc/hostname 1
 	step_do configure_clock_systemd
+	step_do install_fonts
 	step_do configure_console_systemd
 	step_do configure_locale
 	step_do configure_inputrc
@@ -182,8 +179,7 @@ function	lfs_06_system_config_systemd()
 
 function	lfs_06_system_config_sysvinit()
 {
-	step_id_push "LFS_SYSTEM_CONFIG_SYSVINIT"
-	LFS_MAX_STEP=12
+	step_id_push "LFS_SYSTEM_CONFIG_SYSVINIT" 13
 	step_do lfs_boot_script
 	step_do configure_devices
 	step_do configure_network_sysvinit
@@ -191,6 +187,7 @@ function	lfs_06_system_config_sysvinit()
 	step_do chroot_line "${LFS_HOSTNAME}" /etc/hostname 1
 	step_do configure_sysvinit
 	step_do configure_clock_sysvinit
+	step_do install_fonts
 	step_do configure_console_sysvinit
 	step_do configure_rc_site
 	step_do configure_locale
@@ -202,27 +199,26 @@ function	lfs_06_system_config_sysvinit()
 function	lfs_06_system_config()
 {
 	if [ "${LFS_SYSTEMD:-0}" == "0" ]; then
-		step_do lfs_06_system_config_sysvinit
+		lfs_06_system_config_sysvinit
 	else
-		step_do lfs_06_system_config_systemd
+		lfs_06_system_config_systemd
 	fi
 }
 
 function	lfs_07_make_system_bootable()
 {
-	step_id_push "LFS_MAKE_SYSTEM_BOOTABLE"
-	LFS_MAX_STEP=4
+	step_id_push "LFS_MAKE_SYSTEM_BOOTABLE" 5
 	step_do configure_fstab
 	step_do compile_linux
 	step_do configure_grub
-	clean_lfs
+	step_do clean_lfs
 	step_do finish_touch
 	step_id_pop
 }
 
 function	do_lfs()
 {
-	step_id_push "LFS"
+	step_id_push "LFS" 8
 	step_do lfs_01_prepare
 	step_do lfs_02_cross_toolchain
 	step_do lfs_03_temp_tool

@@ -21,12 +21,13 @@ function	daemon_status()
 
 	set +x
 	trap daemon_sigint SIGINT
+	trap get_screen_size WINCH
 
 	while true; do
 		daemon_print_status
 		sleep ${DAEMON_REFRESH_RATE}
 		((index_dot++)) || true
-		if [ ${index_dot} -gt 75 ]; then
+		if [ ${index_dot} -gt 10 ]; then
 			case ${dot} in
 				".")	dot=".."	;;
 				"..")	dot="..."	;;
@@ -37,16 +38,22 @@ function	daemon_status()
 	done
 }
 
+function	get_screen_size()
+{
+	export S_LINES=$(cut -d' ' -f1 < ${SCREEN_SIZE})
+	export S_COLUMNS=$(cut -d' ' -f2 < ${SCREEN_SIZE})
+	POS_DATE="${CSI}${S_LINES};$((S_COLUMNS - 7))H"
+}
+
 function	update_screen_size()
 {
-	read -r S_LINES S_COLUMNS < <(stty size)
-	POS_DATE="${CSI}${S_LINES};$((S_COLUMNS - 7))H"
-	export S_LINES S_COLUMNS
+	stty size > ${SCREEN_SIZE}
 }
 
 function	set_scrolling_region()
 {
 	update_screen_size
+	get_screen_size
 	echo -e "${CLR_SCREEN}${CSI};$((S_LINES - 1))r"
 }
 
@@ -59,6 +66,8 @@ function	daemon_init()
 
 	daemon_status "$(tty)" &
 
+	trap set_scrolling_region WINCH
+
 	DAEMON_PID="${!}"
 	ppass "Daemon launched with PID: ${DAEMON_PID}"
 }
@@ -68,7 +77,6 @@ function	daemon_kill()
 	echo -e "${CSI}r${CUR_ENA}${VID_DIS}"
 	kill -s SIGINT ${DAEMON_PID} &>/dev/null || true
 	wait ${DAEMON_PID} || true
-	rm -rf "${DAEMON_OUT}"
 }
 
 function	dset()

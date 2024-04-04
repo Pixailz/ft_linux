@@ -9,5 +9,5 @@ function	configure_console_systemd()
 	fi
 	chroot_line "FONT=${LFS_CONSOLE_FONT}" /etc/vconsole.conf
 	chroot_line "" /etc/vconsole.conf
-	chroot_line "# End default /etc/vconsole.conf" /etc/vconsole.conf 1
+	chroot_line "# End default /etc/vconsole.conf" /etc/vconsole.conf
 }
