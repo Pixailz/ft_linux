@@ -1,8 +1,5 @@
 # FT_LINUX
 
-![image](https://github.com/Pixailz/ft_linux/assets/35565530/2f7a8e34-6e12-4434-a7d6-8c45bb46b6bb)
-
-
 ## Some ressources
 
 1. [The subject](rsc/en.subject.pdf)
