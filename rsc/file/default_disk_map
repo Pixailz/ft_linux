@@ -1,0 +1,5 @@
+label: dos
+
+1 : size=+200M					, type=83
+2 : size=+${TARGET_SWAP_SIZE}	, type=82
+3 : type=83

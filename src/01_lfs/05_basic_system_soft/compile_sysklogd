@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	compile_sysklogd()
 {
@@ -10,17 +10,7 @@ function	compile_sysklogd()
 	&& make \
 	&& make BINDIR=/sbin install"
 
-	chroot_line "# Begin default /etc/syslog.conf" /etc/syslog.conf 1
-	chroot_line "" /etc/syslog.conf
-	chroot_line "auth,authpriv.* -/var/log/auth.log" /etc/syslog.conf
-	chroot_line "*.*;auth,authpriv.none -/var/log/sys.log" /etc/syslog.conf
-	chroot_line "daemon.* -/var/log/daemon.log" /etc/syslog.conf
-	chroot_line "kern.* -/var/log/kern.log" /etc/syslog.conf
-	chroot_line "mail.* -/var/log/mail.log" /etc/syslog.conf
-	chroot_line "user.* -/var/log/user.log" /etc/syslog.conf
-	chroot_line "*.emerg *" /etc/syslog.conf
-	chroot_line "" /etc/syslog.conf
-	chroot_line "# End default /etc/syslog.conf" /etc/syslog.conf
+	cat_default_file "${LFS}/etc/syslog.conf" < "${DIR_FILE}/syslog.conf"
 
 	package_clean
 }

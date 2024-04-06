@@ -1,21 +1,21 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	ptitle()
 {
-	local	est_sbu="$(calc_sbu "${1}" "${2}")"
+	local	est_sbu
+	est_sbu="$(calc_sbu "${1}" "${2}")"
 	local	hdr="${HDR_TITLE}"
 	local	est_sbu_col="${GRE}"
-	local	test="${@:3}"
 
 	if [ "${est_sbu}" == "0" ]; then
 		est_sbu="No Compilation"
 		est_sbu_col="${RED}"
 	else
-		est_sbu="SBU~:${est_sbu} ($(get_sbu ${est_sbu}))"
+		est_sbu="SBU~:${est_sbu} ($(get_sbu "${est_sbu}"))"
 	fi
 	est_sbu="${est_sbu_col}${est_sbu}${RST}"
 
-	_printf "${hdr}" "${@:3} ${est_sbu}"
+	_printf "${hdr}" "${*:3} ${est_sbu}"
 }
 
 function	get_index()
@@ -24,12 +24,12 @@ function	get_index()
 	local	ind_end="${RST}${RST_BOL}"
 	local	ind="${ind_beg}${2}${ind_end}"
 
-	ptitle "${1}" "${4:-/NOT/FOUND/}" "${ind} $(printf '%-23s' "${3}")"
+	ptitle "${1}" "${4:-/NOT/FOUND/}" "${ind} $(printf "%-${LOG_TITLE_SIZE}s" "${3}")"
 }
 
 function	get_summary_lfs()
 {
-	get_index "${DIR_LFS}/**/*" "1  " "LFS (${GRE}${LFS_VERSION}${RST})" "${GET_PACK_DIR_BASE}"
+	get_index "${DIR_LFS}/**/*" "1  " "LFS (${GRE}${LFS_DISTRO_VERSION}${RST})" "${GET_PACK_DIR_BASE}"
 	log_lvl_push 1
 	get_index "${DIR_LFS}/01_prepare/*" "1.1" "Prepare" "${GET_PACK_DIR_BASE}"
 	get_index "${DIR_LFS}/02_cross_toolchain/*" "1.2" "Cross Toolchain"

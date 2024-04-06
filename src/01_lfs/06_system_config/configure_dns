@@ -1,15 +1,19 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	configure_dns()
 {
-	local	dns_file="/etc/resolv.conf"
+	local	dns_file="${LFS}/etc/resolv.conf"
 
-	chroot_line "# Begin default ${dns_file}" "${dns_file}" 1
-	chroot_line "" "${dns_file}"
-	chroot_line "nameserver ${LFS_NET_DNS_PRI}" "${dns_file}"
+	# Setup DNS
+	cat >> "${dns_file}" <<-EOCONF
+		# Begin default ${dns_file}
+
+		nameserver ${LFS_NET_DNS_PRI}
+	EOCONF
+
 	if [ "${LFS_NET_DNS_SEC:-}" != "" ]; then
-		chroot_line "nameserver ${LFS_NET_DNS_SEC}" "${dns_file}"
+		echo "nameserver ${LFS_NET_DNS_SEC}" >> "${dns_file}"
 	fi
-	chroot_line "" "${dns_file}"
-	chroot_line "# End default ${dns_file}" "${dns_file}"
+
+	echo "# End default ${dns_file}"
 }

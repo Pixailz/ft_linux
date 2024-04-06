@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 # BASH PROPRETIES
 ## Exit immediately if a command exits with a non-zero status
@@ -9,85 +9,104 @@ set -u
 set -o pipefail
 
 # RUNASROOT
-[ "${UID}" != "0" ] && { echo "Error: run as root"; exit 1; }
+[ "${EUID}" != "0" ] && { echo "Error: run as root"; exit 1; }
 
 # Config
-## cli args
-: ${TARGET_DISK:?"Error: missing Disk Device"}
+: "${TARGET_DISK:?Error: missing Disk Device}"
 
-declare -x	PATH_BASE=$(realpath ${BASH_SOURCE[0]})
-declare -x	DIR_BASE=${PATH_BASE%/*}
-declare -x	DIR_SRC="${DIR_BASE}/src"
-declare -x	DIR_RSC="${DIR_BASE}/rsc"
-declare -x	DIR_LFS="${DIR_SRC}/01_lfs"
-declare -x	DIR_BLFS="${DIR_SRC}/02_blfs"
-declare -x	DIR_DOWNLOAD_CACHE="${DIR_BASE}/.sources"
-declare -x	GET_PACK_SAVE=
-declare -x	GET_PACK_CHECK_REPO=
-declare -x	GET_PACK_DOWNLOAD=1
-declare -x	GET_PACK_DIR_BASE="${DIR_SRC}/01_lfs/01_prepare/update_pack_meta"
-declare -x	GET_PACK_ENV="${GET_PACK_DIR_BASE}/.env"
-declare -x	GET_PACK_IN="${DIR_BASE}/package_meta_in"
-declare -x	GET_PACK_OUT="${DIR_BASE}/package_meta"
-declare -x	GET_PACK_OUT_TMP="${GET_PACK_DIR_BASE}/package_meta"
-declare -xa GET_PACK_META=("link" "version" "file" "tar_folder")
-declare -x	LOG_FILE_KEEP=1
-declare -x	SBU_FILE="${DIR_BASE}/SBU"
-declare -x	SBU_EST_SIZE="30"
-declare -gA	STEP
-declare -x	STEP_FILE="${DIR_BASE}/step"
-declare -x	LOG_FILE_DIR="${DIR_BASE}/log"
-declare -x	LOG_FILE_EXEC="${DIR_BASE}/exec.log"
+declare -x	PATH_BASE
+PATH_BASE="$(realpath "${BASH_SOURCE[0]}")"
+declare -x		DIR_BASE="${PATH_BASE%/*}"
+declare -x		DIR_SRC="${DIR_BASE}/src"
+declare -x		DIR_RSC="${DIR_BASE}/rsc"
+declare -x		DIR_SCRIPT="${DIR_RSC}/script"
+declare -x		DIR_FILE="${DIR_RSC}/file"
+declare -x		DIR_LFS="${DIR_SRC}/01_lfs"
+declare -x		DIR_BLFS="${DIR_SRC}/02_blfs"
+declare -x		DIR_DOWNLOAD_CACHE="${DIR_BASE}/.sources"
+declare -x		GET_PACK_SAVE=
+declare -x		GET_PACK_CHECK_REPO=
+declare -x		GET_PACK_DOWNLOAD=1
+declare -x		GET_PACK_DIR_BASE="${DIR_SRC}/utils/update_pack_meta"
+declare -x		GET_PACK_ENV="${GET_PACK_DIR_BASE}/.env"
+declare -x		GET_PACK_IN="${DIR_BASE}/package_meta_in"
+declare -x		GET_PACK_OUT="${DIR_BASE}/package_meta"
+declare -x		GET_PACK_OUT_TMP="${GET_PACK_DIR_BASE}/package_meta"
+declare -xa 	GET_PACK_META=("link" "version" "file" "tar_folder")
+declare -x		LOG_FILE_KEEP=1
+declare -x		SBU_FILE="${DIR_BASE}/SBU"
+declare -x		LOG_TITLE_SIZE="30"
+declare -xgA	STEP
+declare -x		STEP_FILE="${DIR_BASE}/step"
+declare -x		LOG_FILE_DIR="${DIR_BASE}/log"
+declare -x		LOG_FILE_EXEC="${DIR_BASE}/exec.log"
 
 ## LIFOVAR
-declare -xa	LIFOVAR_LOG_LVL=(0)
-declare -xa	LIFOVAR_STEP_ID=(0)
-declare -xa	LIFOVAR_STEP_ID_MAX=(0)
+declare -xa		LIFOVAR_LOG_LVL=(0)
+declare -xa		LIFOVAR_STEP_ID=(0)
+declare -xa		LIFOVAR_STEP_ID_MAX=(0)
 
 ## LFS
-declare -x LFS="/mnt/lfs"
-declare -x LFS_ARCH=$(uname -m)
-declare -x LFS_CORES=$(nproc)
-declare -x LFS_TGT=${LFS_ARCH}-lfs-linux-gnu
-declare -x LFS_HOSTNAME="brda-sil"
-declare -x LFS_SOURCES_DIR="${LFS}/sources"
-declare -x LFS_ROOT_PASS="pass"
-declare -x LFS_STRIP_BINARIES=
-declare -x LFS_NET_INTERFACE="enp0s3"
-declare -x LFS_NET_USE_DHCP=1
-declare -x LFS_NET_STATIC_IP="192.168.1.190"
-declare -x LFS_NET_STATIC_GATE="192.168.1.254"
-declare -x LFS_NET_STATIC_BROA="192.168.1.255"
-declare -x LFS_NET_STATIC_PREF="24"
-declare -x LFS_NET_DNS_PRI="8.8.8.8"
-declare -x LFS_NET_DNS_SEC="8.8.4.4"
-declare -x LFS_CLOCK_UTC=0
-declare -x LFS_CLOCKPARAMS=""
-declare -x LFS_TZ="Europe/Paris"
-declare -x LFS_CONSOLE_UNICODE=1
-declare -x LFS_CONSOLE_FONT="ter-v16b"
-declare -x LFS_RC_SITE_DISTRO="Linux From Scratch"
-declare -x LFS_RC_SITE_DISTRO_CONTACT="lfs-dev@lists.linuxfromscratch.org"
-declare -x LFS_RC_SITE_DISTRO_MINI="LFS"
-declare -x LFS_LOCALE_LANG="en_US.utf8"
-declare -x LFS_KERNEL_DEFCONF="arch/x86/configs/x86_64_defconfig"
-declare -x LFS_CODENAME="brda-sil"
-declare -x LFS_VERSION="12.1"
-declare -x LFS_DO_TEST=0
-declare -x LFS_SYSTEMD=1
-declare -x LFS_MAX_STEP=0
-declare -x LFS_CUR_STEP=0
-declare -x LFS_GIT_VERSION="$(git rev-parse HEAD 2>/dev/null | head -c7)"
+declare -x		LFS="/mnt/lfs"
+declare -x		LFS_ARCH
+LFS_ARCH="$(uname -m)"
+declare -x		LFS_CORES
+LFS_CORES="$(nproc)"
+declare -x		LFS_TGT="${LFS_ARCH}-lfs-linux-gnu"
+declare -x		LFS_HOSTNAME="brda-sil"
+declare -x		LFS_SOURCES_DIR="${LFS}/sources"
+declare -x		LFS_ROOT_PASS="pass"
+declare -x		LFS_STRIP_BINARIES=
 
-declare -x SCREEN_SIZE=$(mktemp /tmp/.screen_size.XXXXXXXXXX)
-declare -x DAEMON_OUT=$(mktemp /tmp/.daemon_out.XXXXXXXXXX)
-declare -x DAEMON_MAX=0
-declare -x DAEMON_REFRESH_RATE=0.05
+declare -x		LFS_NET_INTERFACE="enp0s3"
+declare -x		LFS_NET_USE_DHCP=1
+declare -x		LFS_NET_STATIC_IP="192.168.1.190"
+declare -x		LFS_NET_STATIC_GATE="192.168.1.254"
+declare -x		LFS_NET_STATIC_BROA="192.168.1.255"
+declare -x		LFS_NET_STATIC_PREF="24"
+declare -x		LFS_NET_DNS_PRI="8.8.8.8"
+declare -x		LFS_NET_DNS_SEC="8.8.4.4"
+
+declare -x		LFS_CLOCK_UTC=0
+declare -x		LFS_CLOCKPARAMS=""
+declare -x		LFS_TZ="Europe/Paris"
+
+declare -x		LFS_CONSOLE_UNICODE=1
+declare -x		LFS_CONSOLE_FONT="ter-v16b"
+declare -x		LFS_CONSOLE_KEYMAP="us"
+declare -x		LFS_CONSOLE_LOGLVL="7"
+
+declare -x		LFS_DISTRO="Linux From Scratch"
+declare -x		LFS_DISTRO_MINI="LFS"
+declare -x		LFS_DISTRO_CONTACT="lfs-dev@lists.linuxfromscratch.org"
+declare -x 		LFS_DISTRO_DESC="${LFS_DISTRO}"
+declare -x		LFS_DISTRO_CODENAME="brda-sil"
+declare -x		LFS_DISTRO_VERSION="12.1"
+declare -x		LFS_DISTRO_HOME="https://www.linuxfromscratch.org/lfs/"
+
+declare -x		LFS_LOCALE_LANG="en_US.utf8"
+declare -x		LFS_KERNEL_DEFCONF="arch/x86/configs/x86_64_defconfig"
+declare -x		LFS_DO_TEST=0
+declare -x		LFS_SYSTEMD=1
+declare -x		LFS_MAX_STEP=0
+declare -x		LFS_CUR_STEP=0
+declare -x		LFS_GIT_VERSION
+LFS_GIT_VERSION="$(git rev-parse HEAD 2>/dev/null | head -c7)"
+declare -x		SCREEN_SIZE
+SCREEN_SIZE="$(mktemp /tmp/.screen_size.XXXXXXXXXX)"
+declare -x		DAEMON_OUT
+DAEMON_OUT="$(mktemp /tmp/.daemon_out.XXXXXXXXXX)"
+declare -x		DAEMON_MAX=0
+declare -x		DAEMON_REFRESH_RATE=0.05
+declare -x		TARGET_DISK_MAP="${TARGET_DISK_MAP:-${DIR_RSC}/default_disk_map}"
+declare -x		TARGET_SWAP_SIZE="2G"
 
 # source needed files
-source ${DIR_BASE}/src/include
+source "${DIR_BASE}/src/include"
 
-declare -x LFS_VMLINUZ="vmlinuz-${PACKAGE_VERSION[linux]}-${LFS_CODENAME}"
+declare -x		CONFIG_SITE=/usr/share/config.site
+declare -x		MAKEFLAGS="-j${LFS_CORES}"
+declare -x		LFS_VMLINUZ="vmlinuz-${PACKAGE_VERSION[linux]:-?.?.?}-${LFS_DISTRO_CODENAME}"
 
 set +h
 umask 022
@@ -95,10 +114,8 @@ LC_ALL=POSIX
 PATH=/usr/bin:/usr/sbin
 [ ! -L /bin ] && PATH=/bin:${PATH}
 PATH=${LFS}/tools/bin:${PATH}
-CONFIG_SITE=/usr/share/config.site
-export MAKEFLAGS="-j${LFS_CORES}"
 
-[ "${LOG_FILE_KEEP:-0}" == "0" ] && : > ${LOG_FILE_EXEC}
+[ "${LOG_FILE_KEEP:-0}" == "0" ] && : > "${LOG_FILE_EXEC}"
 
 function	init()
 {
@@ -115,13 +132,7 @@ init
 
 # Main
 do_lfs
-# do_blfs
-
+do_blfs
 # Testing Zone
-
-# mount_lfs
-# create_virtualfs
-# update_pack_meta
-# backup_lfs
 
 exit ${?}

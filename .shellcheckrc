@@ -1,0 +1,24 @@
+# optional checkstyle configuration file
+enable=add-default-case
+enable=quote-safe-variables
+enable=require-variable-braces
+
+# follow arbitrary file path in source statements
+external-sources=true
+
+#
+shell=/usr/bin/bash
+
+# Sources tree of the project
+source-path=src
+source-path=src/utils/update_pack_meta
+source-path=src/01_lfs
+source-path=src/01_lfs/01_prepare
+source-path=src/01_lfs/02_cross_toolchain
+source-path=src/01_lfs/03_temp_tool
+source-path=src/01_lfs/04_chroot_additional_tool
+source-path=src/01_lfs/05_basic_system_soft
+source-path=src/01_lfs/06_system_config
+source-path=src/01_lfs/07_make_system_bootable
+source-path=src/02_blfs
+source-path=src/02_blfs/01_post_lfs

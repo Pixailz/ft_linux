@@ -1,17 +1,10 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	configure_console_sysvinit()
 {
-	chroot_line "# Begin default /etc/sysconfig/console" /etc/sysconfig/console 1
-	chroot_line "" /etc/sysconfig/console
-	if [ "${LFS_CONSOLE_LOGLEVEL:-}" != "" ]; then
-		chroot_line "LOGLEVEL=${LFS_CONSOLE_LOGLEVEL}" /etc/sysconfig/console
-	fi
-	chroot_line "UNICODE=${LFS_CONSOLE_UNICODE}" /etc/sysconfig/console
-	chroot_line "FONT=${LFS_CONSOLE_FONT}" /etc/sysconfig/console
-	if [ "${LFS_CONSOLE_KEYMAP:-}" != "" ]; then
-		chroot_line "KEYMAP=${LFS_CONSOLE_KEYMAP}" /etc/sysconfig/console
-	fi
-	chroot_line "" /etc/sysconfig/console
-	chroot_line "# End default /etc/sysconfig/console" /etc/sysconfig/console
+	# envsubst NEED single quote
+	# shellcheck disable=SC2016
+	cat_default_file "${LFS}/etc/sysconfig/console" \
+		< <(envsubst '$LFS_CONSOLE_UNICODE,$LFS_CONSOLE_FONT,$LFS_CONSOLE_KEYMAP,$LFS_CONSOLE_LOGLVL' \
+			< "${DIR_FILE}/console/sysvinit")
 }

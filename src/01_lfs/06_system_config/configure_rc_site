@@ -1,98 +1,10 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	configure_rc_site()
 {
-	chroot_line "" /etc/sysconfig/rc.site
-	chroot_line "# Begin default /etc/sysconfig/rc.site" /etc/sysconfig/rc.site 1
-	chroot_line "# Optional parameters for boot scripts." /etc/sysconfig/rc.site
-	chroot_line "" /etc/sysconfig/rc.site
-	chroot_line "# Distro Information" /etc/sysconfig/rc.site
-	chroot_line "# These values, if specified here, override the defaults" /etc/sysconfig/rc.site
-	chroot_line "DISTRO=\"${LFS_RC_SITE_DISTRO:-}\" # The distro name" /etc/sysconfig/rc.site
-	chroot_line "DISTRO_CONTACT=\"${LFS_RC_SITE_DISTRO_CONTACT:-}\" # Bug report address" /etc/sysconfig/rc.site
-	chroot_line "DISTRO_MINI=\"${LFS_RC_SITE_DISTRO_MINI}\" # Short name used in filenames for distro config" /etc/sysconfig/rc.site
-	chroot_line "" /etc/sysconfig/rc.site
-	chroot_line "# Define custom colors used in messages printed to the screen" /etc/sysconfig/rc.site
-	chroot_line '# Please consult `man console_codes` for more information' /etc/sysconfig/rc.site
-	chroot_line '# under the "ECMA-48 Set Graphics Rendition" section' /etc/sysconfig/rc.site
-	chroot_line "#" /etc/sysconfig/rc.site
-	chroot_line "# Warning: when switching from a 8bit to a 9bit font," /etc/sysconfig/rc.site
-	chroot_line "# the linux console will reinterpret the bold (1;) to" /etc/sysconfig/rc.site
-	chroot_line "# the top 256 glyphs of the 9bit font.  This does" /etc/sysconfig/rc.site
-	chroot_line "# not affect framebuffer consoles" /etc/sysconfig/rc.site
-	chroot_line "" /etc/sysconfig/rc.site
-	chroot_line '# These values, if specified here, override the defaults' /etc/sysconfig/rc.site
-	chroot_line '#BRACKET="\\033[1;34m" # Blue' /etc/sysconfig/rc.site
-	chroot_line '#FAILURE="\\033[1;31m" # Red' /etc/sysconfig/rc.site
-	chroot_line '#INFO="\\033[1;36m"    # Cyan' /etc/sysconfig/rc.site
-	chroot_line '#NORMAL="\\033[0;39m"  # Grey' /etc/sysconfig/rc.site
-	chroot_line '#SUCCESS="\\033[1;32m" # Green' /etc/sysconfig/rc.site
-	chroot_line '#WARNING="\\033[1;33m" # Yellow' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# Use a colored prefix' /etc/sysconfig/rc.site
-	chroot_line '# These values, if specified here, override the defaults' /etc/sysconfig/rc.site
-	chroot_line '#BMPREFIX="      "' /etc/sysconfig/rc.site
-	chroot_line 'SUCCESS_PREFIX="${SUCCESS}  +  ${NORMAL} "' /etc/sysconfig/rc.site
-	chroot_line 'FAILURE_PREFIX="${FAILURE}  -  ${NORMAL} "' /etc/sysconfig/rc.site
-	chroot_line 'WARNING_PREFIX="${WARNING}  !  ${NORMAL} "' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# Manually set the right edge of message output (characters)' /etc/sysconfig/rc.site
-	chroot_line '# Useful when resetting console font during boot to override' /etc/sysconfig/rc.site
-	chroot_line '# automatic screen width detection' /etc/sysconfig/rc.site
-	chroot_line '#COLUMNS=120' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# Interactive startup' /etc/sysconfig/rc.site
-	chroot_line '#IPROMPT="yes" # Whether to display the interactive boot prompt' /etc/sysconfig/rc.site
-	chroot_line '#itime="3"    # The amount of time (in seconds) to display the prompt' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# The total length of the distro welcome string, without escape codes' /etc/sysconfig/rc.site
-	chroot_line '#wlen=$(echo "Welcome to ${DISTRO}" | wc -c )' /etc/sysconfig/rc.site
-	chroot_line '#welcome_message="Welcome to ${INFO}${DISTRO}${NORMAL}"' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# The total length of the interactive string, without escape codes' /etc/sysconfig/rc.site
-	chroot_line '#ilen=$(echo "Press '\''I'\'' to enter interactive startup" | wc -c )' /etc/sysconfig/rc.site
-	chroot_line '#i_message="Press '\''${FAILURE}I${NORMAL}'\'' to enter interactive startup"' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# Set scripts to skip the file system check on reboot' /etc/sysconfig/rc.site
-	chroot_line '#FASTBOOT=yes' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# Skip reading from the console' /etc/sysconfig/rc.site
-	chroot_line '#HEADLESS=yes' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# Write out fsck progress if yes' /etc/sysconfig/rc.site
-	chroot_line 'VERBOSE_FSCK=yes' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# Speed up boot without waiting for settle in udev' /etc/sysconfig/rc.site
-	chroot_line '#OMIT_UDEV_SETTLE=y' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# Speed up boot without waiting for settle in udev_retry' /etc/sysconfig/rc.site
-	chroot_line '#OMIT_UDEV_RETRY_SETTLE=yes' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# Skip cleaning /tmp if yes' /etc/sysconfig/rc.site
-	chroot_line '#SKIPTMPCLEAN=no' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# For setclock' /etc/sysconfig/rc.site
-	chroot_line '#UTC=1' /etc/sysconfig/rc.site
-	chroot_line '#CLOCKPARAMS=' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# For consolelog (Note that the default, 7=debug, is noisy)' /etc/sysconfig/rc.site
-	chroot_line '#LOGLEVEL=7' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# For network' /etc/sysconfig/rc.site
-	chroot_line '#HOSTNAME=mylfs' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# Delay between TERM and KILL signals at shutdown' /etc/sysconfig/rc.site
-	chroot_line 'KILLDELAY=0' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# Optional sysklogd parameters' /etc/sysconfig/rc.site
-	chroot_line '#SYSKLOGD_PARMS="-m 0"' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# Console parameters' /etc/sysconfig/rc.site
-	chroot_line '#UNICODE=1' /etc/sysconfig/rc.site
-	chroot_line '#KEYMAP="de-latin1"' /etc/sysconfig/rc.site
-	chroot_line '#KEYMAP_CORRECTIONS="euro2"' /etc/sysconfig/rc.site
-	chroot_line '#FONT="lat0-16 -m 8859-15"' /etc/sysconfig/rc.site
-	chroot_line '#LEGACY_CHARSET=' /etc/sysconfig/rc.site
-	chroot_line '' /etc/sysconfig/rc.site
-	chroot_line '# End default /etc/sysconfig/rc.site' /etc/sysconfig/rc.site
+	# envsubst NEED single quote
+	# shellcheck disable=SC2016
+	cat_default_file "${LFS}/etc/locale.conf" \
+		< <(envsubst '$LFS_DISTRO,$LFS_DISTRO_CONTACT,$LFS_DISTRO_MINI' \
+			< "${DIR_FILE}/locale.conf")
 }

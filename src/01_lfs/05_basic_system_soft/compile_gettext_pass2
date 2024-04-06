@@ -1,9 +1,11 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	compile_gettext_pass2()
 {
 	package_init gettext 1.4 2
 
+	# Exported variable
+	# shellcheck disable=SC2154
 	do_chroot "cd /sources/${package_tar_folder} \
 	&& ./configure --prefix=/usr \
 		--disable-static \

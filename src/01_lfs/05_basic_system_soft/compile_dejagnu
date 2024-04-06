@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	compile_dejagnu()
 {
 	package_init dejagnu 0.1
 
-	_mkdir ${dst_folder}/build
+	_mkdir "${dst_folder}/build"
 	do_chroot "cd /sources/${package_tar_folder}/build \
 	&& ../configure --prefix=/usr \
 	&& makeinfo --html --no-split -o doc/dejagnu.html ../doc/dejagnu.texi \

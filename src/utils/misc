@@ -1,0 +1,99 @@
+#!/usr/bin/bash
+
+# FUNCTIONS
+## GNU_UTILS
+
+function	_rm()
+{ if [ -e "${1}" ]; then rm -rf "${1}"; fi }
+
+function	_mkdir()
+{ if [ ! -d "${1}" ]; then _rm "${1}"; fi; mkdir -p "${1}"; }
+
+function	take()
+{ _mkdir "${1}"; _pushd "${1}"; }
+
+function	_cp()
+{ cp -f "${@}"; }
+
+function	_ln()
+{ ln -f "${@}"; }
+
+function	_mv()
+{ mv -f "${@}"; }
+
+function	_tar()
+{ tar "${@}"; }
+
+function	cannot_cd()
+{
+	pfail "Cannot cd${1+ to 1}, exit code: ${2}"
+	exit "${2}"
+}
+
+function	_pushd()
+{ pushd "${1}" || cannot_cd "${1}" "${?}"; }
+
+function	_popd()
+{
+	local	n="${1:-1}"
+
+	for ((i = 0; i < n; i++)); do
+		popd || cannot_cd "" "${?}"
+	done
+}
+
+function	_umount()
+{
+	if mountpoint -q "${1}"; then
+		umount "${1}"
+	fi
+}
+
+function	_mount()
+{
+	if ! mountpoint -q "${2}"; then
+		_mkdir "${2}"
+		mount -t "${3:-ext4}" "${1}" "${2}"
+	fi
+}
+
+function	_swapon()
+{
+	if ! swapon --show=NAME --noheading | grep "${1}"; then
+		swapon "${1}"
+	fi
+}
+
+function	_swapoff()
+{
+	if swapon --show=NAME --noheading | grep "${1}"; then
+		swapoff "${1}"
+	fi
+}
+
+function	cat_default_file()
+{
+	local	f_path="${1}"
+	local	f_comm="${2:-#}"
+	local	IFS=$'\n'
+
+	printf "%s\n\n" "${f_comm} Begin default ${f_path/${LFS}/}\n" > "${f_path}"
+
+	while read -r line; do
+		echo "${line}" >> "${f_path}"
+	done
+
+	echo -e "\n${f_comm} End default ${f_path/${LFS}/}" >> "${f_path}"
+}
+
+function	do_chroot()
+{
+	sudo chroot "/mnt/lfs" /usr/bin/env -i \
+		HOME=/root \
+		TERM="${TERM}" \
+		PS1='(lfs chroot) \u:\w\$ ' \
+		PATH=/usr/bin:/usr/sbin \
+		MAKEFLAGS="-j${LFS_CORES}" \
+		TESTSUITEFLAGS="-j${LFS_CORES}" \
+		/bin/bash <<<"${@}"
+}

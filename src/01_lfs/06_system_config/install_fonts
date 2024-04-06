@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	install_font()
 {
-	package_init ${1} 0
+	package_init "${1}" 0
 
 	do_chroot "cd /sources/${package_tar_folder} \
 	&& ./configure --prefix=/usr \

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	lfs_boot_script()
 {

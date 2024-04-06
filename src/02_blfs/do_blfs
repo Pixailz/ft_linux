@@ -1,13 +1,19 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	blfs_01_post_lfs()
 {
-	:
+	step_id_push "BLFS_POST_LFS" 3
+
+	step_do configure_group_user
+	step_do configure_skel
+	step_do configure_profile
+
+	step_id_pop
 }
 
 function	do_blfs()
 {
-	step_id_push "BLFS"
+	step_id_push "BLFS" 1
 	step_do blfs_01_post_lfs
 	step_id_pop
 }

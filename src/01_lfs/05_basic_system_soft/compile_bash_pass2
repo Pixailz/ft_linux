@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	compile_bash_pass2()
 {
@@ -13,14 +13,11 @@ function	compile_bash_pass2()
 	&& make"
 
 	if [ "${LFS_DO_TEST:-1}" == "1" ]; then
-		chroot_line "set timeout -1" /tmp/e 1
-		chroot_line "spawn make tests" /tmp/e
-		chroot_line "expect eof" /tmp/e
-		chroot_line "lassign [wait] _ _ _ value" /tmp/e
-		chroot_line 'exit ${value}' /tmp/e
+		cat > "${LFS}/tmp/e" < "${DIR_FILE}/test/bash_2"
 		do_chroot "cd /sources/${package_tar_folder} \
 			&& chown -R tester . \
 			&& su -s /usr/bin/expect tester </tmp/e || true"
+		_rm "${LFS}/tmp/e"
 	fi
 
 	do_chroot "cd /sources/${package_tar_folder} \

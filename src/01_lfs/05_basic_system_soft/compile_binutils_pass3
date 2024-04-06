@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	compile_binutils_pass3()
 {
 	package_init binutils 2.2 3
 
-	_mkdir ${dst_folder}/build
+	_mkdir "${dst_folder}/build"
 	do_chroot "cd /sources/${package_tar_folder}/build \
 	&& ../configure --prefix=/usr \
 		--sysconfdir=/etc \

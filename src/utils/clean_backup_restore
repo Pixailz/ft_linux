@@ -1,35 +1,41 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	clean_lfs()
 {
 	do_chroot rm -rf /usr/share/{info,man,doc}/*
 	do_chroot find /usr/{lib,libexec} -name \*.la -delete
 	do_chroot rm -rf /tools
-	mountpoint -q ${LFS}/dev/shm && umount -v ${LFS}/dev/shm || true
-	umount -v ${LFS}/dev/pts || true
-	umount -v ${LFS}/{sys,proc,run,dev} || true
-	find ${LFS}/sources/* -type d -exec rm -rf {} \; || true
+
+	_umount "${LFS}/dev/shm"
+	_umount "${LFS}/dev/pts"
+	for folder in sys proc run dev; do
+		_umount "${LFS}/${folder}"
+	done
+
+	find "${LFS}/sources/*" -type d -exec rm -rf {} \; || true
 }
 
 function	backup_lfs()
 {
 	local	file_desc="${1:-}"
-	local	file="lfs-${LFS_VERSION}-${LFS_CODENAME}-${PACKAGE_VERSION[linux]}"
+	local	file="lfs-${LFS_DISTRO_VERSION}-${LFS_DISTRO_CODENAME}-${PACKAGE_VERSION[linux]}"
 	[ "${LFS_GIT_VERSION}" != "" ] && file+="-${LFS_GIT_VERSION}"
 	[ "${file_desc}" != "" ] && file+="-${file_desc}"
 	file+="-$(date +%d%m%Y%H%M%S).tar.gz"
 
 	clean_lfs
 
-	_cp ${LOG_FILE_EXEC} ${LOG_FILE_DIR}/exec.log
-	env GZIP=-9 tar -czpf "${LFS_SOURCES_DIR}/log.tar.gz" ${LOG_FILE_DIR}
-	_rm ${LOG_FILE_DIR}/exec.log
+	_cp "${LOG_FILE_EXEC}" "${LOG_FILE_DIR}/exec.log"
+	_pushd "${LOG_FILE_DIR}/.."
+	_tar -I 'gzip -9' -cpf "${LFS_SOURCES_DIR}/log.tar.gz" ./log
+	_popd
+	_rm "${LOG_FILE_DIR}/exec.log"
 
-	_pushd ${LFS}
+	_pushd "${LFS}"
 	pinfo "Creating backup ${file}"
 	dset "${BOL}${CYA}Creating backup ${GRE}${file}${RST}${RST_BOL}"
 	# GZIP MAXED
-	env GZIP=-9 tar -czpf "${DIR_BASE}/${file}" .
+	_tar -I 'gzip -9' -cpf "${DIR_BASE}/${file}" .
 	# BZIP2
 	# tar -cjpf "${DIR_BASE}/${file}" .
 	# XZ ...
@@ -51,7 +57,7 @@ function	restore()
 	fi
 
 	mount_lfs
-	_pushd ${LFS}
+	_pushd "${LFS}"
 	pinfo "Restoring backup ${backup_file}"
 	dset "Restoring backup ${CYA}${backup_file}${RST}"
 	tar -xpf "${backup_file}"

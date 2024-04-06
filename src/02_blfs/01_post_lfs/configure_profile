@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+function	configure_profile()
+{
+	cat_default_file "${LFS}/etc/profile" < "${DIR_FILE}/profile/blfs"
+}

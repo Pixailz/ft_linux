@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	log_lvl_push()
 { lifo_var_push "LOG_LVL" "${1}"; }
@@ -19,7 +19,20 @@ function	step_id_pop()
 }
 
 function	lifo_var_push()
-{ declare -n var="LIFOVAR_${1}"; var+=(${2}); unset -n var; }
+{
+	# Disabled because of the use of bash reference
+	# shellcheck disable=SC2178
+	declare -n var="LIFOVAR_${1}"
+	var+=("${2}")
+	unset -n var
+}
+
 
 function	lifo_var_pop()
-{ declare -n var="LIFOVAR_${1}"; unset 'var[-1]'; unset -n var; }
+{
+	# Disabled because of the use of bash reference
+	# shellcheck disable=SC2178
+	declare -n var="LIFOVAR_${1}"
+	unset 'var[-1]'
+	unset -n var
+}

@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+function	configure_group_user()
+{
+	# Recreate /etc/passwd
+	cat > "${LFS}/etc/passwd" < "${DIR_FILE}/passwd/blfs"
+	# Recreate /etc/group
+	cat > "${LFS}/etc/group" < "${DIR_FILE}/group/blfs"
+}

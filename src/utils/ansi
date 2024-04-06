@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 ESC="\x1b"
 CSI="${ESC}["

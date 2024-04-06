@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	set_sbu()
 {
@@ -7,14 +7,16 @@ function	set_sbu()
 	local	added=0
 	local	str=""
 	if [ "${1:-}" != ""  ]; then
-		sbu+=(${1})
+		sbu+=("${1}")
 		ppass "added new SBU ${1}"
-		echo "${sbu}" >> ${DIR_BASE}/SBU
+		echo "${1}" >> "${DIR_BASE}/SBU"
 		added=1
 	fi
-	[ ! -f ${DIR_BASE}/SBU ] && : > ${DIR_BASE}/SBU
+	[ ! -f "${DIR_BASE}"/SBU ] && : > "${DIR_BASE}/SBU"
 
-	sbu+=($(cat ${DIR_BASE}/SBU))
+	# Need to expend on IFS
+	# shellcheck disable=SC2207
+	sbu+=($(cat "${DIR_BASE}/SBU"))
 
 	for ((i = 0; i < ${#sbu[@]}; i++)); do
 		total=$((total + sbu[i]))
@@ -23,7 +25,7 @@ function	set_sbu()
 	if [ "${#sbu[@]}" == "0" ]; then
 		export SBU="0"
 	else
-		export SBU=$((${total} / ${#sbu[@]}))
+		export SBU=$((total / ${#sbu[@]}))
 	fi
 
 	str="${RED}1SBU${RST}:${GRE}${SBU}${RST}s"
@@ -35,12 +37,12 @@ function	set_sbu()
 
 function	get_sbu()
 {
-	local	n="$(bc -l <<<"scale=0; ${1} * ${SBU:-1}")"
-	local	dec="${n#*.}"
+	local	n
+	n="$(bc -l <<<"scale=0; ${1} * ${SBU:-1}")"
 	local	int="${n/.*/}"
-	local	hour="$((${int} / 3600))"
-	local	minute="$(((${int} / 60) % 60))"
-	local	second="$((${int} % 60))"
+	local	hour="$((int / 3600))"
+	local	minute="$(((int / 60) % 60))"
+	local	second="$((int % 60))"
 
 	if [ "${hour}" -gt 0 ]; then printf "%sh" "${hour}"; fi
 	if [ "${minute}" -gt 0 ]; then printf "%02dm" "${minute}"; fi
@@ -50,11 +52,10 @@ function	get_sbu()
 function	calc_sbu()
 {
 	local	tot=0
-	local	todo=()
 
 	for file in ${1}; do
 		if ! [[ "${file}" =~ ^${2}.* ]]; then
-			tot+="$(sed -nE 's|\tpackage_init .* ([0-9]+\.?[0-9]+).*| + \1|p' ${file})"
+			tot+="$(sed -nE 's|\tpackage_init .* ([0-9]+\.?[0-9]+).*| + \1|p' "${file}")"
 		fi
 	done
 	tot="$(bc -l <<<"scale=2; ${tot}")"

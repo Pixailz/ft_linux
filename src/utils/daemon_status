@@ -1,11 +1,12 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	daemon_print_status()
 {
 	local	beg="${CUR_SAV}${CSI}${S_LINES};1H${CLR_LINE}"
-	local	end="${POS_DATE}${RED}${BOL}$(date +'%T')${RST}${RST_BOL}${CUR_RES}"
+	local	end
 
-	echo -ne "${beg}$(cat ${DAEMON_OUT})${dot}${end}" > "${tty}"
+	end="${POS_DATE}${RED}${BOL}$(date +'%T')${RST}${RST_BOL}${CUR_RES}"
+	echo -ne "${beg}$(cat "${DAEMON_OUT}")${dot}${end}" > "${tty}"
 }
 
 function	daemon_sigint()
@@ -25,13 +26,14 @@ function	daemon_status()
 
 	while true; do
 		daemon_print_status
-		sleep ${DAEMON_REFRESH_RATE}
+		sleep "${DAEMON_REFRESH_RATE}"
 		((index_dot++)) || true
-		if [ ${index_dot} -gt 10 ]; then
+		if [ "${index_dot}" -gt 10 ]; then
 			case ${dot} in
 				".")	dot=".."	;;
 				"..")	dot="..."	;;
 				"...")	dot="."		;;
+				*) 		dot="."		;;
 			esac
 			index_dot=0
 		fi
@@ -40,44 +42,46 @@ function	daemon_status()
 
 function	get_screen_size()
 {
-	export S_LINES=$(cut -d' ' -f1 < ${SCREEN_SIZE})
-	export S_COLUMNS=$(cut -d' ' -f2 < ${SCREEN_SIZE})
+	S_LINES="$(cut -d' ' -f1 < "${SCREEN_SIZE}")"
+	S_COLUMNS="$(cut -d' ' -f2 < "${SCREEN_SIZE}")"
+	export S_LINES
+	export S_COLUMNS
 	POS_DATE="${CSI}${S_LINES};$((S_COLUMNS - 7))H"
 }
 
 function	update_screen_size()
 {
-	stty size > ${SCREEN_SIZE}
+	stty size > "${SCREEN_SIZE}"
 }
 
 function	set_scrolling_region()
 {
 	update_screen_size
 	get_screen_size
-	echo -e "${CLR_SCREEN}${CSI};$((S_LINES - 1))r"
+	echo -ne "${CLR_SCREEN}${CSI};$((S_LINES - 1))r"
 }
 
 function	daemon_init()
 {
-	echo -e "${VID_ENA}${CUR_DIS}"
+	echo -ne "${VID_ENA}${CUR_DIS}"
 	set_scrolling_region
 
 	dset "${BOL}${GRE}INIT${RST}${RST_BOL}"
 
 	daemon_status "$(tty)" &
+	export DAEMON_PID="${!}"
 
 	trap set_scrolling_region WINCH
 
-	DAEMON_PID="${!}"
 	ppass "Daemon launched with PID: ${DAEMON_PID}"
 }
 
 function	daemon_kill()
 {
-	echo -e "${CSI}r${CUR_ENA}${VID_DIS}"
-	kill -s SIGINT ${DAEMON_PID} &>/dev/null || true
-	wait ${DAEMON_PID} || true
+	echo -ne "${CSI}r${CUR_ENA}${VID_DIS}"
+	kill -s SIGINT "${DAEMON_PID}" &>/dev/null || true
+	wait "${DAEMON_PID}" || true
 }
 
 function	dset()
-{ echo ${1} > "${DAEMON_OUT}"; }
+{ echo -n "${1}" > "${DAEMON_OUT}"; }

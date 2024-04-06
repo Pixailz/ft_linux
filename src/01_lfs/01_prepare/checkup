@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	checkup()
 {
@@ -20,12 +20,11 @@ function	checkup()
 
 	# Check if all good
 	pinfo "Check all good with LFS script"
-	bash ${DIR_RSC}/version-check.sh
 
-	if [ $? -ne 0 ]; then
+	if bash "${DIR_SCRIPT}/version-check.sh"; then
+		ppass "version-check.sh pass"
+	else
 		pfail "Error: version-check.sh failed"
 		exit 1
-	else
-		ppass "version-check.sh pass"
 	fi
 }

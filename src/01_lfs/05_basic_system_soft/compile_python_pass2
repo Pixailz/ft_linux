@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	compile_python_pass2()
 {
@@ -11,9 +11,8 @@ function	compile_python_pass2()
 		--enable-optimizations \
 	&& make \
 	&& make install"
-	chroot_line "[global]" /etc/pip.conf 1
-	chroot_line "root-user-action = ignore" /etc/pip.conf
-	chroot_line "disable-pip-version-check = true" /etc/pip.conf
+	cat_default_file "${LFS}/etc/pip.conf" < "${DIR_FILE}/pip.conf"
+
 	do_chroot "cd /sources/${package_tar_folder} \
 	&& install -v -dm755 /usr/share/doc/python-${package_version}/html \
 	&& tar --no-same-owner -xvf /sources/${PACKAGE_FILE[python-doc]} \

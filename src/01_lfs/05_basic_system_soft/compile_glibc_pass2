@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	compile_glibc_pass2()
 {
@@ -63,23 +63,13 @@ function	compile_glibc_pass2()
 		&& localedef -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS \
 		&& localedef -i zh_TW -f UTF-8 zh_TW.UTF-8"
 
-	chroot_line '# Begin default /etc/nsswitch.conf' /etc/nsswitch.conf 1
-	chroot_line '' /etc/nsswitch.conf
-	chroot_line 'passwd: files' /etc/nsswitch.conf
-	chroot_line 'group: files' /etc/nsswitch.conf
-	chroot_line 'shadow: files' /etc/nsswitch.conf
-	chroot_line '' /etc/nsswitch.conf
-	chroot_line 'hosts: files dns' /etc/nsswitch.conf
-	chroot_line '' /etc/nsswitch.conf
-	chroot_line 'protocols: files' /etc/nsswitch.conf
-	chroot_line 'services: files' /etc/nsswitch.conf
-	chroot_line 'ethers: files' /etc/nsswitch.conf
-	chroot_line 'rpc: files' /etc/nsswitch.conf
-	chroot_line '' /etc/nsswitch.conf
-	chroot_line '# End default /etc/nsswitch.conf' /etc/nsswitch.conf
+	# Create /etc/nsswitch.conf
+	cat_default_file "${LFS}/etc/nsswitch.conf" < "${DIR_FILE}/nsswitch.conf"
 
-	tar -xf $(package_get_src_file "tzdata") -C ${dst_folder}/build
-	do_chroot 'cd /sources/'${package_tar_folder}'/build \
+	tar -xf "$(package_get_src_file "tzdata")" -C "${dst_folder}/build"
+	# Need variable as is, not expanded
+	# shellcheck disable=SC2016
+	do_chroot 'cd /sources/'"${package_tar_folder}"'/build \
 	&& export ZONEINFO=/usr/share/zoneinfo \
 	&& mkdir -pv ${ZONEINFO}/{posix,right} \
 	&& for tz in etcetera southamerica northamerica europe africa antarctica asia australasia backward; do \
@@ -89,12 +79,10 @@ function	compile_glibc_pass2()
 	done \
 	&& cp -v zone.tab zone1970.tab iso3166.tab ${ZONEINFO} \
 	&& zic -d ${ZONEINFO} -p America/New_York'
-	chroot_line '# Begin default /etc/ld.so.conf' /etc/ld.so.conf 1
-	chroot_line '/usr/local/lib' /etc/ld.so.conf
-	chroot_line '/opt/lib' /etc/ld.so.conf
-	chroot_line '# Add an include directory' /etc/ld.so.conf
-	chroot_line 'include /etc/ld.so.conf.d/*.conf' /etc/ld.so.conf
-	do_chroot "mkdir -pv /etc/ld.so.conf.d"
+
+	# Create /etc/ld.so.conf
+	cat_default_file "${LFS}/etc/ld.so.conf" < "${DIR_FILE}/ld.so.conf"
+	_mkdir "${LFS}/etc/ld.so.conf.d"
 
 	package_clean
 }

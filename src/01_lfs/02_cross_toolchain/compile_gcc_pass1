@@ -1,13 +1,13 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	compile_gcc_pass1()
 {
 	package_init gcc 3.8
 
-	_pushd ${dst_folder}
-	_tar -xf $(package_get_src_file "mpfr")
-	_tar -xf $(package_get_src_file "gmp")
-	_tar -xf $(package_get_src_file "mpc")
+	_pushd "${dst_folder}"
+	_tar -xf "$(package_get_src_file "mpfr")"
+	_tar -xf "$(package_get_src_file "gmp")"
+	_tar -xf "$(package_get_src_file "mpc")"
 	_rm mpfr; _mv mpfr-* mpfr
 	_rm gmp; _mv gmp-* gmp
 	_rm mpc; _mv mpc-* mpc
@@ -15,13 +15,14 @@ function	compile_gcc_pass1()
 		x86_64)
 			sed -e '/m64=/s/lib64/lib/' -i.orig gcc/config/i386/t-linux64
 		;;
+		*) : ;;
 	esac
-	take ${dst_folder}/build
+	take "${dst_folder}/build"
 	../configure \
-		--target=${LFS_TGT} \
-		--prefix=${LFS}/tools \
+		--target="${LFS_TGT}" \
+		--prefix="${LFS}/tools" \
 		--with-glibc-version=2.39 \
-		--with-sysroot=${LFS} \
+		--with-sysroot="${LFS}" \
 		--with-newlib \
 		--without-headers \
 		--enable-default-pie \
@@ -41,7 +42,7 @@ function	compile_gcc_pass1()
 	make install
 	_popd
 	cat gcc/limitx.h gcc/glimits.h gcc/limity.h > \
-		`dirname $(${LFS_TGT}-gcc -print-libgcc-file-name)`/include/limits.h
+		"$(dirname "$("${LFS_TGT}-gcc" -print-libgcc-file-name)")"/include/limits.h
 	_popd
 
 	package_clean

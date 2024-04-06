@@ -1,19 +1,19 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	compile_ncurses_pass1()
 {
 	package_init ncurses 0.3
 
-	_pushd ${dst_folder}
+	_pushd "${dst_folder}"
 	sed -i s/mawk// configure
-	take ${dst_folder}/build
+	take "${dst_folder}/build"
 	../configure
 	make -C include
 	make -C progs tic
 	_popd
 	./configure --prefix=/usr \
-		--host=${LFS_TGT} \
-		--build=$(./config.guess) \
+		--host="${LFS_TGT}" \
+		--build="$(./config.guess)" \
 		--mandir=/usr/share/man \
 		--with-manpage-format=normal \
 		--with-shared \
@@ -24,10 +24,10 @@ function	compile_ncurses_pass1()
 		--disable-stripping \
 		--enable-widec
 	make
-	make DESTDIR=${LFS} TIC_PATH=${dst_folder}/build/progs/tic install
-	[ ! -e ${LFS}/usr/lib/libncurses.so ] && \
-		_ln -s libncursesw.so ${LFS}/usr/lib/libncurses.so
-	sed -e 's/^#if.*XOPEN.*$/#if 1/' -i ${LFS}/usr/include/curses.h
+	make DESTDIR="${LFS}" TIC_PATH="${dst_folder}/build/progs/tic" install
+	[ ! -e "${LFS}/usr/lib/libncurses.so" ] && \
+		_ln -s libncursesw.so "${LFS}/usr/lib/libncurses.so"
+	sed -e 's/^#if.*XOPEN.*$/#if 1/' -i "${LFS}/usr/include/curses.h"
 	_popd
 
 	package_clean

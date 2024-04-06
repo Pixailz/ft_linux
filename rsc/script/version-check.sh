@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 # A script to list version numbers of critical development tools
 
 # If you have tools installed in other directories, adjust PATH here AND
@@ -88,3 +88,5 @@ if [ "$(nproc)" = "" ]; then
 else
    echo "OK: nproc reports $(nproc) logical cores are available"
 fi
+
+exit 0

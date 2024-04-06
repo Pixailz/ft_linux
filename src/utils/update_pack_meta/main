@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 # VARIABLES
 # FUNCTION
@@ -8,10 +8,16 @@ SED_HREF_END="\)[\"'].*|\1|p"
 
 CURL_OPT="-sL --compressed"
 
-[ -f ${GET_PACK_ENV} ] && source ${GET_PACK_ENV}
+# No need to check for .env
+# shellcheck disable=SC1090
+[ -f "${GET_PACK_ENV}" ] && source "${GET_PACK_ENV}"
 
-. ${GET_PACK_IN}
-. ${GET_PACK_OUT}
+# No need to check for package_meta
+# shellcheck disable=SC1090
+. "${GET_PACK_IN}"
+# No need to check for package_meta
+# shellcheck disable=SC1090
+. "${GET_PACK_OUT}"
 
 ## OUT
 declare -A PACKAGE_LINK
@@ -19,80 +25,84 @@ declare -A PACKAGE_VERSION
 declare -A PACKAGE_FILE
 declare -A PACKAGE_TAR_FOLDER
 
-source ${GET_PACK_DIR_BASE}/scrap
+source "${GET_PACK_DIR_BASE}/scrap"
 
 function	save_meta_package_begin()
 {
-	for meta in ${GET_PACK_META[@]}; do
+	for meta in "${GET_PACK_META[@]}"; do
 		local	var_out="out_${meta}"
-		echo -e "declare -gA PACKAGE_${meta^^}=(" > ${!var_out}
+		echo -e "declare -gA PACKAGE_${meta^^}=(" > "${!var_out}"
 	done
 }
 
 function	save_meta_package_end()
 {
-	for meta in ${GET_PACK_META[@]}; do
+	echo -e "#!/usr/bin/bash\n" > "${GET_PACK_OUT}"
+
+	for meta in "${GET_PACK_META[@]}"; do
 		local	var_out="out_${meta}"
 
-		echo ")" >> ${!var_out}
+		echo ")" >> "${!var_out}"
+		printf "%s\n\n" "$(cat "${!var_out}")" >> "${GET_PACK_OUT}"
+
+		rm -rf "${!var_out}"
 	done
 
-	echo -e "#!/bin/bash\n" > ${GET_PACK_OUT}
+	sed -i '$d' "${GET_PACK_OUT}"
 
-	cat ${out_link} >> ${GET_PACK_OUT}
-	echo "" >> ${GET_PACK_OUT}
-	cat ${out_version} >> ${GET_PACK_OUT}
-	echo "" >> ${GET_PACK_OUT}
-	cat ${out_file} >> ${GET_PACK_OUT}
-	echo "" >> ${GET_PACK_OUT}
-	cat ${out_tar_folder} >> ${GET_PACK_OUT}
-
-	rm -rf ${out_link} ${out_version} ${out_file} ${out_tar_folder}
-	unset ${!out_@}
+	unset "${!out_@}"
 }
 
 function	save_meta_package_middle()
 {
 	local	pack="${1}"
 
-	for meta in ${GET_PACK_META[@]}; do
+	for meta in "${GET_PACK_META[@]}"; do
 		local	_var="_ref_${meta}"
-		declare -n ${_var}="PACKAGE_${meta^^}"
+		declare -n "${_var}"="PACKAGE_${meta^^}"
 	done
 
-	echo -e "\t[\"${pack}\"]=\"${_ref_link[${pack}]:-}\"" >> ${out_link}
-	echo -e "\t[\"${pack}\"]=\"${_ref_version[${pack}]:-}\"" >> ${out_version}
-	echo -e "\t[\"${pack}\"]=\"${_ref_file[${pack}]:-}\"" >> ${out_file}
-	echo -e "\t[\"${pack}\"]=\"${_ref_tar_folder[${pack}]:-}\"" >> ${out_tar_folder}
-	unset -n ${!_ref_@}
+	# Exported variable
+	# shellcheck disable=SC2154
+	echo -e "\t[\"${pack}\"]=\"${_ref_link[${pack}]:-}\"" >> "${out_link}"
+	# Exported variable
+	# shellcheck disable=SC2154
+	echo -e "\t[\"${pack}\"]=\"${_ref_version[${pack}]:-}\"" >> "${out_version}"
+	# Exported variable
+	# shellcheck disable=SC2154
+	echo -e "\t[\"${pack}\"]=\"${_ref_file[${pack}]:-}\"" >> "${out_file}"
+	# Exported variable
+	# shellcheck disable=SC2154
+	echo -e "\t[\"${pack}\"]=\"${_ref_tar_folder[${pack}]:-}\"" >> "${out_tar_folder}"
+	unset -n "${!_ref_@}"
 }
 
 function	save_meta_package()
 {
-	for meta in ${GET_PACK_META[@]}; do
+	for meta in "${GET_PACK_META[@]}"; do
 		local	out_tmp_var="out_${meta}"
-		declare -x ${out_tmp_var}="${GET_PACK_OUT_TMP}_${meta}"
-		[ -e "${!out_tmp_var}" ] && rm -rf ${!out_tmp_var}
+		declare -x "${out_tmp_var}"="${GET_PACK_OUT_TMP}_${meta}"
+		[ -e "${!out_tmp_var}" ] && rm -rf "${!out_tmp_var}"
 	done
 
 	save_meta_package_begin
-	for pack in ${PACKAGE[@]}; do
-		save_meta_package_middle ${pack}
+	for pack in "${PACKAGE[@]}"; do
+		save_meta_package_middle "${pack}"
 	done
 	save_meta_package_end
 }
 
 function	get_package_link()
 {
-	for pack in ${PACKAGE[@]}; do
-		for meta in ${GET_PACK_META[@]}; do
+	for pack in "${PACKAGE[@]}"; do
+		for meta in "${GET_PACK_META[@]}"; do
 			local	_var="_ref_${meta}"
-			declare -n ${_var}="PACKAGE_${meta^^}[${pack}]"
+			declare -n "${_var}"="PACKAGE_${meta^^}[${pack}]"
 		done
 		local	pak_fmt="\e[33m${pack}\e[0m"
 
 		pinfo "Scraping (\e[1m${PACKAGE_REPO[${pack}]%%,*}\e[22m) for ${pak_fmt} at \e[36m${PACKAGE_REPO[${pack}]#*,}\x1b[0m"
-		_ref_link="$(scrap ${pack})"
+		_ref_link="$(scrap "${pack}")"
 		if [ "${_ref_link}" == "UNKNOWN_FUNC" ]; then
 			pwarn "No scraping function found for ${pak_fmt}"
 		elif [ "${_ref_link}" == "" ]; then
@@ -100,8 +110,8 @@ function	get_package_link()
 		else
 			ppass "Link found for ${pak_fmt}"
 			pinfo "\tLink:       [\e[1;32m${_ref_link}\e[22;0m]"
-			_ref_file="$(get_package_file ${_ref_link})"
-			_ref_version="$(get_package_version ${_ref_file} "${pack}")"
+			_ref_file="$(get_package_file "${_ref_link}")"
+			_ref_version="$(get_package_version "${_ref_file}" "${pack}")"
 			pinfo "\tVersion:    [\e[1;31m${_ref_version}\e[22;0m]"
 			if [ "${pack::6}" == "patch_" ]; then
 				_ref_file="${pack}${PACKAGE_SUFFIX[${pack}]}"
@@ -111,12 +121,12 @@ function	get_package_link()
 			pinfo "\tFile:       [\e[1;34m${_ref_file}\e[22;0m]"
 			_printf "" ""
 		fi
-		unset -n ${!_ref_@}
+		unset -n "${!_ref_@}"
 	done
 }
 
 function	get_package_file()
-{ echo ${1##*/}; }
+{ echo "${1##*/}"; }
 
 function	get_package_version()
 {
@@ -127,16 +137,17 @@ function	get_package_version()
 	fi
 	case ${2} in
 		"python-doc")
-			v=${v/-docs/}
+			v="${v/-docs/}"
 		;;
+		*) : ;;
 	esac
-	echo ${v}
+	echo "${v}"
 }
 
 function	get_file()
 {
-	local	file=${PACKAGE_FILE[${1}]}
-	local	link=${PACKAGE_LINK[${1}]}
+	local	file="${PACKAGE_FILE[${1}]}"
+	local	link="${PACKAGE_LINK[${1}]}"
 	local	fmt_hdr="(${GRE}${PACKAGE_ID}${RST}/${RED}${PACKAGE_NB}${RST})"
 
 
@@ -166,10 +177,11 @@ function	get_file()
 
 function	get_package_tar_folder()
 {
-	local	pack=${1}
-	local	file=${DIR_DOWNLOAD_CACHE}/${2}
-	local	-n	_ref_tar_folder=PACKAGE_TAR_FOLDER[${pack}]
-	local	first_line="$(_tar -tf ${file} 2>/dev/null | head -n1)"
+	local	pack="${1}"
+	local	file="${DIR_DOWNLOAD_CACHE}/${2}"
+	local	-n	_ref_tar_folder="PACKAGE_TAR_FOLDER[${pack}]"
+	local	first_line
+	first_line="$(_tar -tf "${file}" 2>/dev/null | head -n1 || true)"
 	local	fmt=""
 
 	_ref_tar_folder="${first_line%%/*}"
@@ -181,18 +193,22 @@ function	get_package_tar_folder()
 
 function	update_pack_meta()
 {
-	declare -g PACKAGE_NB=${#PACKAGE[@]}
+	declare -g PACKAGE_NB="${#PACKAGE[@]}"
 	declare -g PACKAGE_ID
 
 	dset "(0/${PACKAGE_NB}) Updating meta package"
 
-	[ "${GET_PACK_CHECK_REPO:-0}" != "0" ] && get_package_link || true
+	[ "${GET_PACK_CHECK_REPO:-0}" != "0" ] && get_package_link
 
-	[ "${1:-${GET_PACK_DOWNLOAD:-0}}" != "0" ] && download_sources || true
+	[ "${1:-${GET_PACK_DOWNLOAD:-0}}" != "0" ] && download_sources
 
-	[ "${GET_PACK_SAVE:-0}" != "0" ] && save_meta_package || true
+	if [ "${GET_PACK_SAVE:-0}" != "0" ]; then
+		save_meta_package
+	fi
 
-	unset ${!PACKAGE_@}
+	unset "${!PACKAGE_@}"
 
-	. ${GET_PACK_OUT}
+	# No need to check for package_meta
+	# shellcheck disable=SC1090
+	. "${GET_PACK_OUT}"
 }

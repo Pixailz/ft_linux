@@ -1,25 +1,16 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	configure_grub()
 {
-	local	grub_dir="/boot/grub"
+	local	grub_dir="${LFS}/boot/grub"
 	local	grub_cfg="${grub_dir}/grub.cfg"
 	local	grub_device="${TARGET_DISK}"
 
-	mkdir -pv ${LFS}${grub_dir}
+	_mkdir "${grub_dir}"
 	do_chroot "grub-install ${grub_device}"
-	chroot_line "# Begin default /boot/grub/grub.cfg" /boot/grub/grub.cfg 1
-	chroot_line "" /boot/grub/grub.cfg
-	chroot_line "set default=0" /boot/grub/grub.cfg
-	chroot_line "set timeout=5" /boot/grub/grub.cfg
-	chroot_line "" /boot/grub/grub.cfg
-	chroot_line "insmod part_gpt" /boot/grub/grub.cfg
-	chroot_line "insmod ext2" /boot/grub/grub.cfg
-	chroot_line "" /boot/grub/grub.cfg
-	chroot_line "set root=(hd1,1)" /boot/grub/grub.cfg
-	chroot_line "" /boot/grub/grub.cfg
-	chroot_line "menuentry \"GNU/Linux, Linux ${PACKAGE_VERSION['linux']}-lfs-${LFS_VERSION}-${LFS_CODENAME}\" {" /boot/grub/grub.cfg
-	chroot_line "	linux /${LFS_VMLINUZ} root=${TARGET_DISK}3 ro" /boot/grub/grub.cfg
-	chroot_line "}" /boot/grub/grub.cfg
-	chroot_line "# End default /boot/grub/grub.cfg" /boot/grub/grub.cfg
+	# envsubst NEED single quote
+	# shellcheck disable=SC2016
+	cat_default_file "${grub_cfg}" \
+		< <(envsubst '$TARGET_DISK,$LFS_VMLINUZ,$LFS_DISTRO_DESC,$LINUX_VERSION,$LINUX_DISTRO_VERSION,$LFS_DISTRO_CODENAME' \
+			< "${DIR_FILE}/grub/lfs")
 }

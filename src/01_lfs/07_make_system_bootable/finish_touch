@@ -1,24 +1,22 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	finish_touch()
 {
 	# Create /etc/lfs-release, /etc/lsb-release, and /etc/os-release
-	echo ${LFS_VERSION} > ${LFS}/etc/lfs-release
-	cat > ${LFS}/etc/lsb-release <<-EOF
-		DISTRIB_ID="Linux From Scratch"
-		DISTRIB_RELEASE="${LFS_VERSION}"
-		DISTRIB_CODENAME="${LFS_CODENAME}"
-		DISTRIB_DESCRIPTION="Linux From Scratch"
-	EOF
-	cat > ${LFS}/etc/os-release <<-EOF
-		NAME="Linux From Scratch"
-		VERSION="${LFS_VERSION}"
-		ID=lfs
-		PRETTY_NAME="Linux From Scratch ${LFS_VERSION}"
-		VERSION_CODENAME="${LFS_CODENAME}"
-		HOME_URL="https://www.linuxfromscratch.org/lfs/"
-	EOF
+	echo "${LFS_DISTRO_VERSION}" > "${LFS}/etc/lfs-release"
+
+	# envsubst NEED single quote
+	# shellcheck disable=SC2016
+	envsubst '$LFS_DISTRO,$LFS_DISTRO_VERSION,$LFS_DISTRO_CODENAME,$LFS_DISTRO_DESC' \
+		> "${LFS}/etc/lsb-release" \
+		< "${DIR_FILE}/lsb-release"
+
+	# envsubst NEED single quote
+	# shellcheck disable=SC2016
+	envsubst '$LFS_DISTRO_DESC,$LFS_DISTRO_VERSION,$LFS_DISTRO_MINI,$LFS_DISTRO_CODENAME,$LFS_DISTRO_HOME' \
+		> "${LFS}/etc/os-release" \
+		< "${DIR_FILE}/os-release"
 
 	# Remove history files
-	find ${LFS} -name ".*_history" -print -delete
+	find "${LFS}" -type f -name ".*_history" -exec rm -f {} \; || true
 }

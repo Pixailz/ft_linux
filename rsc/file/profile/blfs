@@ -1,0 +1,96 @@
+# Written for Beyond Linux From Scratch
+# by James Robertson <jameswrobertson@earthlink.net>
+# modifications by Dagmar d'Surreal <rivyqntzne@pbzpnfg.arg>
+# modifications by Pixailz <brda-sil@student.42angouleme.fr>
+
+# System wide environment variables and startup programs.
+
+# System wide aliases and functions should go in /etc/bashrc.  Personal
+# environment variables and startup programs should go into
+# ~/.bash_profile.  Personal aliases and functions should go into
+# ~/.bashrc.
+
+for i in $(locale); do
+  unset ${i%=*}
+done
+
+if [[ "${TERM}" = linux ]]; then
+  export LANG=${LFS_LOCALE_LANG}
+else
+  source /etc/locale.conf
+
+  for i in $(locale); do
+    key=${i%=*}
+    if [[ -v ${key} ]]; then
+      export ${key}
+    fi
+  done
+fi
+
+# Functions to help us manage paths.  Second argument is the name of the
+# path variable to be modified (default: what is define below, in PATH_VAR)
+export PATH_VAR="PATH"
+
+pathremove()
+{
+	local	newpath
+	local	pathvariable=${2:-${PATH_VAR}}
+	local	IFS=':'
+
+	for dir in ${!pathvariable}; do
+		if [ "${dir}" != "${1}" ]; then
+			newpath="${newpath:+${newpath}:}${dir}"
+		fi
+	done
+
+	export ${pathvariable}="${newpath}"
+}
+
+pathprepend()
+{
+	local pathvariable=${2:-${PATH_VAR}}
+	pathremove "${1}" "${pathvariable}"
+	export ${pathvariable}="${1}${!pathvariable:+:${!pathvariable}}"
+}
+
+pathappend()
+{
+	local pathvariable=${2:-${PATH_VAR}}
+	pathremove "${1}" "${pathvariable}"
+	export ${pathvariable}="${!pathvariable:+${!pathvariable}:}${1}"
+}
+
+export -f pathremove pathprepend pathappend
+
+# Set the initial path
+export PATH=/usr/bin
+
+# Attempt to provide backward compatibility with LFS earlier than 11
+if [ ! -L /bin ]; then
+	pathappend /bin
+fi
+
+if [ "${EUID}" -eq 0 ] ; then
+	pathappend /usr/sbin
+	if [ ! -L /sbin ]; then
+		pathappend /sbin
+	fi
+	unset HISTFILE
+fi
+
+# Set some defaults for graphical systems
+export XDG_DATA_DIRS=${XDG_DATA_DIRS:-/usr/share/}
+export XDG_CONFIG_DIRS=${XDG_CONFIG_DIRS:-/etc/xdg/}
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/tmp/xdg-${USER}}
+
+if [ -f /etc/skel/.bashrc ]; then
+	. /etc/skel/.bashrc
+fi
+
+for script in /etc/profile.d/*.sh ; do
+	if [ -r "${script}" ] ; then
+		. "${script}"
+	fi
+done
+
+unset script

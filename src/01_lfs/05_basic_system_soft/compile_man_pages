@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	compile_man_pages()
 {
 	package_init man-pages 0
 
-	do_chroot "set -x && cd /sources/${package_tar_folder} \
+	do_chroot "cd /sources/${package_tar_folder} \
 	&& rm -v man3/crypt* \
 	&& make prefix=/usr install"
 

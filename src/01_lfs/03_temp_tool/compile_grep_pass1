@@ -1,15 +1,15 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	compile_grep_pass1()
 {
 	package_init grep 0.1
 
-	_pushd ${dst_folder}
+	_pushd "${dst_folder}"
 	./configure --prefix=/usr \
-		--host=${LFS_TGT} \
-		--build=$(build-aux/config.guess)
+		--host="${LFS_TGT}" \
+		--build="$(build-aux/config.guess)"
 	make
-	make DESTDIR=${LFS} install
+	make DESTDIR="${LFS}" install
 	_popd
 
 	package_clean

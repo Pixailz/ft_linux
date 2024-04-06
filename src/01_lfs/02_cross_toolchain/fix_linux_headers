@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	fix_linux_headers()
 {
 	package_init linux 0
 
-	_pushd ${dst_folder}
+	_pushd "${dst_folder}"
 	make mrproper
 	make headers
 	find usr/include -type f ! -name '*.h' -delete
-	_cp -r usr/include ${LFS}/usr
+	_cp -r usr/include "${LFS}/usr"
 	_popd
 
 	package_clean

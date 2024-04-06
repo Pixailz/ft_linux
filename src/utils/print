@@ -1,23 +1,23 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	_printf_ts()
-{ printf "[${YEL}%s${RST}]" "$(date '+%d/%M/%Y %T')" >> ${LOG_FILE_EXEC}; }
+{ printf "[${YEL}%s${RST}]" "$(date '+%d/%M/%Y %T')" >> "${LOG_FILE_EXEC}"; }
 
 function	_printf()
 {
-	local	pad="${LIFOVAR_LOG_LVL[@]: -1}"
+	local	pad="${LIFOVAR_LOG_LVL[*]: -1}"
 	local	pad_str=""
 
 	if [ "${pad}" -gt 0 ]; then
-		for ((i = 0; i < ${pad}; i++)); do
+		for ((i = 0; i < "${pad}"; i++)); do
 			pad_str+="   "
 		done
 	fi
 	if [ "${3:-}" == "" ]; then
 		_printf_ts
-		printf "%s%b %b\n" "${pad_str}" "${1}" "${2}" | tee -a ${LOG_FILE_EXEC}
+		printf "%s%b %b\n" "${pad_str}" "${1}" "${2}" | tee -a "${LOG_FILE_EXEC}"
 	else
-		printf "%b" "${2}" | tee -a ${LOG_FILE_EXEC}
+		printf "%b" "${2}" | tee -a "${LOG_FILE_EXEC}"
 	fi
 }
 

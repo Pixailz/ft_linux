@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+function	configure_skel()
+{
+	_mkdir "${LFS}/etc/skel"
+	cat_default_file "${LFS}/etc/skel/.bashrc" < "${DIR_FILE}/skel/bashrc"
+
+	_mkdir "${LFS}/etc/skel/.vim"
+	cat_default_file "${LFS}/etc/skel/.vim/vimrc" '"' < "${DIR_FILE}/skel/vimrc"
+}

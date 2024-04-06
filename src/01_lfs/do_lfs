@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	lfs_01_prepare()
 {
 	step_id_push "LFS_PREPARE" 4
 	step_do checkup
-	step_do partition
+	step_do partition_lfs
 	mount_lfs
 	step_do update_pack_meta 1
 	chown -v root:root -R "${LFS_SOURCES_DIR}"
@@ -70,7 +70,7 @@ function	lfs_05_basic_system_soft()
 {
 	local	max_step=80
 	[ "${LFS_SYSTEMD:-0}" == "0" ] || max_step=79
-	step_id_push "LFS_BASIC_SYSTEM_SOFT" ${max_step}
+	step_id_push "LFS_BASIC_SYSTEM_SOFT" "${max_step}"
 	step_do compile_man_pages
 	step_do compile_iana_etc
 	step_do compile_glibc_pass2
@@ -157,7 +157,11 @@ function	lfs_05_basic_system_soft()
 		step_do compile_sysklogd
 		step_do compile_sysvinit
 	fi
-	[ "${LFS_STRIP_BINARIES:-0}" != "0" ] && strip_binaries || pinfo "Stripping binaries skipped"
+	if [ "${LFS_STRIP_BINARIES:-0}" != "0" ]; then
+		strip_binaries
+	else
+		pinfo "Stripping binaries skipped"
+	fi
 	step_do clean_basic_soft
 	step_id_pop
 }
@@ -167,7 +171,7 @@ function	lfs_06_system_config_systemd()
 	step_id_push "LFS_SYSTEM_CONFIG_SYSTEMD" 9
 	step_do configure_network_systemd
 	step_do configure_dns
-	step_do chroot_line "${LFS_HOSTNAME}" /etc/hostname 1
+	step_do echo "${LFS_HOSTNAME}" > "${LFS}/etc/hostname"
 	step_do configure_clock_systemd
 	step_do install_fonts
 	step_do configure_console_systemd
@@ -184,7 +188,7 @@ function	lfs_06_system_config_sysvinit()
 	step_do configure_devices
 	step_do configure_network_sysvinit
 	step_do configure_dns
-	step_do chroot_line "${LFS_HOSTNAME}" /etc/hostname 1
+	step_do echo "${LFS_HOSTNAME}" > "${LFS}/etc/hostname"
 	step_do configure_sysvinit
 	step_do configure_clock_sysvinit
 	step_do install_fonts

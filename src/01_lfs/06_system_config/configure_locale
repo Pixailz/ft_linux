@@ -1,32 +1,14 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	configure_locale()
 {
-	chroot_line "# Begin default /etc/locale.conf" /etc/locale.conf 1
-	chroot_line "" /etc/locale.conf
-	chroot_line "LANG=${LFS_LOCALE_LANG}" /etc/locale.conf
-	chroot_line "" /etc/locale.conf
-	chroot_line "# End default /etc/locale.conf" /etc/locale.conf
+	# envsubst NEED single quote
+	# shellcheck disable=SC2016
+	cat_default_file "${LFS}/etc/locale.conf" \
+		< <(envsubst '$LFS_LOCALE_LANG' < "${DIR_FILE}/locale.conf")
 
-	chroot_line "# Begin default /etc/profile" /etc/profile 1
-	chroot_line "" /etc/profile
-	chroot_line 'for i in $(locale); do' /etc/profile
-	chroot_line '  unset ${i%=*}' /etc/profile
-	chroot_line 'done' /etc/profile
-	chroot_line "" /etc/profile
-	chroot_line 'if [[ "$TERM" = linux ]]; then' /etc/profile
-	chroot_line "  export LANG=${LFS_LOCALE_LANG}" /etc/profile
-	chroot_line 'else' /etc/profile
-	chroot_line '  source /etc/locale.conf' /etc/profile
-	chroot_line "" /etc/profile
-	chroot_line '  for i in $(locale); do' /etc/profile
-	chroot_line '    key=${i%=*}' /etc/profile
-	chroot_line '    if [[ -v $key ]]; then' /etc/profile
-	chroot_line '      export $key' /etc/profile
-	chroot_line '    fi' /etc/profile
-	chroot_line '  done' /etc/profile
-	chroot_line 'fi' /etc/profile
-
-	chroot_line '' /etc/profile
-	chroot_line '# End default /etc/profile' /etc/profile
+	# envsubst NEED single quote
+	# shellcheck disable=SC2016
+	cat_default_file "${LFS}/etc/profile" \
+		< <(envsubst '$LFS_LOCALE_LANG' < "${DIR_FILE}/profile/lfs")
 }

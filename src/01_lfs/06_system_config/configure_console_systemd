@@ -1,13 +1,10 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	configure_console_systemd()
 {
-	chroot_line "# Begin default /etc/vconsole.conf" /etc/vconsole.conf 1
-	chroot_line "" /etc/vconsole.conf
-	if [ "${LFS_CONSOLE_KEYMAP:-}" != "" ]; then
-		chroot_line "KEYMAP=${LFS_CONSOLE_KEYMAP}" /etc/vconsole.conf
-	fi
-	chroot_line "FONT=${LFS_CONSOLE_FONT}" /etc/vconsole.conf
-	chroot_line "" /etc/vconsole.conf
-	chroot_line "# End default /etc/vconsole.conf" /etc/vconsole.conf
+	# envsubst NEED single quote
+	# shellcheck disable=SC2016
+	cat_default_file "${LFS}/etc/vconsole.conf" \
+		< <(envsubst '$LFS_CONSOLE_KEYMAP,$LFS_CONSOLE_FONT' \
+			< "${DIR_FILE}/console/systemd")
 }

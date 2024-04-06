@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	kernel_config()
 {
@@ -6,11 +6,12 @@ function	kernel_config()
 	local	var_value=${2}
 	local	prefix=${3:-CONFIG_}
 
-	grep "${prefix}${var_name}" ${LFS}/${KERNEL_CONFIG} 2>&1 1>/dev/null ||
-		echo "# ${prefix}${var_name} is not set" >> ${LFS}/${KERNEL_CONFIG}
+	if grep "${prefix}${var_name}" "${LFS}/${KERNEL_CONFIG}" &>/dev/null; then
+		echo "# ${prefix}${var_name} is not set" >> "${LFS}/${KERNEL_CONFIG}"
+	fi
 
 	sed -i "s|.*${prefix}${var_name}[ =].*|${prefix}${var_name}=${var_value}|" \
-		${LFS}/${KERNEL_CONFIG}
+		"${LFS}/${KERNEL_CONFIG}"
 }
 
 function	compile_linux()
@@ -50,13 +51,13 @@ function	compile_linux()
 	kernel_config "IOMMU_SUPPORT" "y"
 	kernel_config "IRQ_REMAP" "y"
 
-	kernel_config "LOCALVERSION" "\"-${LFS_CODENAME}\""
+	kernel_config "LOCALVERSION" "\"-${LFS_DISTRO_CODENAME}\""
 	kernel_config "LOCALVERSION_AUTO" "y"
 
-	_rm ${LFS}/boot/System.map-${package_version}
-	_rm ${LFS}/boot/${LFS_VMLINUZ}
-	_rm ${LFS}/boot/config-${package_version}
-	_rm ${LFS}/usr/share/doc/linux-${package_version}
+	_rm "${LFS}/boot/System.map-${package_version}"
+	_rm "${LFS}/boot/${LFS_VMLINUZ}"
+	_rm "${LFS}/boot/config-${package_version}"
+	_rm "${LFS}/usr/share/doc/linux-${package_version}"
 
 	do_chroot "cd /sources/${package_tar_folder} \
 	&& make \
@@ -66,18 +67,15 @@ function	compile_linux()
 	&& cp -fiv .config /boot/config-${package_version} \
 	&& cp -fr Documentation -T /usr/share/doc/linux-${package_version}"
 
-	_mkdir ${LFS}/etc/modprobe.d
-	chroot_line "# Begin default /etc/modprobe.d/usb.conf" /etc/modprobe.d/usb.conf 1
-	chroot_line "" /etc/modprobe.d/usb.conf
-	chroot_line "install ohci_hcd /sbin/modprobe ehci_hcd ; /sbin/modprobe -i ohci_hcd ; true" /etc/modprobe.d/usb.conf
-	chroot_line "install uhci_hcd /sbin/modprobe ehci_hcd ; /sbin/modprobe -i uhci_hcd ; true" /etc/modprobe.d/usb.conf
-	chroot_line "" /etc/modprobe.d/usb.conf
-	chroot_line "# End default /etc/modprobe.d/usb.conf" /etc/modprobe.d/usb.conf
+	_mkdir "${LFS}/etc/modprobe.d"
+	cat_default_file "${LFS}/etc/modprobe.d/usb.conf" < "${DIR_FILE}/modprobe_usb.conf"
 
 	unset KERNEL_CONFIG
 
-	_tar -xf ${src_file} -C ${LFS}/usr/src
-	_mv ${LFS}/usr/src/${package_tar_folder} ${LFS}/usr/src/kernel-${package_version}
+	# Exported variable
+	# shellcheck disable=SC2154
+	_tar -xf "${src_file}" -C "${LFS}/usr/src"
+	_mv "${LFS}/usr/src/${package_tar_folder}" "${LFS}/usr/src/kernel-${package_version}"
 
 	package_clean
 }

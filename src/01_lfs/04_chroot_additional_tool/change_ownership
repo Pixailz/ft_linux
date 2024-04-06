@@ -1,10 +1,11 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	change_ownership()
 {
 	pinfo "Changing ownership of ${LFS} to root"
-	chown -R root:root ${LFS}/{usr,lib,var,etc,bin,sbin,tools}
+	chown -R root:root "${LFS}/"{usr,lib,var,etc,bin,sbin,tools}
 	case ${LFS_ARCH} in
-		x86_64) chown -R root:root ${LFS}/lib64 ;;
+		x86_64) chown -R root:root "${LFS}/lib64" ;;
+		*) : ;;
 	esac
 }

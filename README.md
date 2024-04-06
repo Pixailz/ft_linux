@@ -50,9 +50,17 @@ the script will update the [package_meta_in](./package_meta_in) file
 1. Finish systemd part, and do sysvinit, or do it will doing systemd
 1. Make a wiki on how to use this script, at the end because it's not finished
    yet and can change
+1. Find a way to determine boot sda1 -> hd(1,1)
 
 ## IDEAS
 1. Add support for more editor
 1. SBU db already here, save in meta_in, and add update system
 1. Don't redo all the package_meta each time, update var or add it
 1. Add cli option
+1. Add color on pushd / popd
+
+## Shell Check
+
+```sh
+shellcheck -xa -Calways ./run
+```

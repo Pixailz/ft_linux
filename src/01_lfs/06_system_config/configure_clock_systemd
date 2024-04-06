@@ -1,14 +1,8 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	configure_clock_systemd()
 {
 	if [ "${LFS_CLOCK_UTC:-0}" != "0" ]; then
-		chroot_line "# Begin default /etc/sysconfig/clock" "/etc/adjtime" 1
-		chroot_line "" "/etc/adjtime"
-		chroot_line "0.0 0 0.0" "/etc/adjtime"
-		chroot_line "0" "/etc/adjtime"
-		chroot_line "LOCAL" "/etc/adjtime"
-		chroot_line "" "/etc/adjtime"
-		chroot_line "# End default "/etc/adjtime"" "/etc/adjtime"
+		cat_default_file "${LFS}/etc/adjtime" < "${DIR_FILE}/adjtime"
 	fi
 }

@@ -1,33 +1,41 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	configure_network_systemd()
 {
-	local	in_file="/etc/systemd/network/10-${LFS_NET_INTERFACE}"
+	local	in_file="${LFS}/etc/systemd/network/10-${LFS_NET_INTERFACE}"
 
-	_mkdir ${LFS}/etc/systemd/network
+	_mkdir "${LFS}/etc/systemd/network"
 	if [ "${LFS_NET_USE_DHCP:-0}" == "0" ]; then
 		in_file+="-static.network"; else
 		in_file+="-dhcp.network"; fi
 
-	chroot_line "# Begin default ${in_file}" "${in_file}" 1
-	chroot_line "[Match]" "${in_file}"
-	chroot_line "Name=${LFS_NET_INTERFACE}" "${in_file}"
-	chroot_line "" "${in_file}"
-	chroot_line "[Network]" "${in_file}"
+	cat > "${in_file}" <<-EOCONF
+		# Begin default ${in_file}
+
+		[Match]
+		Name=${LFS_NET_INTERFACE}
+
+		[Network]
+	EOCONF
 
 	# Setup DNS
-	chroot_line "DNS=${LFS_NET_DNS_PRI}" "${in_file}"
+	echo "DNS=${LFS_NET_DNS_PRI}" >> "${in_file}"
 	if [ "${LFS_NET_DNS_SEC:-}" != "" ]; then
-		chroot_line "DNS=${LFS_NET_DNS_SEC}" "${in_file}"
+		echo "DNS=${LFS_NET_DNS_SEC}" >> "${in_file}"
 	fi
 
 	if [ "${LFS_NET_USE_DHCP:-0}" == "0" ]; then
-		chroot_line "Address=${LFS_NET_STATIC_IP}/${LFS_NET_STATIC_PREFIX}" "${in_file}"
-		chroot_line "Gateway=${LFS_NET_STATIC_GATE}" "${in_file}"
+		cat >> "${in_file}" <<-EOCONF
+			Address=${LFS_NET_STATIC_IP}/${LFS_NET_STATIC_PREF}
+			Gateway=${LFS_NET_STATIC_GATE}
+		EOCONF
 	else
-		chroot_line "DHCP=ipv4" "${in_file}"
-		chroot_line "" "${in_file}"
-		chroot_line "[DHCPv4]" "${in_file}"
-		chroot_line "UseDomains=true" "${in_file}"
+		cat >> "${in_file}" <<-EOCONF
+			DHCP=ipv4
+
+			[DHCPv4]
+			UseDomains=true
+		EOCONF
 	fi
+	echo "# End default ${in_file}" >> "${in_file}"
 }
