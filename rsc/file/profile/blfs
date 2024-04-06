@@ -10,23 +10,6 @@
 # ~/.bash_profile.  Personal aliases and functions should go into
 # ~/.bashrc.
 
-for i in $(locale); do
-  unset ${i%=*}
-done
-
-if [[ "${TERM}" = linux ]]; then
-  export LANG=${LFS_LOCALE_LANG}
-else
-  source /etc/locale.conf
-
-  for i in $(locale); do
-    key=${i%=*}
-    if [[ -v ${key} ]]; then
-      export ${key}
-    fi
-  done
-fi
-
 # Functions to help us manage paths.  Second argument is the name of the
 # path variable to be modified (default: what is define below, in PATH_VAR)
 export PATH_VAR="PATH"

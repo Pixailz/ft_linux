@@ -2,5 +2,36 @@
 
 function	configure_profile()
 {
+	# Default profile
 	cat_default_file "${LFS}/etc/profile" < "${DIR_FILE}/profile/blfs"
+	install --directory --mode=0755 --owner=root --group=root \
+		"${LFS}/etc/profile.d"
+
+	# Bash completion
+	cat_default_file "${LFS}/etc/profile.d/bash_completion.sh" \
+		< "${DIR_FILE}/profile/bash_completion.sh"
+	install --directory --mode=0755 --owner=root --group=root \
+		"${LFS}/etc/bash_completion.d"
+
+	# Dircolors
+	cat_default_file "${LFS}/etc/profile.d/dircolors.sh" \
+		< "${DIR_FILE}/profile/dircolors.sh"
+
+	# Extrapaths
+	cat_default_file "${LFS}/etc/profile.d/extrapaths.sh" \
+		< "${DIR_FILE}/profile/extrapaths.sh"
+
+	# Readline
+	cat_default_file "${LFS}/etc/profile.d/readline.sh" \
+		< "${DIR_FILE}/profile/readline.sh"
+
+	# umask
+	cat_default_file "${LFS}/etc/profile.d/umask.sh" \
+		< "${DIR_FILE}/profile/umask.sh"
+
+	# Locales
+	# envsubst NEED single quote
+	# shellcheck disable=SC2016
+	cat_default_file "${LFS}/etc/profile.d/i18n.sh" \
+		< <(ensubst '$LFS_LOCAL_LANG' < "${DIR_FILE}/profile/i18n.sh")
 }
