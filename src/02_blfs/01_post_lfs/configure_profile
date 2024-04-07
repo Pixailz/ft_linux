@@ -9,29 +9,35 @@ function	configure_profile()
 
 	# Bash completion
 	cat_default_file "${LFS}/etc/profile.d/bash_completion.sh" \
-		< "${DIR_FILE}/profile/bash_completion.sh"
+		< "${DIR_FILE}/profile/profile_d/bash_completion.sh"
 	install --directory --mode=0755 --owner=root --group=root \
 		"${LFS}/etc/bash_completion.d"
 
 	# Dircolors
 	cat_default_file "${LFS}/etc/profile.d/dircolors.sh" \
-		< "${DIR_FILE}/profile/dircolors.sh"
+		< "${DIR_FILE}/profile/profile_d/dircolors.sh"
 
 	# Extrapaths
 	cat_default_file "${LFS}/etc/profile.d/extrapaths.sh" \
-		< "${DIR_FILE}/profile/extrapaths.sh"
+		< "${DIR_FILE}/profile/profile_d/extrapaths.sh"
 
 	# Readline
 	cat_default_file "${LFS}/etc/profile.d/readline.sh" \
-		< "${DIR_FILE}/profile/readline.sh"
+		< "${DIR_FILE}/profile/profile_d/readline.sh"
 
 	# umask
 	cat_default_file "${LFS}/etc/profile.d/umask.sh" \
-		< "${DIR_FILE}/profile/umask.sh"
+		< "${DIR_FILE}/profile/profile_d/umask.sh"
+
+	# umask
+	cat_default_file "${LFS}/etc/profile.d/prompt.sh" \
+		< "${DIR_FILE}/profile/profile_d/prompt.sh"
 
 	# Locales
 	# envsubst NEED single quote
 	# shellcheck disable=SC2016
 	cat_default_file "${LFS}/etc/profile.d/i18n.sh" \
-		< <(ensubst '$LFS_LOCAL_LANG' < "${DIR_FILE}/profile/i18n.sh")
+		< <(envsubst '$LFS_LOCAL_LANG' < "${DIR_FILE}/profile/profile_d/i18n.sh")
+
+	do_chroot "dircolors -p > /etc/dircolors"
 }

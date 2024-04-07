@@ -6,6 +6,6 @@ insmod ext2
 
 set root=(hd1,1)
 
-menuentry \"${LFS_DISTRO_DESC} version: ${LFS_DISTRO_VERSION}, Linux ${LINUX_VERSION} ${LFS_DISTRO_CODENAME}\" {
+menuentry "${LFS_DISTRO_DESC} version: ${LFS_DISTRO_VERSION}, Linux ${LINUX_VERSION} ${LFS_DISTRO_CODENAME}" {
 	linux /${LFS_VMLINUZ} root=${TARGET_DISK}3 ro
 }

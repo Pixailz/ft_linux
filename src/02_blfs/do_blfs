@@ -2,11 +2,12 @@
 
 function	blfs_01_post_lfs()
 {
-	step_id_push "BLFS_POST_LFS" 3
+	step_id_push "BLFS_POST_LFS" 4
 
 	step_do configure_group_user
 	step_do configure_skel
 	step_do configure_profile
+	step_do configure_issue
 
 	step_id_pop
 }

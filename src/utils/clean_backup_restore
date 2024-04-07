@@ -47,9 +47,9 @@ function	backup_lfs()
 	_popd
 }
 
-function	restore()
+function	restore_lfs()
 {
-	local	backup_file="${1}"
+	local	backup_file="${DIR_BASE}/${1}"
 
 	if [ ! -f "${backup_file}" ]; then
 		pfail "Backup file ${backup_file} not found"
@@ -59,7 +59,7 @@ function	restore()
 	mount_lfs
 	_pushd "${LFS}"
 	pinfo "Restoring backup ${backup_file}"
-	dset "Restoring backup ${CYA}${backup_file}${RST}"
+	dset "Restoring backup ${CYA}${backup_file/${DIR_BASE}/}${RST}"
 	tar -xpf "${backup_file}"
 	ppass "Restore done"
 	dset "Restoring backup ${GRE}done${RST}"

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+function	configure_issue()
+{
+	cat > "${LFS}/etc/issue" < "${DIR_FILE}/issue"
+}

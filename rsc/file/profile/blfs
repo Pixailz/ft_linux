@@ -66,8 +66,20 @@ export XDG_DATA_DIRS=${XDG_DATA_DIRS:-/usr/share/}
 export XDG_CONFIG_DIRS=${XDG_CONFIG_DIRS:-/etc/xdg/}
 export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/tmp/xdg-${USER}}
 
-if [ -f /etc/skel/.bashrc ]; then
-	. /etc/skel/.bashrc
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+if [ -f "${HOME}/.bashrc" ]; then
+	. "${HOME}/.bashrc"
+else
+	if [ -f /etc/skel/.bashrc ]; then
+		. /etc/skel/.bashrc
+	fi
+fi
+
+if [ -d "${HOME}/bin" ] ; then
+  pathprepend "${HOME}/bin"
 fi
 
 for script in /etc/profile.d/*.sh ; do
@@ -75,5 +87,6 @@ for script in /etc/profile.d/*.sh ; do
 		. "${script}"
 	fi
 done
+
 
 unset script

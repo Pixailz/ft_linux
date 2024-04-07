@@ -1,0 +1,20 @@
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# Set up some environment variables.
+export HISTSIZE=10000
+export HISTFILESIZE="${HISTSIZE}"
+export HISTIGNORE="&:[bf]g:exit"
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "${TERM}" in
+    xterm-color|*-256color) color_prompt=yes;;
+	*) color_prompt= ;;
+esac
