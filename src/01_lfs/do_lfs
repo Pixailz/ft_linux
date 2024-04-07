@@ -5,7 +5,7 @@ function	lfs_01_prepare()
 	step_id_push "LFS_PREPARE" 4
 	step_do checkup
 	step_do partition_lfs
-	mount_lfs
+	lfs_mount
 	step_do update_pack_meta 1
 	chown -v root:root -R "${LFS_SOURCES_DIR}"
 	step_do create_minimal_fhs
@@ -29,7 +29,7 @@ function	lfs_02_cross_toolchain()
 
 function	lfs_03_temp_tool()
 {
-	step_id_push "LFS_TEMP_TOOL" 17
+	step_id_push "LFS_TEMP_TOOL" 18
 	step_do compile_m4_pass1
 	step_do compile_ncurses_pass1
 	step_do compile_bash_pass1
@@ -47,6 +47,7 @@ function	lfs_03_temp_tool()
 	step_do compile_xz_pass1
 	step_do compile_binutils_pass2
 	step_do compile_gcc_pass2
+	step_do backup_lfs "temp_tool"
 	step_id_pop
 }
 
@@ -54,7 +55,7 @@ function	lfs_04_chroot_additional_tool()
 {
 	step_id_push "LFS_CHROOT_ADDITIONAL_TOOL" 10
 	step_do change_ownership
-	step_do create_virtualfs
+	lfs_virtualfs_enable
 	step_do create_full_fhs
 	step_do essential_file
 	step_do compile_gettext_pass1
@@ -63,6 +64,7 @@ function	lfs_04_chroot_additional_tool()
 	step_do compile_python_pass1
 	step_do compile_texinfo_pass1
 	step_do compile_util_linux_pass1
+	step_do clean_temp_lfs
 	step_id_pop
 }
 
@@ -168,10 +170,10 @@ function	lfs_05_basic_system_soft()
 
 function	lfs_06_system_config_systemd()
 {
-	step_id_push "LFS_SYSTEM_CONFIG_SYSTEMD" 9
+	step_id_push "LFS_SYSTEM_CONFIG_SYSTEMD" 8
 	step_do configure_network_systemd
 	step_do configure_dns
-	step_do echo "${LFS_HOSTNAME}" > "${LFS}/etc/hostname"
+	echo "${LFS_HOSTNAME}" > "${LFS}/etc/hostname"
 	step_do configure_clock_systemd
 	step_do install_fonts
 	step_do configure_console_systemd
@@ -183,12 +185,12 @@ function	lfs_06_system_config_systemd()
 
 function	lfs_06_system_config_sysvinit()
 {
-	step_id_push "LFS_SYSTEM_CONFIG_SYSVINIT" 13
+	step_id_push "LFS_SYSTEM_CONFIG_SYSVINIT" 12
 	step_do lfs_boot_script
 	step_do configure_devices
 	step_do configure_network_sysvinit
 	step_do configure_dns
-	step_do echo "${LFS_HOSTNAME}" > "${LFS}/etc/hostname"
+	echo "${LFS_HOSTNAME}" > "${LFS}/etc/hostname"
 	step_do configure_sysvinit
 	step_do configure_clock_sysvinit
 	step_do install_fonts
@@ -211,25 +213,27 @@ function	lfs_06_system_config()
 
 function	lfs_07_make_system_bootable()
 {
-	step_id_push "LFS_MAKE_SYSTEM_BOOTABLE" 5
+	step_id_push "LFS_MAKE_SYSTEM_BOOTABLE" 4
 	step_do configure_fstab
 	step_do compile_linux
 	step_do configure_grub
-	step_do clean_lfs
 	step_do finish_touch
 	step_id_pop
 }
 
 function	do_lfs()
 {
-	step_id_push "LFS" 8
+	step_id_push "LFS" 11
 	step_do lfs_01_prepare
 	step_do lfs_02_cross_toolchain
 	step_do lfs_03_temp_tool
 	step_do lfs_04_chroot_additional_tool
 	step_do lfs_05_basic_system_soft
+	step_do backup_lfs "base_system"
 	step_do lfs_06_system_config
+	step_do backup_lfs "configured"
 	step_do lfs_07_make_system_bootable
-	step_do backup_lfs
+	step_do backup_lfs "bootable"
+	step_do save_log
 	step_id_pop
 }

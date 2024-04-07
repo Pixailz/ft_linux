@@ -1,0 +1,61 @@
+#!/bin/bash
+
+function	lfs_mount()
+{
+	pinfo "Mounting ${LFS} filesystem"
+
+	_mkdir "${LFS}"
+	_mount "${TARGET_DISK}3" "${LFS}" ext4
+	_swapon "${TARGET_DISK}2"
+	_mount "${TARGET_DISK}1" "${LFS}/boot" ext4
+	ppass "Mounted ${LFS} filesystem"
+}
+
+function	lfs_umount()
+{
+	lfs_virtualfs_disable
+
+	pinfo "Unmounting ${LFS} filesystem"
+
+	_umount "${LFS}/boot"
+	_swapoff "${TARGET_DISK}2"
+	_umount "${LFS}"
+	ppass "Unmounted ${LFS} filesystem"
+}
+
+
+function	lfs_virtualfs_enable()
+{
+	lfs_mount
+	pinfo "Enabling virtual file system"
+
+	mkdir -p "${LFS}/"{dev,proc,sys,run}
+
+	# Populate /dev
+	mount -v --bind /dev "${LFS}/dev" || true
+	mount -vt devpts devpts -o gid=5,mode=0620 "${LFS}/dev/pts" || true
+	mount -vt proc proc "${LFS}/proc" || true
+	mount -vt sysfs sysfs "${LFS}/sys" || true
+	mount -vt tmpfs tmpfs "${LFS}/run" || true
+	if [ -h "${LFS}/dev/shm" ]; then
+		install -v -d -m 1777 "${LFS}$(realpath /dev/shm)"
+	else
+		mount -vt tmpfs -o nosuid,nodev tmpfs "${LFS}/dev/shm"
+	fi
+	ppass "Enabled virtual file system"
+}
+
+function	lfs_virtualfs_disable()
+{
+	pinfo "Disabling virtual file system"
+
+	: > "${DAEMON_WAIT_FILE}"
+	mount --make-slave "${LFS}/dev" || true
+	for folder in sys proc run; do
+		_umount "${LFS}/${folder}"
+	done
+	umount -R "${LFS}/dev" || true
+
+	_rm "${DAEMON_WAIT_FILE}"
+	ppass "Disabled virtual file system"
+}

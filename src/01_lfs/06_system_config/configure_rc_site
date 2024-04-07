@@ -4,7 +4,7 @@ function	configure_rc_site()
 {
 	# envsubst NEED single quote
 	# shellcheck disable=SC2016
-	cat_default_file "${LFS}/etc/locale.conf" \
+	cat_default_file "${LFS}/etc/sysconfig/rc.site" \
 		< <(envsubst '$LFS_DISTRO,$LFS_DISTRO_CONTACT,$LFS_DISTRO_MINI' \
-			< "${DIR_FILE}/locale.conf")
+			< "${DIR_FILE}/rc.site")
 }

@@ -2,9 +2,9 @@
 
 # Distro Information
 # These values, if specified here, override the defaults
-DISTRO=\"${LFS_DISTRO:-}\" # The distro name
-DISTRO_CONTACT=\"${LFS_DISTRO_CONTACT:-}\" # Bug report address
-DISTRO_MINI=\"${LFS_DISTRO_MINI}\" # Short name used in filenames for distro config
+DISTRO="${LFS_DISTRO:-}" # The distro name
+DISTRO_CONTACT="${LFS_DISTRO_CONTACT:-}" # Bug report address
+DISTRO_MINI="${LFS_DISTRO_MINI}" # Short name used in filenames for distro config
 
 # Define custom colors used in messages printed to the screen
 # Please consult `man console_codes` for more information

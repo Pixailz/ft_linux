@@ -11,6 +11,6 @@ function	configure_grub()
 	# envsubst NEED single quote
 	# shellcheck disable=SC2016
 	cat_default_file "${grub_cfg}" \
-		< <(envsubst '$TARGET_DISK,$LFS_VMLINUZ,$LFS_DISTRO_DESC,$LINUX_VERSION,$LINUX_DISTRO_VERSION,$LFS_DISTRO_CODENAME' \
+		< <(envsubst '$TARGET_DISK,$LFS_VMLINUZ,$LFS_DISTRO_DESC,$LINUX_VERSION,$LFS_DISTRO_VERSION,$LFS_DISTRO_CODENAME' \
 			< "${DIR_FILE}/grub/lfs")
 }

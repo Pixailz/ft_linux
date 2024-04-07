@@ -27,6 +27,9 @@ function	daemon_status()
 	while true; do
 		daemon_print_status
 		sleep "${DAEMON_REFRESH_RATE}"
+
+		[ -f "${DAEMON_WAIT_FILE}" ] && continue
+
 		((index_dot++)) || true
 		if [ "${index_dot}" -gt 10 ]; then
 			case ${dot} in

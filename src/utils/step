@@ -62,7 +62,7 @@ function	step_do()
 	step_set_daemon_status "${1}" "${step_i}"
 
 	if [ "${STEP[STEP_${id}]}" -ge "${STEP[${id}]:-0}" ]; then
-		${1} "${@:2}" 2>&1 | tee -a "${LOG_FILE_DIR}/${1}.log"
+		${1} "${@:2}" 2>&1 | tee -a "${DIR_LOG}/${1}.log"
 		STEP["${id}"]="${step_i}"
 		step_set_var "${id}" "${step_i}"
 	fi

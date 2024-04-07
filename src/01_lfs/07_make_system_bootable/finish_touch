@@ -19,4 +19,7 @@ function	finish_touch()
 
 	# Remove history files
 	find "${LFS}" -type f -name ".*_history" -exec rm -f {} \; || true
+
+	# Change root passwd
+	do_chroot "echo 'root:${LFS_ROOT_PASS}' | chpasswd"
 }

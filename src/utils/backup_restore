@@ -1,0 +1,101 @@
+#!/usr/bin/bash
+
+function	backup_lfs_clean()
+{
+	lfs_virtualfs_disable
+	lfs_mount
+	find "${LFS}/sources/*" -type d -exec rm -rf {} \; || true
+}
+
+function	backup_lfs_get_id()
+{
+	# local	tot
+
+	# while read -r i; do
+	# 	local	n
+	# 	n="$(sed -n "s|${DIR_BAK}||p")"
+	# 	tot="${tot:+ + }${n}"
+	# done < <(find "${DIR_BAK}" -name "*${LFS_BAK_EXT}")
+
+	# echo "${tot:-empty}"
+	wc -l < <(ls -lA "${DIR_BAK}/"*"${LFS_BAK_EXT}" 2>/dev/null)
+}
+
+function	backup_lfs()
+{
+	local	desc="${1:+-$1}"
+	local	to_backup
+	local	to_backup_id
+	local	fmt
+
+	to_backup_id=$(backup_lfs_get_id)
+
+	backup_lfs_clean
+
+	to_backup="${DIR_BAK}/${LFS_BAK_PREFIX}-$(backup_lfs_get_id)${desc}${LFS_BAK_EXT}"
+
+	fmt="${BOL}${CYA}Creating incremental backup "
+	fmt+="${GRE}${to_backup/${DIR_BASE}/}${RST}, lvl ${CYA}${to_backup_id}${RST}${RST_BOL}"
+	pinfo "${fmt}"
+	dset "${fmt}"
+
+	_tar --create \
+		--directory="${LFS}" .\
+		--file="${to_backup}" \
+		--listed-incremental="${LFS_BAK_META}" \
+		--use-compress-program="gzip -9"
+
+	ppass "Backup done"
+	dset "Backup done"
+	lfs_virtualfs_enable
+}
+
+# function	backup_lfs()
+# {
+# 	local	file_desc="${1:-}"
+# 	local	file="lfs-${LFS_DISTRO_VERSION}-${LFS_DISTRO_CODENAME}-${PACKAGE_VERSION[linux]}"
+# 	[ "${LFS_GIT_VERSION}" != "" ] && file+="-${LFS_GIT_VERSION}"
+# 	[ "${file_desc}" != "" ] && file+="-${file_desc}"
+# 	file+="-$(date +%d%m%Y%H%M%S).tar.gz"
+
+# 	backup_lfs_clean
+
+# 	_cp "${LOG_FILE_EXEC}" "${DIR_LOG}/exec.log"
+# 	_pushd "${DIR_LOG}/.."
+# 	_tar -I 'gzip -9' -cpf "${LFS_SOURCES_DIR}/log.tar.gz" ./log
+# 	_popd
+# 	_rm "${DIR_LOG}/exec.log"
+
+# 	_pushd "${LFS}"
+# 	pinfo "Creating backup ${file}"
+# 	dset "${BOL}${CYA}Creating backup ${GRE}${file}${RST}${RST_BOL}"
+# 	# GZIP MAXED
+# 	_tar -I 'gzip -9' -cpf "${DIR_BASE}/${file}" .
+# 	# BZIP2
+# 	# tar -cjpf "${DIR_BASE}/${file}" .
+# 	# XZ ...
+# 	# tar -czpf "${DIR_BASE}/${file}" .
+# 	ppass "Backup done"
+
+# 	lfs_virtualfs_enable
+# 	_popd
+# }
+
+function	restore_lfs()
+{
+	local	backup_file="${DIR_BASE}/${1}"
+
+	if [ ! -f "${backup_file}" ]; then
+		pfail "Backup file ${backup_file} not found"
+		return
+	fi
+
+	lfs_mount
+	_pushd "${LFS}"
+	pinfo "Restoring backup ${backup_file}"
+	dset "Restoring backup ${CYA}${backup_file/${DIR_BASE}/}${RST}"
+	tar -xpf "${backup_file}"
+	ppass "Restore done"
+	dset "Restoring backup ${GRE}done${RST}"
+	_popd
+}

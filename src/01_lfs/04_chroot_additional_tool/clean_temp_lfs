@@ -1,0 +1,7 @@
+
+function	clean_temp_lfs()
+{
+	do_chroot rm -rf /usr/share/{info,man,doc}/*
+	do_chroot find /usr/{lib,libexec} -name \*.la -delete
+	do_chroot rm -rf /tools
+}

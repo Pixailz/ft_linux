@@ -27,8 +27,7 @@ function	compile_shadow()
 	&& grpconv \
 	&& mkdir -p /etc/default \
 	&& useradd -D --gid 999 \
-	&& sed -i '/MAIL/s/yes/no/' /etc/default/useradd \
-	&& echo 'root:${LFS_ROOT_PASS}' | chpasswd"
+	&& sed -i '/MAIL/s/yes/no/' /etc/default/useradd"
 
 	package_clean
 }

@@ -51,6 +51,7 @@ the script will update the [package_meta_in](./package_meta_in) file
 1. Make a wiki on how to use this script, at the end because it's not finished
    yet and can change
 1. Find a way to determine boot sda1 -> hd(1,1)
+1. Fix not scrollable screen (daemon bugs)
 
 ## IDEAS
 1. Add support for more editor

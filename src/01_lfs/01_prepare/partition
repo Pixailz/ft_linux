@@ -2,47 +2,15 @@
 
 function	partition_lfs()
 {
-	pinfo "Unmount all partition"
-	# () prevent IFS to be modified
-	# shellcheck disable=SC2206
-	# shellcheck disable=SC2207
-	(
-		IFS=$'\n'
-		mounted=($(mount | grep "${TARGET_DISK}" || true))
-		IFS=' '
-		for ((i = $((${#mounted[@]} - 1)); i >= 0; i--)); do
-			m=(${mounted[${i}]})
-			_umount "${m[2]}"
-		done
-	)
+	lfs_umount
 
-	pinfo "Unmount all swap"
-	# shellcheck disable=SC2206
-	# shellcheck disable=SC2207
-	(
-		IFS=$'\n'
-		mounted=($(swapon | grep "${TARGET_DISK}" || true))
-		IFS=' '
-		for ((i = $((${#mounted[@]} - 1)); i >= 0; i--)); do
-			m=(${mounted[${i}]})
-			_swapoff "${m[0]}"
-		done
-	)
-
-	sfdisk "${TARGET_DISK}" < <(envsubst < "${DIR_FILE}/default_disk_map")
+	# envsubst NEED single quote
+	# shellcheck disable=SC2016
+	sfdisk "${TARGET_DISK}" \
+		< <(envsubst '$TARGET_SWAP_SIZE'< "${DIR_FILE}/default_disk_map")
 
 	pinfo "Make filesystem"
 	echo y | mkfs -v -t ext4 "${TARGET_DISK}1"
 	mkswap "${TARGET_DISK}2"
 	echo y | mkfs -v -t ext4 "${TARGET_DISK}3"
-}
-
-function	mount_lfs()
-{
-	pinfo "Mount filesystem"
-	_mkdir "${LFS}"
-
-	_mount "${TARGET_DISK}3" "${LFS}" ext4
-	_swapon "${TARGET_DISK}2"
-	_mount "${TARGET_DISK}1" "${LFS}/boot" ext4
 }

@@ -42,32 +42,32 @@ function	_popd()
 	done
 }
 
-function	_umount()
+function	_mount()
 {
-	if mountpoint -q "${1}"; then
-		umount "${1}"
+	if ! mountpoint -q "${2}" &>/dev/null; then
+		_mkdir "${2}"
+		mount -v -t "${3:-ext4}" "${1}" "${2}"
 	fi
 }
 
-function	_mount()
+function	_umount()
 {
-	if ! mountpoint -q "${2}"; then
-		_mkdir "${2}"
-		mount -t "${3:-ext4}" "${1}" "${2}"
+	if mountpoint -q "${1}" &>/dev/null; then
+		umount -v "${1}"
 	fi
 }
 
 function	_swapon()
 {
-	if ! swapon --show=NAME --noheading | grep "${1}"; then
-		swapon "${1}"
+	if ! swapon --show=NAME --noheading | grep "${1}" &>/dev/null; then
+		swapon -v "${1}"
 	fi
 }
 
 function	_swapoff()
 {
-	if swapon --show=NAME --noheading | grep "${1}"; then
-		swapoff "${1}"
+	if swapon --show=NAME --noheading | grep "${1}" &>/dev/null; then
+		swapoff -v "${1}"
 	fi
 }
 
@@ -96,4 +96,22 @@ function	do_chroot()
 		MAKEFLAGS="-j${LFS_CORES}" \
 		TESTSUITEFLAGS="-j${LFS_CORES}" \
 		/bin/bash <<<"${@}"
+}
+
+function	press_akey()
+{
+	local	msg="${1:-Press any key to continue...}"
+
+	pinfo "${msg}"
+	read -rsn1
+}
+
+function	save_log()
+{
+	_cp "${LOG_FILE_EXEC}" "${DIR_LOG}/exec.log"
+	_pushd "${DIR_LOG}/.."
+	_tar -I 'gzip -9' -cpf "${LFS_SOURCES_DIR}/log.tar.gz" ./log
+	_popd
+	_rm "${DIR_LOG}/exec.log"
+	backup_lfs "log"
 }

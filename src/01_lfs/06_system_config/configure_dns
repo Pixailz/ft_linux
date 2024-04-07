@@ -5,7 +5,7 @@ function	configure_dns()
 	local	dns_file="${LFS}/etc/resolv.conf"
 
 	# Setup DNS
-	cat >> "${dns_file}" <<-EOCONF
+	cat > "${dns_file}" <<-EOCONF
 		# Begin default ${dns_file}
 
 		nameserver ${LFS_NET_DNS_PRI}
@@ -15,5 +15,5 @@ function	configure_dns()
 		echo "nameserver ${LFS_NET_DNS_SEC}" >> "${dns_file}"
 	fi
 
-	echo "# End default ${dns_file}"
+	echo -e "\n# End default ${dns_file}" >> "${dns_file}"
 }
