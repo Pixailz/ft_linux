@@ -15,7 +15,7 @@
 1. Linux From Scratch 12.1
 	> finished
 2. Beyond Linux From Scratch
-	> https://linuxfromscratch.org/blfs/view/12.1-systemd/postlfs/profile.html
+	> https://linuxfromscratch.org/blfs/view/12.1-systemd/postlfs/security.html
 
 ## How To
 
