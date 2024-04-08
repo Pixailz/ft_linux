@@ -231,9 +231,7 @@ function	do_lfs()
 	step_do lfs_05_basic_system_soft
 	step_do backup_lfs "base_system"
 	step_do lfs_06_system_config
-	step_do backup_lfs "configured"
 	step_do lfs_07_make_system_bootable
-	step_do backup_lfs "bootable"
 	step_do save_log
 	step_id_pop
 }

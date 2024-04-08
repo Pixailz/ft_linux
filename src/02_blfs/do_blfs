@@ -8,7 +8,7 @@ function	blfs_01_post_lfs()
 	step_do configure_skel
 	step_do configure_profile
 	step_do configure_issue
-	step_do backup_lfs "post_lfs"
+	step_do create_user
 	step_id_pop
 }
 
@@ -16,5 +16,6 @@ function	do_blfs()
 {
 	step_id_push "BLFS" 1
 	step_do blfs_01_post_lfs
+	step_do backup_lfs "blfs"
 	step_id_pop
 }

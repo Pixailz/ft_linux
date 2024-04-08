@@ -37,13 +37,6 @@ init
 do_lfs
 do_blfs
 
-# Create user if LFS_USER_NAME is not null, at the end because skel and other
-# things are setup before
-if [ "${LFS_USER_NAME:-}" != "" ]; then
-	do_chroot "useradd -m -s /bin/bash ${LFS_USER_NAME}"
-	do_chroot "echo '${LFS_USER_NAME}:${LFS_USER_PASS}' | chpasswd"
-fi
-
 # Testing Zone
 
 exit ${?}

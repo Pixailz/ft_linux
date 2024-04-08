@@ -13,6 +13,7 @@ source "${DIR_SRC}/utils/trap"
 source "${DIR_SRC}/utils/ansi"
 source "${DIR_SRC}/utils/package"
 source "${DIR_SRC}/utils/daemon_status"
+source "${DIR_SRC}/utils/create_user"
 
 # Get/Scrap/Update meta package, gevin a repo link and type
 # see more in src/get_package_link/README.md

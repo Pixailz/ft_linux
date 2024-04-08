@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+function	create_user()
+{
+	if [ "${LFS_USER_NAME:-}" != "" ]; then
+		_rm "${LFS}/home/${LFS_USER_NAME}"
+		do_chroot "useradd -m -s /bin/bash ${LFS_USER_NAME}"
+		do_chroot "echo '${LFS_USER_NAME}:${LFS_USER_PASS}' | chpasswd"
+	fi
+}

@@ -43,6 +43,7 @@ function	backup_lfs()
 		--directory="${LFS}" .\
 		--file="${to_backup}" \
 		--listed-incremental="${LFS_BAK_META}" \
+		--preserve-permissions \
 		--use-compress-program="gzip -9"
 
 	ppass "Backup done"
@@ -50,52 +51,32 @@ function	backup_lfs()
 	lfs_virtualfs_enable
 }
 
-# function	backup_lfs()
-# {
-# 	local	file_desc="${1:-}"
-# 	local	file="lfs-${LFS_DISTRO_VERSION}-${LFS_DISTRO_CODENAME}-${PACKAGE_VERSION[linux]}"
-# 	[ "${LFS_GIT_VERSION}" != "" ] && file+="-${LFS_GIT_VERSION}"
-# 	[ "${file_desc}" != "" ] && file+="-${file_desc}"
-# 	file+="-$(date +%d%m%Y%H%M%S).tar.gz"
-
-# 	backup_lfs_clean
-
-# 	_cp "${LOG_FILE_EXEC}" "${DIR_LOG}/exec.log"
-# 	_pushd "${DIR_LOG}/.."
-# 	_tar -I 'gzip -9' -cpf "${LFS_SOURCES_DIR}/log.tar.gz" ./log
-# 	_popd
-# 	_rm "${DIR_LOG}/exec.log"
-
-# 	_pushd "${LFS}"
-# 	pinfo "Creating backup ${file}"
-# 	dset "${BOL}${CYA}Creating backup ${GRE}${file}${RST}${RST_BOL}"
-# 	# GZIP MAXED
-# 	_tar -I 'gzip -9' -cpf "${DIR_BASE}/${file}" .
-# 	# BZIP2
-# 	# tar -cjpf "${DIR_BASE}/${file}" .
-# 	# XZ ...
-# 	# tar -czpf "${DIR_BASE}/${file}" .
-# 	ppass "Backup done"
-
-# 	lfs_virtualfs_enable
-# 	_popd
-# }
-
 function	restore_lfs()
 {
-	local	backup_file="${DIR_BASE}/${1}"
-
-	if [ ! -f "${backup_file}" ]; then
-		pfail "Backup file ${backup_file} not found"
-		return
-	fi
+	local	lvl="${1:-}"
+	local	cur_lvl=0
+	local	fmt
 
 	lfs_mount
-	_pushd "${LFS}"
-	pinfo "Restoring backup ${backup_file}"
-	dset "Restoring backup ${CYA}${backup_file/${DIR_BASE}/}${RST}"
-	tar -xpf "${backup_file}"
-	ppass "Restore done"
-	dset "Restoring backup ${GRE}done${RST}"
-	_popd
+
+	while read -r file; do
+		fmt="${file##*-}"
+		fmt="Restoring backup ${CYA}${fmt%%.*}${RST}, lvl ${GRE}${cur_lvl}${RST}"
+		pinfo "${fmt}"
+		dset "${fmt}"
+
+		_tar --extract \
+			--verbose \
+			--listed-incremental=/dev/null \
+			--file="${file}" \
+			--directory="${LFS}" \
+			--preserve-permissions
+
+		[ "${lvl}" == "${cur_lvl}" ] && break
+		((cur_lvl++)) || true
+	done < <(find "${DIR_BAK}" -name "${LFS_BAK_PREFIX}*${LFS_BAK_EXT}" | sort)
+
+	fmt="Restored backup ${GRE}${DIR_BAK/${DIR_BASE}\/}${RST}"
+	ppass "${fmt}"
+	dset "${fmt}"
 }

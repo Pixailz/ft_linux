@@ -22,4 +22,5 @@ function	finish_touch()
 
 	# Change root passwd
 	do_chroot "echo 'root:${LFS_ROOT_PASS}' | chpasswd"
+	create_user
 }

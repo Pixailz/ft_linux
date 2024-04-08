@@ -7,6 +7,7 @@ function	partition_lfs()
 	# envsubst NEED single quote
 	# shellcheck disable=SC2016
 	sfdisk "${TARGET_DISK}" \
+		--no-reread \
 		< <(envsubst '$TARGET_SWAP_SIZE'< "${DIR_FILE}/default_disk_map")
 
 	pinfo "Make filesystem"
