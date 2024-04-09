@@ -27,69 +27,57 @@ declare -A PACKAGE_TAR_FOLDER
 
 source "${GET_PACK_DIR_BASE}/scrap"
 
-function	save_meta_package_begin()
+function	save_meta_package_get_value()
 {
-	for meta in "${GET_PACK_META[@]}"; do
-		local	var_out="out_${meta}"
-		echo -e "declare -gA PACKAGE_${meta^^}=(" > "${!var_out}"
-	done
+	local	pak="PACKAGE_${1^^}"
+	local	reg="print if s/.*?${pak}=\(.*?\[\"${2}\"\]=\"(.*?)\".*?# END ${pak}.*/\1/s"
+
+	perl -0777 -nE "${reg}" "${GET_PACK_OUT}"
 }
 
-function	save_meta_package_end()
+function	save_meta_package_add_value()
 {
-	echo -e "#!/usr/bin/bash\n" > "${GET_PACK_OUT}"
+	local	line="$(grep -n "# END PACKAGE_${1^^}" "${GET_PACK_OUT}" | cut -d: -f1)"
 
-	for meta in "${GET_PACK_META[@]}"; do
-		local	var_out="out_${meta}"
-
-		echo ")" >> "${!var_out}"
-		printf "%s\n\n" "$(cat "${!var_out}")" >> "${GET_PACK_OUT}"
-
-		rm -rf "${!var_out}"
-	done
-
-	sed -i '$d' "${GET_PACK_OUT}"
-
-	unset "${!out_@}"
+	sed "$((line - 1))i\\\\t[\"${2}\"]=\"${3}\"" -i "${GET_PACK_OUT}"
 }
 
-function	save_meta_package_middle()
+function	save_meta_package_set_value()
+{
+	local	pak="PACKAGE_${1^^}"
+	local	reg="print if s/.*?${pak}=\(.*?\[\"${2}\"\]=\"(.*?)\".*?# END ${pak}.*/\1/s"
+
+	perl -0777 -nE "${reg}" "${GET_PACK_OUT}"
+}
+
+function	save_meta_package_wrapper()
 {
 	local	pack="${1}"
+	local	meta="${2}"
+	local	new_val="${3}"
+	local	old_val="$(save_meta_package_get_value "${meta}" "${pack}")"
 
-	for meta in "${GET_PACK_META[@]}"; do
-		local	_var="_ref_${meta}"
-		declare -n "${_var}"="PACKAGE_${meta^^}"
-	done
-
-	# Exported variable
-	# shellcheck disable=SC2154
-	echo -e "\t[\"${pack}\"]=\"${_ref_link[${pack}]:-}\"" >> "${out_link}"
-	# Exported variable
-	# shellcheck disable=SC2154
-	echo -e "\t[\"${pack}\"]=\"${_ref_version[${pack}]:-}\"" >> "${out_version}"
-	# Exported variable
-	# shellcheck disable=SC2154
-	echo -e "\t[\"${pack}\"]=\"${_ref_file[${pack}]:-}\"" >> "${out_file}"
-	# Exported variable
-	# shellcheck disable=SC2154
-	echo -e "\t[\"${pack}\"]=\"${_ref_tar_folder[${pack}]:-}\"" >> "${out_tar_folder}"
-	unset -n "${!_ref_@}"
+	if [ "${new_val}" == "" ]; then
+		pwarn "${pack}: ${meta}: nothing found"
+	elif [ "${old_val}" == "" ]; then
+		pinfo "${pack}: ${meta}: adding value"
+		save_meta_package_add_value "${meta}" "${pack}" "${new_val}"
+	elif [ "${old_val}" == "${new_val}" ]; then
+		ppass "${pack}: ${meta}: up-to-date"
+	else
+		pinfo "${pack}: ${meta}: updating value"
+		sed -i "s|${old_val}|${new_val}|" "${GET_PACK_OUT}"
+	fi
 }
 
 function	save_meta_package()
 {
-	for meta in "${GET_PACK_META[@]}"; do
-		local	out_tmp_var="out_${meta}"
-		declare -x "${out_tmp_var}"="${GET_PACK_OUT_TMP}_${meta}"
-		[ -e "${!out_tmp_var}" ] && rm -rf "${!out_tmp_var}"
-	done
-
-	save_meta_package_begin
 	for pack in "${PACKAGE[@]}"; do
-		save_meta_package_middle "${pack}"
+		save_meta_package_wrapper "${pack}" "LINK" "${PACKAGE_LINK[${pack}]:-}"
+		save_meta_package_wrapper "${pack}" "VERSION" "${PACKAGE_VERSION[${pack}]:-}"
+		save_meta_package_wrapper "${pack}" "FILE" "${PACKAGE_FILE[${pack}]:-}"
+		save_meta_package_wrapper "${pack}" "TAR_FOLDER" "${PACKAGE_TAR_FOLDER[${pack}]:-}"
 	done
-	save_meta_package_end
 }
 
 function	get_package_link()

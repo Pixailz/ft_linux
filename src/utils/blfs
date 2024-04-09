@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+function	blfs_todo()
+{
+	local	package="${1}"
+
+	[ "${BLFS_TODO[${package}]:-}" == "1" ] && return 1
+
+	return 0
+}

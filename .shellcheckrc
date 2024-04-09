@@ -21,4 +21,4 @@ source-path=src/01_lfs/05_basic_system_soft
 source-path=src/01_lfs/06_system_config
 source-path=src/01_lfs/07_make_system_bootable
 source-path=src/02_blfs
-source-path=src/02_blfs/01_post_lfs
+source-path=src/02_blfs/01_after_lfs

@@ -36,7 +36,8 @@ function	step_setup_file()
 	step_setup "LFS_SYSTEM_CONFIG_SYSTEMD"
 	step_setup "LFS_MAKE_SYSTEM_BOOTABLE"
 	step_setup "BLFS"
-	step_setup "BLFS_POST_LFS"
+	step_setup "BLFS_AFTER_LFS"
+	step_setup "BLFS_SECURITY"
 }
 
 function	step_set_daemon_status()

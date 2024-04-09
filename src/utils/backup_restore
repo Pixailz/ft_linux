@@ -53,13 +53,18 @@ function	backup_lfs()
 
 function	restore_lfs()
 {
-	local	lvl="${1:-}"
+	local	lvl_end="${1:-}"
+	local	lvl_start="${2:--1}"
 	local	cur_lvl=0
 	local	fmt
 
 	lfs_mount
 
 	while read -r file; do
+		if [ "${cur_lvl}" -le "${lvl_start}" ]; then
+			((cur_lvl++)) || true
+			continue
+		fi
 		fmt="${file##*-}"
 		fmt="Restoring backup ${CYA}${fmt%%.*}${RST}, lvl ${GRE}${cur_lvl}${RST}"
 		pinfo "${fmt}"
@@ -72,11 +77,12 @@ function	restore_lfs()
 			--directory="${LFS}" \
 			--preserve-permissions
 
-		[ "${lvl}" == "${cur_lvl}" ] && break
+		[ "${lvl_end}" == "${cur_lvl}" ] && break
 		((cur_lvl++)) || true
-	done < <(find "${DIR_BAK}" -name "${LFS_BAK_PREFIX}*${LFS_BAK_EXT}" | sort)
+	done < <(find "${DIR_BAK}" -name "*${LFS_BAK_EXT}" | sort)
 
 	fmt="Restored backup ${GRE}${DIR_BAK/${DIR_BASE}\/}${RST}"
 	ppass "${fmt}"
 	dset "${fmt}"
+	install_grub
 }

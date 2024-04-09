@@ -56,7 +56,6 @@ the script will update the [package_meta_in](./package_meta_in) file
 ## IDEAS
 1. Add support for more editor
 1. SBU db already here, save in meta_in, and add update system
-1. Don't redo all the package_meta each time, update var or add it
 1. Add cli option
 1. Add color on pushd / popd
 

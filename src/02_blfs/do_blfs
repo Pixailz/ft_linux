@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
-function	blfs_01_post_lfs()
+function	blfs_01_after_lfs()
 {
-	step_id_push "BLFS_POST_LFS" 5
+	step_id_push "BLFS_AFTER_LFS" 5
 
 	step_do configure_group_user
 	step_do configure_skel
@@ -12,10 +12,20 @@ function	blfs_01_post_lfs()
 	step_id_pop
 }
 
+function	blfs_02_security()
+{
+	step_id_push "BLFS_SECURITY" 2
+	step_do compile_make_ca
+	step_do compile_cracklib
+	step_id_pop
+}
+
 function	do_blfs()
 {
 	step_id_push "BLFS" 1
-	step_do blfs_01_post_lfs
+	step_do blfs_01_after_lfs
+	BLFS_TODO_CHECK=1
+	step_do blfs_02_security
 	step_do backup_lfs "blfs"
 	step_id_pop
 }

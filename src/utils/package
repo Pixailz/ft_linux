@@ -29,6 +29,11 @@ function	package_init()
 	local	fmt_pass="pass ${package_pass}"
 	local	fmt_sbu=""
 
+	if [ "${BLFS_TODO_CHECK:-0}" == "1" ] && blfs_todo "${package}"; then
+		pinfo "Skipping ${package}"
+		return 0
+	fi
+
 	if [ "${package_sbu}" == "" ]; then
 		fmt_sbu="and getting SBU"
 	elif [ "${package_sbu}" == "0" ]; then
@@ -40,6 +45,7 @@ function	package_init()
 	if [ "${4:-0}" != "0" ]; then _rm "${dst_folder}"; fi
 	package_decompress
 	pinfo "${fmt_building} ${fmt_pass} ${fmt_sbu}"
+	return 1
 }
 
 function	package_clean()

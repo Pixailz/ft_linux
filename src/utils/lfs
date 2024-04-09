@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function	lfs_mount()
 {
@@ -8,7 +8,7 @@ function	lfs_mount()
 	_mount "${TARGET_DISK}3" "${LFS}" ext4
 	_swapon "${TARGET_DISK}2"
 	_mount "${TARGET_DISK}1" "${LFS}/boot" ext4
-	sync
+	sync "${TARGET_DISK}"
 	ppass "Mounted ${LFS} filesystem"
 }
 
@@ -21,7 +21,7 @@ function	lfs_umount()
 	_umount "${LFS}/boot"
 	_swapoff "${TARGET_DISK}2"
 	_umount "${LFS}"
-	sync
+	sync "${TARGET_DISK}"
 	ppass "Unmounted ${LFS} filesystem"
 }
 
@@ -44,7 +44,7 @@ function	lfs_virtualfs_enable()
 	else
 		mount -vt tmpfs -o nosuid,nodev tmpfs "${LFS}/dev/shm"
 	fi
-	sync
+	sync "${TARGET_DISK}"
 	ppass "Enabled virtual file system"
 }
 
@@ -61,6 +61,6 @@ function	lfs_virtualfs_disable()
 	umount -R "${LFS}/dev" || true
 
 	_rm "${DAEMON_WAIT_FILE}"
-	sync
+	sync "${TARGET_DISK}"
 	ppass "Disabled virtual file system"
 }

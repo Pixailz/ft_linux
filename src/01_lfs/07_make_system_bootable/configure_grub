@@ -1,13 +1,21 @@
 #!/usr/bin/bash
 
+function	install_grub()
+{
+	pinfo "Installing GRUB"
+	dset "Installing GRUB"
+
+	lfs_virtualfs_enable
+	do_chroot "grub-install ${TARGET_DISK} --target=i386-pc"
+}
+
 function	configure_grub()
 {
 	local	grub_dir="${LFS}/boot/grub"
 	local	grub_cfg="${grub_dir}/grub.cfg"
-	local	grub_device="${TARGET_DISK}"
 
 	_mkdir "${grub_dir}"
-	do_chroot "grub-install ${grub_device}"
+	install_grub
 	# envsubst NEED single quote
 	# shellcheck disable=SC2016
 	cat_default_file "${grub_cfg}" \

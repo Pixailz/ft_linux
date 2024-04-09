@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+function	compile_make_ca()
+{
+	package_init make-ca 0.1 && return
+
+	pinfo "building make-ca"
+
+	package_clean
+}
