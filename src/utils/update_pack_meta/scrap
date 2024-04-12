@@ -211,7 +211,7 @@ function	scrap_gitlab()
 	# shellcheck disable=SC2086
 	# GraphQL query to get the latest release
 	# shellcheck disable=SC2016
-	out=$(curl ${CURL_OPT} -X POST https://gitlab.com/api/graphql  \
+	out=$(curl ${CURL_OPT} -X POST https://gitlab.gnome.org/api/graphql  \
 			-H "Content-Type: application/json" \
 			-d '{
 				"operationName":"allReleases",

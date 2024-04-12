@@ -109,11 +109,16 @@ declare -xa PACKAGE=(
 	"make-ca"
 )
 
-# declare -xa PACKAGE=(
-# 	"cracklib"
-# 	# "cracklib-wordlists"
-# 	"make-ca"
-# )
+declare -xa PACKAGE=(
+	# "cracklib"
+	# "cracklib-wordlists"
+	# "make-ca"
+	"p11-kit"
+	"libtasn1"
+	"nss"
+	"nspr"
+	"libxslt"
+)
 
 # Package repository
 declare -xA PACKAGE_REPO=(
@@ -159,7 +164,6 @@ declare -xA PACKAGE_REPO=(
 	["kmod"]="apache_no_sort,https://mirrors.edge.kernel.org/pub/linux/utils/kernel/kmod"
 	["less"]="website,https://www.greenwoodsoftware.com/less/download.html"
 	["libcap"]="apache_no_sort,https://mirrors.edge.kernel.org/pub/linux/libs/security/linux-privs/libcap2"
-	["lfs-bootscripts"]="github,lfs-dev/lfs-bootscripts"
 	["libffi"]="github,libffi/libffi"
 	["libpipeline"]="apache,https://download.savannah.gnu.org/releases/libpipeline"
 	["libtool"]="apache,https://ftp.gnu.org/gnu/libtool"
@@ -225,6 +229,12 @@ declare -xA PACKAGE_REPO=(
 	["cracklib"]="github,cracklib/cracklib"
 	["cracklib-wordlists"]="github,cracklib/cracklib"
 	["make-ca"]="github,lfs-book/make-ca"
+
+	["p11-kit"]="github,p11-glue/p11-kit"
+	["libtasn1"]="apache,https://ftp.gnu.org/gnu/libtasn1"
+	["nss"]="fossies,https://fossies.org/linux/misc/nss"
+	["nspr"]="apache_no_sort,https://sources.buildroot.net/libnspr"
+	["libxslt"]="gitlab,GNOME/libxslt"
 )
 
 # Package prefix
@@ -335,6 +345,11 @@ declare -xA PACKAGE_PREFIX=(
 	["cracklib"]="cracklib-"
 	["cracklib-wordlists"]="cracklib-words-"
 	["make-ca"]="make-ca-"
+	["p11-kit"]="p11-kit-"
+	["libtasn1"]="libtasn1-"
+	["nss"]="nss-"
+	["nspr"]="nspr-"
+	["libxslt"]="libxslt-"
 )
 
 # Package suffix
@@ -422,7 +437,7 @@ declare -xA PACKAGE_SUFFIX=(
 	["vim"]=".tar.gz"
 	["wheel"]=".tar.gz"
 	["xml-parser"]=".tar.gz"
-	["xz"]=".tar.gz"
+	["xz"]=".tar.xz"
 	["zlib"]=".tar.gz"
 	["zstd"]=".tar.gz"
 
@@ -446,4 +461,9 @@ declare -xA PACKAGE_SUFFIX=(
 	["cracklib"]=".tar.gz"
 	["cracklib-wordlists"]=".gz"
 	["make-ca"]=".tar.xz"
+	["p11-kit"]=".tar.xz"
+	["libtasn1"]=".tar.gz"
+	["nss"]=".tar.gz"
+	["nspr"]=".tar.gz"
+	["libxslt"]=".tar.gz"
 )
