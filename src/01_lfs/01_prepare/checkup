@@ -3,7 +3,7 @@
 function	checkup()
 {
 	# Install dependencies
-	sudo apt update && sudo apt install -y \
+	apk add --update \
 		vim \
 		binutils \
 		bison \

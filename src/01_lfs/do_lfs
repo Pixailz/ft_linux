@@ -2,9 +2,9 @@
 
 function	lfs_01_prepare()
 {
-	step_id_push "LFS_PREPARE" 4
+	step_id_push "LFS_PREPARE" 3
 	step_do checkup
-	step_do partition_lfs
+	# step_do partition_lfs
 	lfs_mount
 	step_do update_pack_meta 1
 	chown -v root:root -R "${LFS_SOURCES_DIR}"
@@ -25,6 +25,7 @@ function	lfs_02_cross_toolchain()
 	export MAKEFLAGS="-j${LFS_CORES}"
 	step_do compile_libstdcxx
 	step_id_pop
+	exit 130
 }
 
 function	lfs_03_temp_tool()
