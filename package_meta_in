@@ -109,16 +109,16 @@ declare -xa PACKAGE=(
 	"make-ca"
 )
 
-declare -xa PACKAGE=(
-	# "cracklib"
-	# "cracklib-wordlists"
-	# "make-ca"
-	"p11-kit"
-	"libtasn1"
-	"nss"
-	"nspr"
-	"libxslt"
-)
+# declare -xa PACKAGE=(
+# 	# "cracklib"
+# 	# "cracklib-wordlists"
+# 	# "make-ca"
+# 	"p11-kit"
+# 	"libtasn1"
+# 	"nss"
+# 	"nspr"
+# 	"libxslt"
+# )
 
 # Package repository
 declare -xA PACKAGE_REPO=(

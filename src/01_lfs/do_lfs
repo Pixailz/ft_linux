@@ -2,28 +2,24 @@
 
 function	lfs_01_prepare()
 {
-	step_id_push "LFS_PREPARE" 4
+	step_id_push "LFS_PREPARE" 3
 	step_do checkup
 	step_do partition_lfs
+	step_do dot_mngr info
 	lfs_mount
-	step_do update_pack_meta 1
-	chown -v root:root -R "${LFS_SOURCES_DIR}"
 	step_do create_minimal_fhs
+	chown -v root:root -R "${LFS_SOURCES_DIR}"
 	step_id_pop
 }
 
 function	lfs_02_cross_toolchain()
 {
 	step_id_push "LFS_CROSS_TOOLCHAIN" 5
-	export MAKEFLAGS="-j1"
-	step_do compile_binutils_pass1
-	export MAKEFLAGS="-j${LFS_CORES}"
-	step_do compile_gcc_pass1
-	step_do fix_linux_headers
-	export MAKEFLAGS="-j1"
-	step_do compile_glibc_pass1
-	export MAKEFLAGS="-j${LFS_CORES}"
-	step_do compile_libstdcxx
+	step_do dot_mngr_install 1_binutils
+	step_do dot_mngr_install 1_gcc
+	step_do dot_mngr_install 1_linux_headers
+	step_do dot_mngr_install 1_glibc
+	step_do dot_mngr_install 1_libstdcxx
 	step_id_pop
 }
 
@@ -224,6 +220,7 @@ function	do_lfs()
 {
 	step_id_push "LFS" 11
 	step_do lfs_01_prepare
+	lfs_mount
 	step_do lfs_02_cross_toolchain
 	step_do lfs_03_temp_tool
 	step_do lfs_04_chroot_additional_tool

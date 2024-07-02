@@ -19,3 +19,7 @@ lfs-*
 package_meta*
 !package_meta_in
 !package_meta
+
+# dot_mngr
+dot_mngr
+venv

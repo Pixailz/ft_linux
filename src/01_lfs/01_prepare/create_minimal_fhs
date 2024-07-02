@@ -3,6 +3,7 @@
 function	create_minimal_fhs()
 {
 	pinfo "Create directory layout"
+	_mkdir "${LFS_SOURCES_DIR}"
 	mkdir -p "${LFS}/"{etc,var,tools} "${LFS}/usr/"{bin,lib,sbin}
 	for i in bin lib sbin; do
 		[ -e "${LFS}/${i}" ] && _rm "${LFS}/${i}"

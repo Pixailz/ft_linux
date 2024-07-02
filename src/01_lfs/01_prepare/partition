@@ -4,14 +4,16 @@ function	partition_lfs()
 {
 	lfs_umount
 
-	# envsubst NEED single quote
-	# shellcheck disable=SC2016
-	sfdisk "${TARGET_DISK}" \
-		--no-reread \
-		< <(envsubst '$TARGET_SWAP_SIZE'< "${DIR_FILE}/default_disk_map")
+	if [ "${LFS_DO_PARTITION}" == "1" ]; then
+		# envsubst NEED single quote
+		# shellcheck disable=SC2016
+		sfdisk "${TARGET_DISK}" \
+			--no-reread \
+			< <(envsubst '$TARGET_SWAP_SIZE'< "${DIR_FILE}/default_disk_map")
 
-	pinfo "Make filesystem"
-	echo y | mkfs -v -t ext4 "${TARGET_DISK}1"
-	mkswap "${TARGET_DISK}2"
-	echo y | mkfs -v -t ext4 "${TARGET_DISK}3"
+		pinfo "Make filesystem"
+		echo y | mkfs -v -t ext4 "${TARGET_DISK}1"
+		mkswap "${TARGET_DISK}2"
+		echo y | mkfs -v -t ext4 "${TARGET_DISK}3"
+	fi
 }

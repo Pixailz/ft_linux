@@ -2,29 +2,32 @@
 
 function	lfs_mount()
 {
-	pinfo "Mounting ${LFS} filesystem"
+	if [ "${LFS_DO_PARTITION}" == "1" ]; then
+		pinfo "Mounting ${LFS} filesystem"
 
-	_mkdir "${LFS}"
-	_mount "${TARGET_DISK}3" "${LFS}" ext4
-	_swapon "${TARGET_DISK}2"
-	_mount "${TARGET_DISK}1" "${LFS}/boot" ext4
-	sync "${TARGET_DISK}"
-	ppass "Mounted ${LFS} filesystem"
+		_mkdir "${LFS}"
+		_mount "${TARGET_DISK}3" "${LFS}" ext4
+		_swapon "${TARGET_DISK}2"
+		_mount "${TARGET_DISK}1" "${LFS}/boot" ext4
+		sync "${TARGET_DISK}"
+		ppass "Mounted ${LFS} filesystem"
+	fi
 }
 
 function	lfs_umount()
 {
-	lfs_virtualfs_disable
+	if [ "${LFS_DO_PARTITION}" == "1" ]; then
+		lfs_virtualfs_disable
 
-	pinfo "Unmounting ${LFS} filesystem"
+		pinfo "Unmounting ${LFS} filesystem"
 
-	_umount "${LFS}/boot"
-	_swapoff "${TARGET_DISK}2"
-	_umount "${LFS}"
-	sync "${TARGET_DISK}"
-	ppass "Unmounted ${LFS} filesystem"
+		_umount "${LFS}/boot"
+		_swapoff "${TARGET_DISK}2"
+		_umount "${LFS}"
+		sync "${TARGET_DISK}"
+		ppass "Unmounted ${LFS} filesystem"
+	fi
 }
-
 
 function	lfs_virtualfs_enable()
 {

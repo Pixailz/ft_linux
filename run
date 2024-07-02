@@ -11,6 +11,11 @@ set -o pipefail
 # RUNASROOT
 [ "${EUID}" != "0" ] && { echo "Error: run as root"; exit 1; }
 
+declare -x		WHOAMI
+WHOAMI="$(who mom likes | awk '{print $1}')"
+declare -x		WHOAMI_HOME
+WHOAMI_HOME="$(grep ${WHOAMI} /etc/passwd | cut -d: -f6)"
+
 # Config
 declare -x		PATH_BASE
 PATH_BASE="$(realpath "${BASH_SOURCE[0]}")"
@@ -25,7 +30,7 @@ function	init()
 	_mkdir "${DIR_BAK}"
 	step_setup_file
 	daemon_init
-
+	install_dot_mngr
 	set_sbu
 	get_summary
 }
@@ -35,7 +40,7 @@ init
 
 # Main
 do_lfs
-do_blfs
+# do_blfs
 
 # Testing Zone
 

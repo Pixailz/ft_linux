@@ -13,7 +13,9 @@ function	checkup()
 		patch \
 		texinfo \
 		gawk \
-		curl
+		curl \
+		python3 \
+		python3-venv
 
 	pinfo "Symlink /bin/sh to /bin/bash"
 	[ /bin/sh -ef /bin/bash ] || (_rm /bin/sh; _ln -s /bin/bash /bin/sh)
