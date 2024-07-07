@@ -29,9 +29,9 @@ function	get_index()
 
 function	get_summary_lfs()
 {
-	get_index "${DIR_LFS}/**/*" "1  " "LFS (${GRE}${LFS_DISTRO_VERSION}${RST})" "${GET_PACK_DIR_BASE}"
+	get_index "${DIR_LFS}/**/*" "1  " "LFS (${GRE}${LFS_DISTRO_VERSION}${RST})"
 	log_lvl_push 1
-	get_index "${DIR_LFS}/01_prepare/*" "1.1" "Prepare" "${GET_PACK_DIR_BASE}"
+	get_index "${DIR_LFS}/01_prepare/*" "1.1" "Prepare"
 	get_index "${DIR_LFS}/02_cross_toolchain/*" "1.2" "Cross Toolchain"
 	get_index "${DIR_LFS}/03_temp_tool/*" "1.3" "Temp Tool"
 	get_index "${DIR_LFS}/04_chroot_additional_tool/*" "1.4" "Chroot Additional Tool"

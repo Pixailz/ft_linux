@@ -1,14 +1,33 @@
 #!/usr/bin/bash
 
+function	is_mounted()
+{
+	if cat /proc/{swaps,mounts} | grep "${1}"; then
+		echo 1
+	else
+		echo 0
+	fi
+}
+
 function	lfs_mount()
 {
 	if [ "${LFS_DO_PARTITION}" == "1" ]; then
 		pinfo "Mounting ${LFS} filesystem"
 
 		_mkdir "${LFS}"
-		_mount "${TARGET_DISK}3" "${LFS}" ext4
-		_swapon "${TARGET_DISK}2"
-		_mount "${TARGET_DISK}1" "${LFS}/boot" ext4
+
+		if [ "$(is_mounted "${TARGET_DISK}3")" == "0" ]; then
+			_mount "${TARGET_DISK}3" "${LFS}" ext4
+		fi
+
+		if [ "$(is_mounted "${TARGET_DISK}2")" == "0" ]; then
+			_swapon "${TARGET_DISK}2"
+		fi
+
+		if [ "$(is_mounted "${TARGET_DISK}1")" == "0" ]; then
+			_mount "${TARGET_DISK}1" "${LFS}/boot" ext4
+		fi
+
 		sync "${TARGET_DISK}"
 		ppass "Mounted ${LFS} filesystem"
 	fi
@@ -37,15 +56,29 @@ function	lfs_virtualfs_enable()
 	mkdir -p "${LFS}/"{dev,proc,sys,run}
 
 	# Populate /dev
-	mount -v --bind /dev "${LFS}/dev" || true
-	mount -vt devpts devpts -o gid=5,mode=0620 "${LFS}/dev/pts" || true
-	mount -vt proc proc "${LFS}/proc" || true
-	mount -vt sysfs sysfs "${LFS}/sys" || true
-	mount -vt tmpfs tmpfs "${LFS}/run" || true
+
+	if [ "$(is_mounted "${LFS}/dev")" == "0" ]; then
+		mount -v --bind /dev "${LFS}/dev"
+	fi
+	if [ "$(is_mounted "${LFS}/dev/pts")" == "0" ]; then
+		mount -vt devpts devpts -o gid=5,mode=0620 "${LFS}/dev/pts"
+	fi
+	if [ "$(is_mounted "${LFS}/proc")" == "0" ]; then
+		mount -vt proc proc "${LFS}/proc"
+	fi
+	if [ "$(is_mounted "${LFS}/sys")" == "0" ]; then
+		mount -vt sysfs sysfs "${LFS}/sys"
+	fi
+	if [ "$(is_mounted "${LFS}/run")" == "0" ]; then
+		mount -vt tmpfs tmpfs "${LFS}/run"
+	fi
+
 	if [ -h "${LFS}/dev/shm" ]; then
 		install -v -d -m 1777 "${LFS}$(realpath /dev/shm)"
 	else
-		mount -vt tmpfs -o nosuid,nodev tmpfs "${LFS}/dev/shm"
+		if [ "$(is_mounted "${LFS}/dev/shm")" == "0" ]; then
+			mount -vt tmpfs -o nosuid,nodev tmpfs "${LFS}/dev/shm"
+		fi
 	fi
 	sync "${TARGET_DISK}"
 	ppass "Enabled virtual file system"

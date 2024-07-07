@@ -12,14 +12,9 @@ source "${DIR_SRC}/utils/summary"
 source "${DIR_SRC}/utils/step"
 source "${DIR_SRC}/utils/trap"
 source "${DIR_SRC}/utils/ansi"
-source "${DIR_SRC}/utils/package"
 source "${DIR_SRC}/utils/daemon_status"
 source "${DIR_SRC}/utils/create_user"
 source "${DIR_SRC}/utils/dot_mngr_helper"
-
-# Get/Scrap/Update meta package, gevin a repo link and type
-# see more in src/get_package_link/README.md
-source "${GET_PACK_DIR_BASE}/main"
 
 source "${DIR_LFS}/do_lfs"
 
@@ -65,7 +60,7 @@ source "${DIR_LFS}/04_chroot_additional_tool/clean_temp_lfs"
 
 source "${DIR_LFS}/05_basic_system_soft/compile_man_pages"
 source "${DIR_LFS}/05_basic_system_soft/compile_iana_etc"
-source "${DIR_LFS}/05_basic_system_soft/compile_glibc_pass2"
+source "${DIR_LFS}/05_basic_system_soft/configure_glibc_pass2"
 source "${DIR_LFS}/05_basic_system_soft/compile_zlib"
 source "${DIR_LFS}/05_basic_system_soft/compile_bzip2"
 source "${DIR_LFS}/05_basic_system_soft/compile_xz_pass2"

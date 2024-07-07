@@ -7,7 +7,7 @@ function	compile_gettext_pass1()
 	# Exported variable
 	# shellcheck disable=SC2154
 	do_chroot "cd /sources/${package_tar_folder} \
-	&& ./configure --prefix=/usr --docdir=/usr/share/doc/bison-${package_version} \
+	&& ./configure --prefix=/usr --docdir=/usr/share/doc/gettext-${package_version} \
 	&& make \
 	&& make install"
 

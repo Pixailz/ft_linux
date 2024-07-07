@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+
+function	configure_glibc_pass2()
+{
+	# package_init glibc 12 2
+
+	# Create /etc/nsswitch.conf
+	cat_default_file "${LFS}/etc/nsswitch.conf" < "${DIR_FILE}/nsswitch.conf"
+
+	# Create /etc/ld.so.conf
+	cat_default_file "${LFS}/etc/ld.so.conf" < "${DIR_FILE}/ld.so.conf"
+	_mkdir "${LFS}/etc/ld.so.conf.d"
+
+	_ln -sfv "${LFS}/usr/share/zoneinfo/${LFS_TZ}" /etc/localtime
+}

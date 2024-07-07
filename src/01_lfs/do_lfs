@@ -5,7 +5,7 @@ function	lfs_01_prepare()
 	step_id_push "LFS_PREPARE" 3
 	step_do checkup
 	step_do partition_lfs
-	step_do dot_mngr info
+	step_do dot_mngr_info
 	lfs_mount
 	step_do create_minimal_fhs
 	chown -v root:root -R "${LFS_SOURCES_DIR}"
@@ -15,9 +15,13 @@ function	lfs_01_prepare()
 function	lfs_02_cross_toolchain()
 {
 	step_id_push "LFS_CROSS_TOOLCHAIN" 5
+	start=$(date +%s)
 	step_do dot_mngr_install 1_binutils
+	end=$(date +%s)
+	set_sbu "$((end - start))"
+	unset start end
 	step_do dot_mngr_install 1_gcc
-	step_do dot_mngr_install 1_linux_headers
+	step_do dot_mngr_install 1_linux-headers
 	step_do dot_mngr_install 1_glibc
 	step_do dot_mngr_install 1_libstdcxx
 	step_id_pop
@@ -26,23 +30,23 @@ function	lfs_02_cross_toolchain()
 function	lfs_03_temp_tool()
 {
 	step_id_push "LFS_TEMP_TOOL" 17
-	step_do compile_m4_pass1
-	step_do compile_ncurses_pass1
-	step_do compile_bash_pass1
-	step_do compile_coreutils_pass1
-	step_do compile_diffutils_pass1
-	step_do compile_file_pass1
-	step_do compile_findutils_pass1
-	step_do compile_gawk_pass1
-	step_do compile_grep_pass1
-	step_do compile_gzip_pass1
-	step_do compile_make_pass1
-	step_do compile_patch_pass1
-	step_do compile_sed_pass1
-	step_do compile_tar_pass1
-	step_do compile_xz_pass1
-	step_do compile_binutils_pass2
-	step_do compile_gcc_pass2
+	step_do dot_mngr_install 1_m4
+	step_do dot_mngr_install 1_ncurses
+	step_do dot_mngr_install 1_bash
+	step_do dot_mngr_install 1_coreutils
+	step_do dot_mngr_install 1_diffutils
+	step_do dot_mngr_install 1_file
+	step_do dot_mngr_install 1_findutils
+	step_do dot_mngr_install 1_gawk
+	step_do dot_mngr_install 1_grep
+	step_do dot_mngr_install 1_gzip
+	step_do dot_mngr_install 1_make
+	step_do dot_mngr_install 1_patch
+	step_do dot_mngr_install 1_sed
+	step_do dot_mngr_install 1_tar
+	step_do dot_mngr_install 1_xz
+	step_do dot_mngr_install 2_binutils
+	step_do dot_mngr_install 2_gcc
 	step_id_pop
 }
 
@@ -53,47 +57,51 @@ function	lfs_04_chroot_additional_tool()
 	lfs_virtualfs_enable
 	step_do create_full_fhs
 	step_do essential_file
-	step_do compile_gettext_pass1
-	step_do compile_bison_pass1
-	step_do compile_perl_pass1
-	step_do compile_python_pass1
-	step_do compile_texinfo_pass1
-	step_do compile_util_linux_pass1
+	step_do dot_mngr_install 1_gettext
+	step_do dot_mngr_install 1_bison
+	step_do dot_mngr_install 1_perl
+	step_do dot_mngr_install 1_python3
+	step_do dot_mngr_install 1_texinfo
+	step_do dot_mngr_install 1_linux-utils
 	step_do clean_temp_lfs
 	step_id_pop
 }
 
 function	lfs_05_basic_system_soft()
 {
-	local	max_step=80
-	[ "${LFS_SYSTEMD:-0}" == "0" ] || max_step=79
+	# local	max_step=80
+	local	max_step=1000
+	# [ "${LFS_SYSTEMD:-0}" == "0" ] || max_step=79
 	step_id_push "LFS_BASIC_SYSTEM_SOFT" "${max_step}"
-	step_do compile_man_pages
-	step_do compile_iana_etc
-	step_do compile_glibc_pass2
-	step_do compile_zlib
-	step_do compile_bzip2
-	step_do compile_xz_pass2
-	step_do compile_zstd
-	step_do compile_file_pass2
-	step_do compile_readline
-	step_do compile_m4_pass2
-	step_do compile_bc
-	step_do compile_flex
-	step_do compile_tcl
-	step_do compile_expect
-	step_do compile_dejagnu
-	step_do compile_pkgconf
-	step_do compile_binutils_pass3
-	step_do compile_gmp
-	step_do compile_mpfr
-	step_do compile_mpc
-	step_do compile_attr
-	step_do compile_acl
-	step_do compile_libcap
-	step_do compile_libxcrypt
-	step_do compile_shadow
-	step_do compile_gcc_pass3
+	step_do dot_mngr_install 1_man-pages
+	step_do dot_mngr_install 1_iana-etc
+	step_do dot_mngr_install 2_glibc
+	step_do configure_glibc_pass2
+	step_do dot_mngr_install 1_zlib
+	step_do dot_mngr_install 1_bzip2
+	step_do dot_mngr_install 2_xz
+	step_do dot_mngr_install 1_zstd
+	step_do dot_mngr_install 2_file
+	step_do dot_mngr_install 1_readline
+	step_do dot_mngr_install 2_m4
+	step_do dot_mngr_install 1_bc
+	step_do dot_mngr_install 1_flex
+	step_do dot_mngr_install 1_tcl
+	step_do dot_mngr_install 1_expect
+	step_do dot_mngr_install 1_dejagnu
+	step_do dot_mngr_install 1_pkgconf
+	step_do dot_mngr_install 3_binutils
+	step_do dot_mngr_install 1_gmp
+	step_do dot_mngr_install 1_mpfr
+	step_do dot_mngr_install 1_mpc
+	step_do dot_mngr_install 1_attr
+	step_do dot_mngr_install 1_acl
+	step_do dot_mngr_install 1_libcap
+	step_do dot_mngr_install 1_libxcrypt
+	step_do dot_mngr_install 1_shadow
+
+	step_do dot_mngr_install 3_gcc
+	exit 131
 	step_do compile_ncurses_pass2
 	step_do compile_sed_pass2
 	step_do compile_psmisc
@@ -225,6 +233,7 @@ function	do_lfs()
 	step_do lfs_03_temp_tool
 	step_do lfs_04_chroot_additional_tool
 	step_do lfs_05_basic_system_soft
+	exit 130
 	step_do backup_lfs "base_system"
 	step_do lfs_06_system_config
 	step_do lfs_07_make_system_bootable
