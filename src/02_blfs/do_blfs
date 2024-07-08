@@ -24,7 +24,6 @@ function	do_blfs()
 {
 	step_id_push "BLFS" 1
 	step_do blfs_01_after_lfs
-	BLFS_TODO_CHECK=1
 	step_do blfs_02_security
 	step_do backup_lfs "blfs"
 	step_id_pop
