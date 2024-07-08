@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+function	configure_vim_pass1()
+{
+	# package_init vim 2.5
+
+	cat_default_file "${LFS}/etc/vimrc" '"' < "${DIR_FILE}/vimrc"
+}

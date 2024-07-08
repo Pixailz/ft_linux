@@ -54,7 +54,6 @@ function	lfs_04_chroot_additional_tool()
 {
 	step_id_push "LFS_CHROOT_ADDITIONAL_TOOL" 10
 	step_do change_ownership
-	lfs_virtualfs_enable
 	step_do create_full_fhs
 	step_do essential_file
 	step_do dot_mngr_install 1_gettext
@@ -62,7 +61,7 @@ function	lfs_04_chroot_additional_tool()
 	step_do dot_mngr_install 1_perl
 	step_do dot_mngr_install 1_python3
 	step_do dot_mngr_install 1_texinfo
-	step_do dot_mngr_install 1_linux-utils
+	step_do dot_mngr_install 1_linux-util
 	step_do clean_temp_lfs
 	step_id_pop
 }
@@ -99,68 +98,70 @@ function	lfs_05_basic_system_soft()
 	step_do dot_mngr_install 1_libcap
 	step_do dot_mngr_install 1_libxcrypt
 	step_do dot_mngr_install 1_shadow
-
 	step_do dot_mngr_install 3_gcc
-	exit 131
-	step_do compile_ncurses_pass2
-	step_do compile_sed_pass2
-	step_do compile_psmisc
-	step_do compile_gettext_pass2
-	step_do compile_bison_pass2
-	step_do compile_grep_pass2
-	step_do compile_bash_pass2
-	step_do compile_libtool
-	step_do compile_gdbm
-	step_do compile_gperf
-	step_do compile_expat
-	step_do compile_inetutils
-	step_do compile_less
-	step_do compile_perl_pass2
-	step_do compile_xml_parser
-	step_do compile_intltool
-	step_do compile_autoconf
-	step_do compile_automake
-	step_do compile_openssl
-	step_do compile_kmod
-	step_do compile_libelf
-	step_do compile_libffi
-	step_do compile_python_pass2
-	step_do compile_flit_core
-	step_do compile_wheel
-	step_do compile_setuptools
-	step_do compile_ninja
-	step_do compile_meson
-	step_do compile_coreutils_pass2
-	step_do compile_check
-	step_do compile_diffutils_pass2
-	step_do compile_gawk_pass2
-	step_do compile_findutils_pass2
-	step_do compile_groff
-	step_do compile_grub
-	step_do compile_gzip_pass2
-	step_do compile_iproute2
-	step_do compile_kbd
-	step_do compile_libpipeline
-	step_do compile_make_pass2
-	step_do compile_patch_pass2
-	step_do compile_tar_pass2
-	step_do compile_texinfo_pass2
-	step_do compile_vim
-	step_do compile_markupsafe
-	step_do compile_jinja2
+	step_do dot_mngr_install 2_ncurses
+	step_do dot_mngr_install 2_sed
+	step_do dot_mngr_install 1_psmisc
+	step_do dot_mngr_install 2_gettext
+	step_do dot_mngr_install 2_bison
+	step_do dot_mngr_install 2_grep
+	step_do dot_mngr_install 2_bash
+	step_do dot_mngr_install 1_libtool
+	step_do dot_mngr_install 1_gdbm
+	step_do dot_mngr_install 1_gperf
+	step_do dot_mngr_install 1_expat
+	step_do dot_mngr_install 1_inetutils
+	step_do dot_mngr_install 1_less
+	step_do dot_mngr_install 2_perl
+	step_do dot_mngr_install 1_xml-parser
+	step_do dot_mngr_install 1_intltool
+	step_do dot_mngr_install 1_autoconf
+	step_do dot_mngr_install 1_automake
+	step_do dot_mngr_install 1_openssl
+	step_do dot_mngr_install 1_kmod
+	step_do dot_mngr_install 1_elfutils
+	step_do dot_mngr_install 1_libffi
+	step_do dot_mngr_install 2_python3
+	step_do configure_python3_pass2
+	step_do dot_mngr_install 1_flit-core
+	step_do dot_mngr_install 1_wheel
+	step_do dot_mngr_install 1_setuptools
+	step_do dot_mngr_install 1_ninja
+	step_do dot_mngr_install 1_meson
+	step_do dot_mngr_install 2_coreutils
+	step_do dot_mngr_install 1_check
+	step_do dot_mngr_install 2_diffutils
+	step_do dot_mngr_install 2_gawk
+	step_do dot_mngr_install 2_findutils
+	step_do dot_mngr_install 1_groff
+	step_do dot_mngr_install 1_grub
+	step_do dot_mngr_install 2_gzip
+	step_do dot_mngr_install 1_iproute2
+	step_do dot_mngr_install 1_kbd
+	step_do dot_mngr_install 1_libpipeline
+	step_do dot_mngr_install 2_make
+	step_do dot_mngr_install 2_patch
+	step_do dot_mngr_install 2_tar
+	step_do dot_mngr_install 2_texinfo
+	step_do dot_mngr_install 1_vim
+	step_do configure_vim_pass1
+	step_do dot_mngr_install 1_markup-safe
+	step_do dot_mngr_install 1_jinja2
+
 	if [ "${LFS_SYSTEMD:-0}" == "0" ]; then
-		step_do compile_udev
+		step_do dot_mngr_install 1_udev
 	else
-		step_do compile_systemd
-		step_do compile_dbus
+		step_do dot_mngr_install 1_systemd
+		step_do dot_mngr_install 1_dbus
 	fi
-	step_do compile_man_db
-	step_do compile_procps_ng
-	step_do compile_util_linux_pass2
-	step_do compile_e2fsprogs
+	step_do dot_mngr_install 1_man-db
+	step_do dot_mngr_install 1_procps-ng
+	step_do dot_mngr_install 2_linux-util
+	step_do dot_mngr_install 1_e2fsprogs
 	if [ "${LFS_SYSTEMD:-0}" == "0" ]; then
-		step_do compile_sysklogd
-		step_do compile_sysvinit
+		step_do dot_mngr_install 1_sysklogd
+		step_do configure_sysklogd
+		step_do dot_mngr_install 1_sysvinit
 	fi
 	if [ "${LFS_STRIP_BINARIES:-0}" != "0" ]; then
 		strip_binaries
@@ -216,9 +217,12 @@ function	lfs_06_system_config()
 
 function	lfs_07_make_system_bootable()
 {
-	step_id_push "LFS_MAKE_SYSTEM_BOOTABLE" 4
+	step_id_push "LFS_MAKE_SYSTEM_BOOTABLE" 5
 	step_do configure_fstab
-	step_do compile_linux
+	export DISTRO_CODENAME="${LFS_DISTRO_CODENAME}"
+	export VMLINUZ="${LFS_VMLINUZ}"
+	step_do dot_mngr_install 1_linux
+	step_do configure_linux
 	step_do configure_grub
 	step_do finish_touch
 	step_id_pop
@@ -231,9 +235,10 @@ function	do_lfs()
 	lfs_mount
 	step_do lfs_02_cross_toolchain
 	step_do lfs_03_temp_tool
+	lfs_virtualfs_enable
 	step_do lfs_04_chroot_additional_tool
+	lfs_virtualfs_enable
 	step_do lfs_05_basic_system_soft
-	exit 130
 	step_do backup_lfs "base_system"
 	step_do lfs_06_system_config
 	step_do lfs_07_make_system_bootable

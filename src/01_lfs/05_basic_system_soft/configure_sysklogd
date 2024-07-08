@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+function	configure_sysklogd()
+{
+	# package_init sysklogd 0 2
+
+	cat_default_file "${LFS}/etc/syslog.conf" < "${DIR_FILE}/syslog.conf"
+}

@@ -1,23 +1,6 @@
 #!/usr/bin/bash
 
-function	install_font()
-{
-	package_init "${1}" 0
-
-	do_chroot "cd /sources/${package_tar_folder} \
-	&& ./configure --prefix=/usr \
-		--psfdir=${dst_dir} \
-	&& make psf \
-	&& make install-psf"
-
-	package_clean
-}
-
 function	install_fonts()
 {
-	export dst_dir="/usr/share/consolefonts"
-
-	install_font "terminus"
-
-	unset dst_dir
+	dot_mngr_install 1_terminus
 }

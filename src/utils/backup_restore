@@ -2,9 +2,9 @@
 
 function	backup_lfs_clean()
 {
+	find "${LFS}/sources/*" -type d -exec rm -rf {} \; || true
 	lfs_virtualfs_disable
 	lfs_mount
-	find "${LFS}/sources/*" -type d -exec rm -rf {} \; || true
 }
 
 function	backup_lfs_get_id()

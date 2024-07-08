@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+function	configure_python3_pass2()
+{
+	# package_init python 1.8 2
+
+	cat_default_file "${LFS}/etc/pip.conf" < "${DIR_FILE}/pip.conf"
+}
