@@ -19,6 +19,14 @@ function	install_dot_mngr()
 	cat <<-EOF > "${WHOAMI_HOME}/.config/dot_mngr/sources.list"
 		lfs_repo https://github.com/Pixailz/dot_mngr_repo lfs
 	EOF
+
+
+	DISABLE_CHECK=""
+	if [ "${LFS_DO_TEST:-1}" == "0" ]; then
+		DISABLE_CHECK="--disable-check"
+	fi
+
+	export DISABLE_CHECK
 }
 
 # function	activate_dot_mngr()
@@ -42,6 +50,7 @@ function	dot_mngr_install()
 		--target-triplet "${LFS_TGT}" \
 		--use-prefix "${LFS}" \
 			install ${@} \
+				"${DISABLE_CHECK}" \
 				--extract-folder "${LFS}/sources"
 }
 
