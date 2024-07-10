@@ -23,7 +23,7 @@ function	essential_file()
 	# Create test user
 	echo "tester:x:101:101::/home/tester:/bin/bash" >> "${LFS}/etc/passwd"
 	echo "tester:x:101:" >> "${LFS}/etc/group"
-	do_chroot install -o tester -d "${LFS}/home/tester"
+	do_chroot install -o tester -d "/home/tester"
 
 	# Create log folder
 	do_chroot touch /var/log/{btmp,lastlog,faillog,wtmp}
