@@ -14,9 +14,18 @@ function	blfs_01_after_lfs()
 
 function	blfs_02_security()
 {
-	step_id_push "BLFS_SECURITY" 2
-	step_do compile_make_ca
-	step_do compile_cracklib
+	step_id_push "BLFS_SECURITY" 1000
+	step_do dot_mngr_install_blfs 1_make-ca
+	step_do dot_mngr_install_blfs 1_cracklib
+	step_do dot_mngr_install_blfs 1_cryptsetup
+	step_do dot_mngr_install_blfs 1_cyrus-sasl
+	step_do dot_mngr_install_blfs 1_gnupg
+	step_do dot_mngr_install_blfs 1_gpgme
+	step_do dot_mngr_install_blfs 1_iptables
+	step_do dot_mngr_install_blfs 1_linux-pam
+	step_do dot_mngr_install_blfs 1_sudo
+
+	exit 131
 	step_id_pop
 }
 

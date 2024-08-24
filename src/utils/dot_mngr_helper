@@ -13,11 +13,13 @@ function	install_dot_mngr()
 		ln -s "${WHOAMI_HOME}/.config/dot_mngr" /root/.config/dot_mngr
 	fi
 	if [ "$(python3 -m pip list | grep dot-mngr | wc -l)" != "1" ]; then
-		sudo -u "${WHOAMI}" pip install -e ./dot_mngr
-		pip install -e ./dot_mngr
+		sudo -u "${WHOAMI}" pip install --break-system-packages -e ./dot_mngr
+		pip install --break-system-packages -e ./dot_mngr
 	fi
 	cat <<-EOF > "${WHOAMI_HOME}/.config/dot_mngr/sources.list"
-		lfs_repo https://github.com/Pixailz/dot_mngr_repo lfs
+		lfs https://github.com/Pixailz/dot_mngr_repo lfs
+		blfs https://github.com/Pixailz/dot_mngr_repo blfs
+		main https://github.com/Pixailz/dot_mngr_repo main
 	EOF
 
 
@@ -27,6 +29,8 @@ function	install_dot_mngr()
 	fi
 
 	export DISABLE_CHECK
+	export DISTRO_CODENAME="${LFS_DISTRO_CODENAME}"
+	export VMLINUZ="${LFS_VMLINUZ}"
 }
 
 # function	activate_dot_mngr()
@@ -60,4 +64,17 @@ function	dot_mngr_info()
 		--target-triplet "${LFS_TGT}" \
 		--use-prefix "${LFS}" \
 			info
+}
+
+function	dot_mngr_install_blfs()
+{
+	local	key="${1#[0-9]_*}"
+
+	for k in "${!BLFS_TODO[@]}"; do
+		if [ "${k}" == "${key}" ] && [ "${BLFS_TODO[${key}]}" == "0" ]; then
+			pwarm "Skipping ${key}..."
+			return 0
+		fi
+	done
+	dot_mngr_install ${@}
 }

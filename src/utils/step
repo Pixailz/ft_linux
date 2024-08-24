@@ -60,12 +60,11 @@ function	step_do()
 	local	id="${LIFOVAR_STEP_ID[*]: -1}"
 	local	step_i="$((${STEP[STEP_${id}]} + 1))"
 
-	if [ "${1}" == "dot_mngr_install" ]; then
-		step_set_daemon_status "${1} ${2}" "${step_i}"
+	if [[ ${1} =~ dot_mngr_install.* ]]; then
+		step_set_daemon_status "dot_mngr install ${2}" "${step_i}"
 	else
 		step_set_daemon_status "${1}" "${step_i}"
 	fi
-
 	if [ "${STEP[STEP_${id}]}" -ge "${STEP[${id}]:-0}" ]; then
 		${1} "${@:2}"
 		STEP["${id}"]="${step_i}"

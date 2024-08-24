@@ -45,7 +45,7 @@ systemd-timesync:x:78:78:systemd Time Synchronization:/:/usr/bin/false
 ssystemd-coredump:x:79:79:systemd Core Dumper:/:/usr/bin/false
 uuidd:x:80:80:UUID Generation Daemon User:/dev/null:/usr/bin/false
 systemd-oom:x:81:81:systemd Out Of Memory Daemon:/:/usr/bin/false
-ldap:x:83:83:OpenLDAP User:/var/lib/openldap:/usr/bin/false
+ldap:x:83:83:OpenLDAP Daemon User:/var/lib/openldap:/usr/bin/false
 avahi:x:84:84:Avahi Daemon User:/var/run/avahi-daemon:/usr/bin/false
 avaahi-autoipd:x:85:85:Avahi AutoIP Daemon User:/var/lib/avahi-autoipd:/usr/bin/false
 ntp:x:87:87:Network Time Protocol User:/var/lib/ntp:/usr/bin/false

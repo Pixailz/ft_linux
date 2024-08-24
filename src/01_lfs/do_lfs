@@ -74,8 +74,8 @@ function	lfs_05_basic_system_soft()
 	step_id_push "LFS_BASIC_SYSTEM_SOFT" "${max_step}"
 	step_do dot_mngr_install 1_man-pages
 	step_do dot_mngr_install 1_iana-etc
-	step_do dot_mngr_install 2_glibc
 	step_do configure_glibc_pass2
+	step_do dot_mngr_install 2_glibc
 	step_do dot_mngr_install 1_zlib
 	step_do dot_mngr_install 1_bzip2
 	step_do dot_mngr_install 2_xz
@@ -219,8 +219,6 @@ function	lfs_07_make_system_bootable()
 {
 	step_id_push "LFS_MAKE_SYSTEM_BOOTABLE" 5
 	step_do configure_fstab
-	export DISTRO_CODENAME="${LFS_DISTRO_CODENAME}"
-	export VMLINUZ="${LFS_VMLINUZ}"
 	step_do dot_mngr_install 1_linux
 	step_do configure_linux
 	step_do configure_grub

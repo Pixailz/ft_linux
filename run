@@ -40,7 +40,7 @@ init
 
 # Main
 do_lfs
-# do_blfs
+do_blfs
 
 # Testing Zone
 
