@@ -1,54 +1,54 @@
 root:x:0:0:root:/root:/bin/bash
-bin:x:1:1:bin:/dev/null:/usr/bin/false
-daemon:x:6:6:Daemon User:/dev/null:/usr/bin/false
-lp:x:9:9:Printing Daemon:/dev/null:/usr/bin/false
-atd:x:17:17:at Daemon:/var/spool/atjobs:/usr/bin/false
-messagebus:x:18:18:D-Bus Message Daemon User:/run/dbus:/usr/bin/false
-named:x:20:20:Named User:/dev/null:/usr/bin/false
-gdm:x:21:21:GDM User:/var/lib/gdm:/usr/bin/false
-fcron:x:22:22:Fcron User:/dev/null:/usr/bin/false
-systemd-journal:x:23:23:systemd Journal System:/:/usr/bin/false
-apache:x:25:25:Apache User:/srv/httpd:/usr/bin/false
-smmsp:x:26:26:smmsp User:/var/spool/clientmqueue:/usr/bin/false
-polkitd:x:27:27:PolicyKit Daemon User:/var/lib/polkit:/usr/bin/false
-rpc:x:28:28:RPC Daemon User:/var/lib/nfs:/usr/bin/false
-exim:x:31:31:Exim Daemon User:/var/spool/exim:/usr/bin/false
-postfix:x:32:32:Postfix Daemon User:/var/spool/postfix:/usr/bin/false
-sendmail:x:34:34:Sendmail Daemon User:/dev/null:/usr/bin/false
-vmailman:x:35:35:Virtual Mailman:/var/spool/vmailman:/usr/bin/false
-news:x:36:36:News Daemon User:/var/spool/news:/usr/bin/false
-kdm:x:37:37:KDM Display Manager:/var/lib/kdm:/usr/bin/false
-fetchmail:x:38:38:Fetchmail Daemon User:/dev/null:/usr/bin/false
-mysql:x:40:40:MySQL Daemon User:/var/lib/mysql:/usr/bin/false
-postgres:x:41:41:PostgreSQL Server:/var/lib/postgres:/usr/bin/false
-dovecot:x:42:42:Dovecot Secure IMAP Server:/dev/null:/usr/bin/false
-dovenull:x:43:43:Dovecot Login User:/dev/null:/usr/bin/false
-ftp:x:45:45:FTP Daemon User:/srv/ftp:/usr/bin/false
-proftpd:x:46:46:ProFTPD Daemon User:/var/lib/proftpd:/usr/bin/false
-vsftpd:x:47:47:vsftpd Daemon User:/var/lib/vsftpd:/usr/bin/false
-rsyncd:x:48:48:rsync Daemon User:/var/lib/rsync:/usr/bin/false
-sshd:x:50:50:SSH Daemon User:/var/empty:/usr/bin/false
-stunnel:x:51:51:Stunnel Daemon User:/dev/null:/usr/bin/false
-dhcpd:x:52:52:DHCP Daemon User:/var/lib/dhcp:/usr/bin/false
-svn:x:56:56:Subversion Server:/srv/svn:/usr/bin/false
-git:x:58:58:Git Version Control:/srv/git:/usr/bin/false
-games:x:60:60:Games Account:/var/games:/usr/bin/false
-sddm:x:64:64:Simple Desktop Display Manager:/var/lib/sddm:/usr/bin/false
-lightdm:x:65:65:LightDM Display Manager:/var/lib/lightdm:/usr/bin/false
-colord:x:71:71:Color Management Daemon User:/var/lib/colord:/usr/bin/false
-systemd-journal-gateway:x:73:73:systemd Journal Gateway:/:/usr/bin/false
-systemd-journal-remote:x:74:74:systemd Journal Remote:/:/usr/bin/false
-systemd-journal-upload:x:75:75:systemd Journal Upload:/:/usr/bin/false
-systemd-network:x:76:76:systemd Network Management:/:/usr/bin/false
-systemd-resolve:x:77:77:systemd Resolver:/:/usr/bin/false
-systemd-timesync:x:78:78:systemd Time Synchronization:/:/usr/bin/false
-ssystemd-coredump:x:79:79:systemd Core Dumper:/:/usr/bin/false
-uuidd:x:80:80:UUID Generation Daemon User:/dev/null:/usr/bin/false
-systemd-oom:x:81:81:systemd Out Of Memory Daemon:/:/usr/bin/false
-ldap:x:83:83:OpenLDAP Daemon User:/var/lib/openldap:/usr/bin/false
-avahi:x:84:84:Avahi Daemon User:/var/run/avahi-daemon:/usr/bin/false
-avaahi-autoipd:x:85:85:Avahi AutoIP Daemon User:/var/lib/avahi-autoipd:/usr/bin/false
-ntp:x:87:87:Network Time Protocol User:/var/lib/ntp:/usr/bin/false
-unbound:x:88:88:Unbound DNS Resolver:/var/lib/unbound:/usr/bin/false
-anonymous:x:98:98:Anonymous User:/dev/null:/usr/bin/false
-nobody:x:65534:65534:Unprivileged User:/dev/null:/usr/bin/false
+bin:x:1:1:bin:/dev/null:/bin/false
+daemon:x:6:6:Daemon User:/dev/null:/bin/false
+lp:x:9:9:Printing Daemon:/dev/null:/bin/false
+atd:x:17:17:at Daemon:/var/spool/atjobs:/bin/false
+messagebus:x:18:18:D-Bus Message Daemon User:/run/dbus:/bin/false
+named:x:20:20:Named User:/dev/null:/bin/false
+gdm:x:21:21:GDM User:/var/lib/gdm:/bin/false
+fcron:x:22:22:Fcron User:/dev/null:/bin/false
+systemd-journal:x:23:23:systemd Journal System:/:/bin/false
+apache:x:25:25:Apache User:/srv/httpd:/bin/false
+smmsp:x:26:26:smmsp User:/var/spool/clientmqueue:/bin/false
+polkitd:x:27:27:PolicyKit Daemon Owner:/etc/polkit-1:/bin/false
+rpc:x:28:28:RPC Daemon User:/var/lib/nfs:/bin/false
+exim:x:31:31:Exim Daemon User:/var/spool/exim:/bin/false
+postfix:x:32:32:Postfix Daemon User:/var/spool/postfix:/bin/false
+sendmail:x:34:34:Sendmail Daemon User:/dev/null:/bin/false
+vmailman:x:35:35:Virtual Mailman:/var/spool/vmailman:/bin/false
+news:x:36:36:News Daemon User:/var/spool/news:/bin/false
+kdm:x:37:37:KDM Display Manager:/var/lib/kdm:/bin/false
+fetchmail:x:38:38:Fetchmail Daemon User:/dev/null:/bin/false
+mysql:x:40:40:MySQL Daemon User:/var/lib/mysql:/bin/false
+postgres:x:41:41:PostgreSQL Server:/var/lib/postgres:/bin/false
+dovecot:x:42:42:Dovecot Secure IMAP Server:/dev/null:/bin/false
+dovenull:x:43:43:Dovecot Login User:/dev/null:/bin/false
+ftp:x:45:45:FTP Daemon User:/srv/ftp:/bin/false
+proftpd:x:46:46:ProFTPD Daemon User:/var/lib/proftpd:/bin/false
+vsftpd:x:47:47:vsftpd Daemon User:/var/lib/vsftpd:/bin/false
+rsyncd:x:48:48:rsync Daemon User:/var/lib/rsync:/bin/false
+sshd:x:50:50:sshd PrivSep:/var/lib/sshd:/bin/false
+stunnel:x:51:51:Stunnel Daemon User:/dev/null:/bin/false
+dhcpd:x:52:52:DHCP Daemon User:/var/lib/dhcp:/bin/false
+svn:x:56:56:Subversion Server:/srv/svn:/bin/false
+git:x:58:58:Git Version Control:/srv/git:/bin/false
+games:x:60:60:Games Account:/var/games:/bin/false
+sddm:x:64:64:Simple Desktop Display Manager:/var/lib/sddm:/bin/false
+lightdm:x:65:65:LightDM Display Manager:/var/lib/lightdm:/bin/false
+colord:x:71:71:Color Management Daemon User:/var/lib/colord:/bin/false
+systemd-journal-gateway:x:73:73:systemd Journal Gateway:/:/bin/false
+systemd-journal-remote:x:74:74:systemd Journal Remote:/:/bin/false
+systemd-journal-upload:x:75:75:systemd Journal Upload:/:/bin/false
+systemd-network:x:76:76:systemd Network Management:/:/bin/false
+systemd-resolve:x:77:77:systemd Resolver:/:/bin/false
+systemd-timesync:x:78:78:systemd Time Synchronization:/:/bin/false
+ssystemd-coredump:x:79:79:systemd Core Dumper:/:/bin/false
+uuidd:x:80:80:UUID Generation Daemon User:/dev/null:/bin/false
+systemd-oom:x:81:81:systemd Out Of Memory Daemon:/:/bin/false
+ldap:x:83:83:OpenLDAP Daemon User:/var/lib/openldap:/bin/false
+avahi:x:84:84:Avahi Daemon User:/var/run/avahi-daemon:/bin/false
+avaahi-autoipd:x:85:85:Avahi AutoIP Daemon User:/var/lib/avahi-autoipd:/bin/false
+ntp:x:87:87:Network Time Protocol User:/var/lib/ntp:/bin/false
+unbound:x:88:88:Unbound DNS Resolver:/var/lib/unbound:/bin/false
+anonymous:x:98:98:Anonymous User:/dev/null:/bin/false
+nobody:x:65534:65534:Unprivileged User:/dev/null:/bin/false

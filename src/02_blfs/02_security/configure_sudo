@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+function	configure_sudo()
+{
+	_mkdir "${LFS}/etc/sudoers.d"
+
+	cat_default_file "${LFS}/etc/sudoers.d/00-sudo" \
+		< <(envsubst '$LFS_ROOT_GROUP' \
+			< "${DIR_FILE}/sudoers")
+}

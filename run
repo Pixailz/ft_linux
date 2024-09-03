@@ -29,8 +29,9 @@ function	init()
 	_mkdir "${DIR_LOG}"
 	_mkdir "${DIR_BAK}"
 	step_setup_file
-	daemon_init
+	# daemon_init
 	install_dot_mngr
+	# TODO: re-implement SBU with dot_mngr
 	set_sbu
 	get_summary
 }

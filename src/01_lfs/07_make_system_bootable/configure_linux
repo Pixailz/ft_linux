@@ -1,77 +1,7 @@
 #!/usr/bin/bash
 
-# function	kernel_config()
-# {
-# 	local	var_name=${1}
-# 	local	var_value=${2}
-# 	local	prefix=${3:-CONFIG_}
-
-# 	if grep "${prefix}${var_name}" "${LFS}/${KERNEL_CONFIG}" &>/dev/null; then
-# 		echo "# ${prefix}${var_name} is not set" >> "${LFS}/${KERNEL_CONFIG}"
-# 	fi
-
-# 	sed -i "s|.*${prefix}${var_name}[ =].*|${prefix}${var_name}=${var_value}|" \
-# 		"${LFS}/${KERNEL_CONFIG}"
-# }
-
 function	configure_linux()
 {
-	# package_init linux 20.4
-
-	# export KERNEL_CONFIG="/sources/${package_tar_folder}/.config"
-	# do_chroot "cd /sources/${package_tar_folder} \
-	# && make mrproper \
-	# && make defconfig"
-
-	# kernel_config "WERROR" "n"
-	# kernel_config "PSI" "y"
-	# kernel_config "PSI_DEFAULT_DISABLED" "n"
-	# kernel_config "IKHEADERS" "n"
-	# kernel_config "CGROUPS" "y"
-	# kernel_config "MEMCG" "y"
-	# kernel_config "EXPERT" "n"
-
-	# kernel_config "RELOCATABLE" "y"
-	# kernel_config "RANDOMISE_BASE" "y"
-
-	# kernel_config "STACKPROTECTOR" "y"
-	# kernel_config "STACKPROTECTOR_STRONG" "y"
-
-	# kernel_config "UEVENT_HELPER" "n"
-	# kernel_config "DEVTMPFS" "y"
-	# kernel_config "DEVTMPFS_MOUNT" "y"
-
-	# kernel_config "DRM" "y"
-	# kernel_config "DRM_FBDEV_EMULATION" "y"
-	# kernel_config "FRAMEBUFFER_CONSOLE" "y"
-
-	# kernel_config "X86_X2APIC" "y"
-	# kernel_config "PCI" "y"
-	# kernel_config "PCI_MSI" "y"
-	# kernel_config "IOMMU_SUPPORT" "y"
-	# kernel_config "IRQ_REMAP" "y"
-
-	# kernel_config "LOCALVERSION" "\"-${LFS_DISTRO_CODENAME}\""
-	# kernel_config "LOCALVERSION_AUTO" "y"
-
-	# _rm "${LFS}/boot/System.map-${package_version}"
-	# _rm "${LFS}/boot/${LFS_VMLINUZ}"
-	# _rm "${LFS}/boot/config-${package_version}"
-	# _rm "${LFS}/usr/share/doc/linux-${package_version}"
-
-	# do_chroot "cd /sources/${package_tar_folder} \
-	# && make \
-	# && make modules_install \
-	# && cp -fiv System.map /boot/System.map-${package_version} \
-	# && cp -fiv arch/x86/boot/bzImage /boot/${LFS_VMLINUZ} \
-	# && cp -fiv .config /boot/config-${package_version} \
-	# && cp -fr Documentation -T /usr/share/doc/linux-${package_version}"
-
 	_mkdir "${LFS}/etc/modprobe.d"
 	cat_default_file "${LFS}/etc/modprobe.d/usb.conf" < "${DIR_FILE}/modprobe_usb.conf"
-
-	# # Exported variable
-	# # shellcheck disable=SC2154
-	# _tar -xf "${src_file}" -C "${LFS}/usr/src"
-	# _mv "${LFS}/usr/src/${package_tar_folder}" "${LFS}/usr/src/kernel-${package_version}"
 }

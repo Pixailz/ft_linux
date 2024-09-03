@@ -16,6 +16,7 @@ function	blfs_02_security()
 {
 	step_id_push "BLFS_SECURITY" 1000
 	step_do dot_mngr_install_blfs 1_make-ca
+	step_do dot_mngr_install_blfs 2_make-ca
 	step_do dot_mngr_install_blfs 1_cracklib
 	step_do dot_mngr_install_blfs 1_cryptsetup
 	step_do dot_mngr_install_blfs 1_cyrus-sasl
@@ -23,17 +24,30 @@ function	blfs_02_security()
 	step_do dot_mngr_install_blfs 1_gpgme
 	step_do dot_mngr_install_blfs 1_iptables
 	step_do dot_mngr_install_blfs 1_linux-pam
-	step_do dot_mngr_install_blfs 1_sudo
+	step_do dot_mngr_install_blfs 1_liboauth
+	step_do dot_mngr_install_blfs 1_libpwquality
+	step_do configure_pwquality
+	step_do dot_mngr_install_blfs 1_mit-kerberos5
+	step_do configure_mit-kerberos5
+	step_do dot_mngr_install_blfs 1_nettle
+	step_do dot_mngr_install_blfs 1_nss
+	step_do dot_mngr_install_blfs 1_openssh
+	step_do dot_mngr_install_blfs 1_p11-kit
+	step_do dot_mngr_install_blfs 1_polkit
 
-	exit 131
+	# step_do dot_mngr_install_blfs 1_sudo
+	# step_do configure_sudo
+
 	step_id_pop
 }
 
 function	do_blfs()
 {
-	step_id_push "BLFS" 1
+	step_id_push "BLFS" 4
 	step_do blfs_01_after_lfs
 	step_do blfs_02_security
-	step_do backup_lfs "blfs"
+	echo pass
+	step_do dot_mngr_install main@linux-compile
+	# step_do backup_lfs "blfs"
 	step_id_pop
 }

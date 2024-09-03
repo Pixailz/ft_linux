@@ -1,0 +1,8 @@
+#!/usr/bin/bash
+
+function	configure_mit-kerberos5()
+{
+	cat_default_file "${LFS}/etc/krb5.conf" \
+		< <(envsubst '$KERB_FQND,$KERB_FQND_UPPER,$KERB_FQND_ADMIN' \
+			< "${DIR_FILE}/krb5.conf")
+}

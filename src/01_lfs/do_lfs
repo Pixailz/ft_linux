@@ -2,7 +2,7 @@
 
 function	lfs_01_prepare()
 {
-	step_id_push "LFS_PREPARE" 3
+	step_id_push "LFS_PREPARE" 4
 	step_do checkup
 	step_do partition_lfs
 	step_do dot_mngr_info
@@ -68,9 +68,8 @@ function	lfs_04_chroot_additional_tool()
 
 function	lfs_05_basic_system_soft()
 {
-	# local	max_step=80
-	local	max_step=1000
-	# [ "${LFS_SYSTEMD:-0}" == "0" ] || max_step=79
+	local	max_step=82
+	[ "${LFS_SYSTEMD:-0}" == "0" ] || max_step=84
 	step_id_push "LFS_BASIC_SYSTEM_SOFT" "${max_step}"
 	step_do dot_mngr_install 1_man-pages
 	step_do dot_mngr_install 1_iana-etc
@@ -79,6 +78,7 @@ function	lfs_05_basic_system_soft()
 	step_do dot_mngr_install 1_zlib
 	step_do dot_mngr_install 1_bzip2
 	step_do dot_mngr_install 2_xz
+	step_do dot_mngr_install 1_lz4
 	step_do dot_mngr_install 1_zstd
 	step_do dot_mngr_install 2_file
 	step_do dot_mngr_install 1_readline
@@ -147,7 +147,6 @@ function	lfs_05_basic_system_soft()
 	step_do configure_vim_pass1
 	step_do dot_mngr_install 1_markup-safe
 	step_do dot_mngr_install 1_jinja2
-
 	if [ "${LFS_SYSTEMD:-0}" == "0" ]; then
 		step_do dot_mngr_install 1_udev
 	else
@@ -190,7 +189,6 @@ function	lfs_06_system_config_systemd()
 function	lfs_06_system_config_sysvinit()
 {
 	step_id_push "LFS_SYSTEM_CONFIG_SYSVINIT" 12
-	step_do lfs_boot_script
 	step_do configure_devices
 	step_do configure_network_sysvinit
 	step_do configure_dns
@@ -217,9 +215,10 @@ function	lfs_06_system_config()
 
 function	lfs_07_make_system_bootable()
 {
-	step_id_push "LFS_MAKE_SYSTEM_BOOTABLE" 5
+	step_id_push "LFS_MAKE_SYSTEM_BOOTABLE" 6
 	step_do configure_fstab
 	step_do dot_mngr_install 1_linux
+	step_do dot_mngr_install main@linux-compile
 	step_do configure_linux
 	step_do configure_grub
 	step_do finish_touch
@@ -228,7 +227,8 @@ function	lfs_07_make_system_bootable()
 
 function	do_lfs()
 {
-	step_id_push "LFS" 11
+	export FORCE_INSTALL=1
+	step_id_push "LFS" 9
 	step_do lfs_01_prepare
 	lfs_mount
 	step_do lfs_02_cross_toolchain
@@ -242,4 +242,5 @@ function	do_lfs()
 	step_do lfs_07_make_system_bootable
 	step_do save_log
 	step_id_pop
+	unset FORCE_INSTALL
 }

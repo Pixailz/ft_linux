@@ -1,0 +1,2 @@
+Defaults secure_path="$PREFIX/sbin:$PREFIX/bin"
+%$LFS_ROOT_GROUP ALL=(ALL) ALL

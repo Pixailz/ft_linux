@@ -11,8 +11,7 @@ function	create_minimal_fhs()
 	done
 	case "${LFS_ARCH}" in
 		x86_64)
-			[ -e "${LFS}/lib64" ] && _rm "${LFS}/lib64"
-			_ln -s lib "${LFS}/lib64"
+			_mkdir "${LFS}/lib64"
 		;;
 		*) : ;;
 	esac

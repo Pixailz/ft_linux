@@ -1,0 +1,7 @@
+#!/usr/bin/bash
+
+function	configure_pwquality()
+{
+	cat_default_file "${LFS}/etc/pam.d/system-password" \
+		< "${DIR_FILE}/pwquality"
+}
